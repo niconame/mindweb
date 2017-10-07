@@ -1,0 +1,145 @@
+<html>
+<head>
+<title>LogPlay</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8;" />
+<link href="YMap.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="YMap.js"></script>
+<script type="text/javascript" src="YTree.js"></script>
+<script type="text/javascript" src="YView.js"></script>
+
+<script type="text/javascript">
+	var yTree;
+	var yView;
+	var yApp;
+	var prjID;
+	var isLoad = true; // 設定為true 這樣才不會到DB建立rootnode的資料
+	var node_dbar;
+	var playspeed = 1000;
+	var speedshow = 1;
+	var logplay = true;
+
+	$(document).ready(function() {
+		document.onmouseup		= null;
+
+		yTree = new YTree("Start");
+		yView = new YView(yTree, document.getElementById("panelDOM"), document.getElementById("panelSVG"));
+	
+		yView.panelD.style.left = 0 + "px";
+		yView.panelD.style.top = 0 + "px";
+
+		yApp = new YApp(yView);
+		yView.redrawTree(true);
+				
+		//顯示速度
+		$('#playspeed').val((playspeed/1000).toFixed(2) + "  次\/秒");  
+		
+		var rootnode = yView.getNodeByID("r"); // 取得root node
+		// 去DB取得此專案的 root.NodeID 並賦予這邊的rootnode 
+		// 拉出此專案的log 
+		// 分解log 並將之進行操作				
+		$.ajax({
+			async: false,
+			url: 'update',
+			type: 'POST',
+			dataType: 'text',
+			data: {act:'getrootnodeid'},
+			error: function(res){
+				alert('DB Error');
+				return false;
+			},
+			success: function(res){
+				rootnode.NodeID = res;
+				getlog();
+			}
+		});
+	});
+
+function getlog() {	
+
+	$.ajax({
+		//async: false,
+		url: 'update',
+		type: 'POST',
+		dataType: 'text',
+		data: {act:'getlog'},
+		error: function(res){
+			alert('DB Error');
+			return false;
+		},
+		success: function(res){
+			if (res == 'complete')
+				//alert('complete');
+				$('#playstate').text('complete');
+			else {
+				setTimeout("getlog()", playspeed);
+				var objlog = JSON.parse(res);
+				playlog(objlog);
+			}
+		}
+	});		
+}
+
+function playlog(objlog) {
+
+	var arrdata = objlog.content.split(',');
+	var action = objlog.action;
+	var myact;
+		
+	if (action == "node_create") {
+		myact = "新增節點";
+		socket_get_node_create(arrdata);
+	} else if (action == "node_edit") {
+		myact = "編輯節點";
+		socket_get_node_edit(arrdata);
+	} else if (action == "node_drag") {
+		myact = "移動節點";
+		socket_get_node_drag(arrdata);
+	} else if (action == "node_delete") {
+		myact = "刪除節點";
+		socket_get_node_delete(arrdata);
+	} else if (action == "node_iconadd") {
+		myact = "加入圖示";
+		socket_get_node_iconadd(arrdata);
+	} else if (action == "node_iconremoveall") {
+		myact = "移除圖示";
+		socket_get_node_iconremoveall(arrdata[0]);
+	}
+	
+	var strcontent = "時間：" + timeformat(objlog.time) + "\t使用者：" + objlog.uname + "\t進行操作：" + myact;
+	$('#lblogplaycontent').val(strcontent);	
+}
+
+
+function accelerate() {
+	speedshow +=  0.2;
+	//playspeed += 500;
+	playspeed = 1/speedshow * 1000;
+	//顯示速度
+	$('#playspeed').val(speedshow.toFixed(2) + "  次\/秒");  	
+}
+
+function deceleration() {
+	if(speedshow <= 0.2) return;
+	speedshow -=  0.2;
+	//playspeed += 500;
+	playspeed = 1/speedshow * 1000;
+	//顯示速度
+	$('#playspeed').val(speedshow.toFixed(2) + "  次\/秒");  		
+}
+
+</script>
+</head>
+
+<body style="margin:0px">
+<div class="logplaystate"><label id="playstate" disabled="true">Playing....</label></div>
+<div class="logspeedcontrol">
+	<input type="text" size="10" disabled="true" id="playspeed" /> 
+	<input type="button" value="減速" onclick="deceleration();" />
+	<input type="button" value="加速" onclick="accelerate();"/> 
+</div>
+<div id="logplaycontent" class="logplaycontent"><input type="text" size="60" disabled="true" id="lblogplaycontent" /> </div>
+<div id="panelDOM" style="position:absolute;width:1700px;height:680px;margin:0px;padding:0px;overflow:visible;border:solid 1px gray;z-index:0">
+<svg id="panelSVG" xmlns="http://www.w3.org/2000/svg" version="1.1" width="2000px" height="2000px"></svg>
+</div>
+</html>

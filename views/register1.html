@@ -1,0 +1,322 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<script type="text/javascript" src="jquery.js"></script>
+	<link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Signika:400,700' rel='stylesheet' type='text/css'>
+	<title>MindLinker</title>
+    <script type="text/css"></script>
+<style>
+
+#block1{
+	width: 450px;
+    height: 400px;
+}
+.slideUp {
+    margin: 0px auto;
+    position: absolute;
+    -moz-transition-property:top;
+    -moz-transition-duration: 3s;
+    -webkit-transition-property:top;
+    -webkit-transition-duration: 3s;
+    -o-transition-property:  top;
+    -o-transition-duration: 3s;
+    top: 10%;
+	left: 30%;
+
+}
+
+.slideLeft {
+	margin: 0px auto;
+    position: absolute;
+    -moz-transition-property: top;
+    -moz-transition-duration: 3s;
+    -webkit-transition-property:  top;
+    -webkit-transition-duration: 3s;
+    -o-transition-property:  top;
+    -o-transition-duration: 3s;
+    top: 5%;
+	left: 30%;
+}
+#content {
+    width: 300px;
+    height: 300px;
+    margin: 50px auto;
+    padding: 100px;
+    border: 1px;
+    
+}
+
+#slogan{
+	position: absolute;
+	width: 464px;
+	height: 230px;
+	left:900px;
+	top:600px;
+}
+
+h4{
+	font-family: "Times New Roman";
+	font-size:38px;
+	color:#979a99;
+	
+}
+h1 {
+    color: #e40000;
+	font-family: "Signika",Amatic SC;
+	front-size: 46px;
+	position: relative;
+	text-align:center;
+	top: 30px;
+	line-height: 1.3em;
+    background: transparent none repeat scroll 0 0;
+    border: 0 none;
+    margin: 0;
+    outline: 0 none;
+    padding: 0;
+    vertical-align: baseline;
+}
+.circle1{
+
+    left: 596px;
+    position: absolute;
+    top: 40px;
+    width:10px;
+	height:10px; 
+	border-radius:99em;
+	background-color:#00b9e8;
+
+}
+.circle2{
+
+    left: 630px;
+    position: absolute;
+    top: 70px;
+    width:17px;
+	height:17px; 
+	border-radius:99em;
+	background-color:#00b9e8;
+
+}
+.circle3{
+
+    left: 80px auto;
+    position: absolute;
+    top: 500px;
+    width:75px;
+	height:75px; 
+	border-radius:99em;
+	background-color:#00b9e8;
+
+}
+.circle4{
+
+    left: 230px;
+    position: absolute;
+    top: 380px;
+    width:35px;
+	height:35px; 
+	border-radius:99em;
+	background-color:#00b9e8;
+}
+.circle5{
+
+    left: 155px;
+    position: absolute;
+    top: 184px;
+    width:35px;
+	height:35px; 
+	border-radius:99em;
+	background-color:#00b9e8;
+}
+
+.circle6{
+
+    left: 1300px;
+    position: absolute;
+    top: 350px;
+    width:130px;
+	height:130px; 
+	border-radius:99em;
+	background-color:#00b9e8;
+}
+.circle7{
+
+    left: 1200px;
+    position: absolute;
+    top: 300px;
+    width:35px;
+	height:35px;	
+	border-radius:99em;
+	
+	background-color:#00b9e8;
+}
+.circle8{
+
+    left: 1000px;
+    position: absolute;
+    top: 400px;
+    width:40px;
+	height:40px;	
+	border-radius:99em;
+	background-color:#00b9e8;
+}
+#id,#name,#pwd,#pwdcheck{
+    border-radius: 10px;
+	border: 2px solid rgb(173, 204, 204);
+    height:20px;
+	width: 260px;
+    box-shadow: 0px 0px 27px rgb(204, 204, 204) inset;
+	transition:500ms all ease;
+    padding:3px 3px 3px 3px;
+}
+
+#id:focus,#pwd:focus,#name:focus,#pwdcheck
+{
+    border-radius: 10px;
+    width:260px;
+    transition:500ms all ease;
+    padding:3px 3px 3px 3px;
+}
+#create tr td{
+	font-size :18pt;
+	font-family: 'Montserrat', sans-serif;
+	color: #623A28 bold;
+}	
+#Register_button{
+    padding:3px 3px 3px 3px;
+	font-family: 'Montserrat', sans-serif;
+	font-size :16pt;	
+    border-radius: 5px;
+	color:white;
+    background:#4777BE;
+	height :31px;
+	width :125px;
+	border-style:none;
+}
+#Reset_button {
+    padding:3px 3px 3px 3px;
+	font-family: 'Montserrat', sans-serif;
+	font-size :16pt;	
+    border-radius: 5px;
+	color::#4777BE;
+    background:white;
+	height :31px;
+	width :125px;
+	border-style:none;
+}
+ 
+#Register_button:hover,#Reset_button:hover {
+	font-family: 'Montserrat', sans-serif;
+    padding:3px 3px 3px 3px;
+	font-size :16pt;
+    border-radius: 5px;
+    height: 31px;
+	width:125px;
+    color: #4777BE;
+    background:white;
+    border-style:none;
+}
+h3 {
+    color:black;
+}
+a{
+	text-decoration:none;
+	font-family: 'Oxygen', sans-serif;
+	font-size:12pt bold;
+	
+}
+#create1{
+	color:red;
+	font-size:2em;
+}
+</style>
+</style>
+<SCRIPT type="text/javascript">
+		//登入框
+		function updateTransition() {
+			var el = document.querySelector("div.slideLeft");
+  
+			if (el) {
+				el.className = "slideUp";
+			} else {
+				el = document.querySelector("div.slideUp");
+				el.className = "slideLeft";
+			}
+			return;
+		}
+		function runDemo() {
+			var el = updateTransition();  
+			el.addEventListener("transitionend", updateTransition);
+		}
+
+		// 使用者輸入判斷
+		function check()
+		{
+			if ( $('#id').val() == "") {
+				alert("please input your Account");
+			} else if ( $('#name').val()== "") {
+				alert("please input your name");
+			} else if ( $('#pwd').val() == "") {
+				alert("please input your password");
+			} else if ( $('#pwdcheck').val()== "") {
+				alert("please input your password check");
+			} else if ( $('#pwd').val() != $('#pwdcheck').val() ) {
+				alert("please check your password");
+			} else formsubmit();
+		}
+
+		function formsubmit() {
+			$.post( "register",
+				{	id:		$('#id').val(),
+					name:	$('#name').val(),
+					pwd:	$('#pwd').val(),
+				},
+				function (data) {
+					if( data == 'success') {
+						alert('註冊成功 請重新登入');
+						window.location = '/';						
+					}			
+					else
+						alert('註冊失敗 請重新註冊');
+			});
+		}
+
+</SCRIPT>	
+</head>
+
+<body onload="runDemo()">
+<div class="circle1"></div><div class="circle2"></div>
+<div class="circle3"></div><div class="circle4"></div>
+<div class="circle5"></div><div class="circle6"></div>
+<div class="circle7"></div><div class="circle8"></div>
+<div class="circle9"></div><div class="circle10"></div>
+<div id="slogan"><h4>Free your mind and your heart will follow.</h4></div>
+<div id="header">
+<strong><h1>MindLinker</h1></strong></div>
+<div id="block1">
+<div class="slideUp">
+<div id="content">
+	<div id="create">
+	<form name="registerform" action="/register" method="post">
+		<table align="center" >
+			<tr><td id="create1" align="center" font>Sign Up</td></tr>
+			<tr><td>Account (ENG) :</td></tr>
+			<tr><td><input id='id' value="" type='text' /></td></tr>
+			<tr><td>Name :</td></tr>
+			<tr><td><input id='name' value="" type='text' /></td></tr>
+			<tr><td>Password (&lt;12) :</td></tr>
+			<tr><td><input id='pwd' value="" type='password'  MAXLENGTH=12/></td></tr>
+			<tr><td>Password Check :</td></tr>
+			<tr><td><input id='pwdcheck' value="" type='password'  MAXLENGTH=12/></td></tr>
+			<tr><td><tr><td><button id="Register_button"onClick="check()">Register</button><button id="Reset_button"onClick="this.form.reset()">Reset</button></td></tr></td></tr>
+			<tr><td align="center"><a href="/">Back</a></td></tr>
+		</table>	
+	</form>
+	<br/>
+	</div>
+</div>
+   
+</body>
+</html>

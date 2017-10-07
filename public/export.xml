@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapdata>
+  <NodeID>6300</NodeID>
+  <MapID>216</MapID>
+  <ParentNodeID>0</ParentNodeID>
+  <Content>地下室重建計劃</Content>
+  <ps>HI</ps>
+  <starttime>11/01/2014</starttime>
+  <endtime>11/30/2014</endtime>
+  <budget>1800000</budget>
+  <leader>梁煥明</leader>
+  <Created>1416558541169</Created>
+  <Creater>100213018</Creater>
+  <Modified>2014-11-21T08:29:01.000Z</Modified>
+  <Modifier>100213018</Modifier>
+  <Position>0</Position>
+  <FinishDate/>
+  <Childs>
+      <NodeID>6301</NodeID>
+      <MapID>216</MapID>
+      <ParentNodeID>6300</ParentNodeID>
+      <Content>實驗室101</Content>
+      <ps>null</ps>
+      <starttime>11/01/2014</starttime>
+      <endtime>11/10/2014</endtime>
+      <budget>200000</budget>
+      <leader>梁煥明</leader>
+      <Created>1416558573623</Created>
+      <Creater>100213018</Creater>
+      <Modified>2014-11-21T08:29:33.000Z</Modified>
+      <Modifier>100213018</Modifier>
+      <Position>2</Position>
+      <FinishDate/>
+      <Childs>
+          <NodeID>6311</NodeID>
+          <MapID>216</MapID>
+          <ParentNodeID>6301</ParentNodeID>
+          <Content>增加設備</Content>
+          <ps>null</ps>
+          <starttime>11/01/2014</starttime>
+          <endtime>11/07/2014</endtime>
+          <budget>100000</budget>
+          <leader>梁煥明</leader>
+          <Created>1416646097998</Created>
+          <Creater>100213018</Creater>
+          <Modified>2014-11-22T08:48:24.000Z</Modified>
+          <Modifier>100213018</Modifier>
+          <Position>2</Position>
+          <FinishDate/>
+          <Childs>
+              <NodeID>6318</NodeID>
+              <MapID>216</MapID>
+              <ParentNodeID>6311</ParentNodeID>
+              <Content>添購主機</Content>
+              <ps>null</ps>
+              <starttime>11/01/2014</starttime>
+              <endtime>11/03/2014</endtime>
+              <budget>20000</budget>
+              <leader>梁煥明</leader>
+              <Created>1416673203951</Created>
+              <Creater>100213018</Creater>
+              <Modified>2014-11-22T16:20:03.000Z</Modified>
+              <Modifier>100213018</Modifier>
+              <Position>2</Position>
+              <FinishDate/>
+              <Childs>
+</Childs>
+              <icons>
+</icons>
+
+              <NodeID>6321</NodeID>
+              <MapID>216</MapID>
+              <ParentNodeID>6311</ParentNodeID>
+              <Content>添購印表機</Content>
+              <ps>null</ps>
+              <starttime>11/01/2014</starttime>
+              <endtime>11/03/2014</endtime>
+              <budget>10000</budget>
+              <leader>Willaim</leader>
+              <Created>1416673417503</Created>
+              <Creater>100213018</Creater>
+              <Modified>2014-11-22T16:23:37.000Z</Modified>
+              <Modifier>100213018</Modifier>
+              <Position>2</Position>
+              <FinishDate/>
+              <Childs>
+</Childs>
+              <icons>
+</icons>
+
+              <NodeID>6322</NodeID>
+              <MapID>216</MapID>
+              <ParentNodeID>6311</ParentNodeID>
+              <Content>添購其他設備</Content>
+              <ps>null</ps>
+              <starttime>11/01/2014</starttime>
+              <endtime>11/05/2014</endtime>
+              <budget>50000</budget>
+              <leader>梁煥明</leader>
+              <Created>1416673569079</Created>
+              <Creater>100213018</Creater>
+              <Modified>2014-11-22T16:26:09.000Z</Modified>
+              <Modifier>100213018</Modifier>
+              <Position>2</Position>
+              <FinishDate/>
+              <Childs>
+</Childs>
+              <icons>
+</icons>
+
+              <NodeID>6434</NodeID>
+              <MapID>216</MapID>
+              <ParentNodeID>6311</ParentNodeID>
+              <Content>購買菜瓜布</Content>
+              <ps>undefined</ps>
+              <starttime>undefined</starttime>
+              <endtime>undefined</endtime>
+              <budget>undefined</budget>
+              <leader>undefined</leader>
+              <Created>1440506204540</Created>
+              <Creater>100213018</Creater>
+              <Modified>2015-08-25T12:36:44.000Z</Modified>
+              <Modifier>100213018</Modifier>
+              <Position>2</Position>
+              <FinishDate/>
+              <Childs>
+</Childs>
+              <icons>
+</icons>
+
+              <NodeID>6435</NodeID>
+              <MapID>216</MapID>
+              <ParentNodeID>6311</ParentNodeID>
+              <Content>購買水果</Content>
+              <ps>undefined</ps>
+              <starttime>undefined</starttime>
+              <endtime>undefined</endtime>
+              <budget>undefined</budget>
+              <leader>undefined</leader>
+              <Created>1440506235377</Created>
+              <Creater>100213018</Creater>
+              <Modified>2015-08-25T12:37:15.000Z</Modified>
+              <Modifier>100213018</Modifier>
+              <Position>2</Position>
+              <FinishDate/>
+              <Childs>
+</Childs>
+              <icons>
+</icons>
+
+</Childs>
+          <icons>
+</icons>
+
+          <NodeID>6317</NodeID>
+          <MapID>216</MapID>
+          <ParentNodeID>6301</ParentNodeID>
+          <Content>內部裝潢+設計</Content>
+          <ps>null</ps>
+          <starttime>11/04/2014</starttime>
+          <endtime>11/09/2014</endtime>
+          <budget>50000</budget>
+          <leader>梁煥明</leader>
+          <Created>1416672999423</Created>
+          <Creater>100213018</Creater>
+          <Modified>2014-11-22T16:16:39.000Z</Modified>
+          <Modifier>100213018</Modifier>
+          <Position>2</Position>
+          <FinishDate/>
+          <Childs>
+</Childs>
+          <icons>
+</icons>
+
+</Childs>
+      <icons>full-7
+</icons>
+
+      <NodeID>6302</NodeID>
+      <MapID>216</MapID>
+      <ParentNodeID>6300</ParentNodeID>
+      <Content>廁所1</Content>
+      <ps>null</ps>
+      <starttime>11/05/2014</starttime>
+      <endtime>11/15/2014</endtime>
+      <budget>100000</budget>
+      <leader>陳柏翰</leader>
+      <Created>1416558575031</Created>
+      <Creater>100213018</Creater>
+      <Modified>2014-11-21T08:29:35.000Z</Modified>
+      <Modifier>100213018</Modifier>
+      <Position>1</Position>
+      <FinishDate/>
+      <Childs>
+</Childs>
+      <icons>mail
+</icons>
+
+      <NodeID>6303</NodeID>
+      <MapID>216</MapID>
+      <ParentNodeID>6300</ParentNodeID>
+      <Content>實驗室102</Content>
+      <ps>null</ps>
+      <starttime>11/05/2014</starttime>
+      <endtime>11/15/2014</endtime>
+      <budget>200000</budget>
+      <leader>李恩睿</leader>
+      <Created>1416558576407</Created>
+      <Creater>100213018</Creater>
+      <Modified>2014-11-21T08:29:36.000Z</Modified>
+      <Modifier>100213018</Modifier>
+      <Position>2</Position>
+      <FinishDate/>
+      <Childs>
+          <NodeID>6304</NodeID>
+          <MapID>216</MapID>
+          <ParentNodeID>6303</ParentNodeID>
+          <Content>增加設備</Content>
+          <ps>null</ps>
+          <starttime>11/06/2014</starttime>
+          <endtime>11/13/2014</endtime>
+          <budget>100000</budget>
+          <leader>李恩睿</leader>
+          <Created>1416558597039</Created>
+          <Creater>100213018</Creater>
+          <Modified>2014-11-21T08:29:57.000Z</Modified>
+          <Modifier>100213018</Modifier>
+          <Position>2</Position>
+          <FinishDate/>
+          <Childs>
+              <NodeID>6312</NodeID>
+              <MapID>216</MapID>
+              <ParentNodeID>6304</ParentNodeID>
+              <Content>添購主機</Content>
+              <ps>null</ps>
+              <starttime>11/06/2014</starttime>
+              <endtime>11/09/2014</endtime>
+              <budget>20000</budget>
+              <leader>李恩睿</leader>
+              <Created>1416646429859</Created>
+              <Creater>100213059</Creater>
+              <Modified>2014-11-22T08:53:49.000Z</Modified>
+              <Modifier>100213018</Modifier>
+              <Position>2</Position>
+              <FinishDate/>
+              <Childs>
+</Childs>
+              <icons>
+</icons>
+
+              <NodeID>6314</NodeID>
+              <MapID>216</MapID>
+              <ParentNodeID>6304</ParentNodeID>
+              <Content>添購印表機</Content>
+              <ps>null</ps>
+              <starttime>11/06/2014</starttime>
+              <endtime>11/09/2014</endtime>
+              <budget>10000</budget>
+              <leader>李恩睿</leader>
+              <Created>1416646443602</Created>
+              <Creater>100213059</Creater>
+              <Modified>2014-11-22T08:54:03.000Z</Modified>
+              <Modifier>100213018</Modifier>
+              <Position>2</Position>
+              <FinishDate/>
+              <Childs>
+</Childs>
+              <icons>
+</icons>
+
+              <NodeID>6323</NodeID>
+              <MapID>216</MapID>
+              <ParentNodeID>6304</ParentNodeID>
+              <Content>添購其他設備</Content>
+              <ps>null</ps>
+              <starttime>11/06/2014</starttime>
+              <endtime>11/12/2014</endtime>
+              <budget>50000</budget>
+              <leader>李恩睿</leader>
+              <Created>1416673713312</Created>
+              <Creater>100213018</Creater>
+              <Modified>2014-11-22T16:28:33.000Z</Modified>
+              <Modifier>100213018</Modifier>
+              <Position>2</Position>
+              <FinishDate/>
+              <Childs>
+</Childs>
+              <icons>
+</icons>
+
+</Childs>
+          <icons>
+</icons>
+
+          <NodeID>6310</NodeID>
+          <MapID>216</MapID>
+          <ParentNodeID>6303</ParentNodeID>
+          <Content>內部裝潢+設計</Content>
+          <ps>null</ps>
+          <starttime>11/08/2014</starttime>
+          <endtime>11/14/2014</endtime>
+          <budget>50000</budget>
+          <leader>李恩睿</leader>
+          <Created>1416646067162</Created>
+          <Creater>100213059</Creater>
+          <Modified>2014-11-22T08:47:47.000Z</Modified>
+          <Modifier>100213018</Modifier>
+          <Position>2</Position>
+          <FinishDate/>
+          <Childs>
+</Childs>
+          <icons>
+</icons>
+
+</Childs>
+      <icons>full-2
+</icons>
+
+      <NodeID>6306</NodeID>
+      <MapID>216</MapID>
+      <ParentNodeID>6300</ParentNodeID>
+      <Content>實驗室103</Content>
+      <ps>null</ps>
+      <starttime>11/10/2014</starttime>
+      <endtime>11/20/2014</endtime>
+      <budget>200000</budget>
+      <leader>許展祐</leader>
+      <Created>1416645566752</Created>
+      <Creater>100213018</Creater>
+      <Modified>2014-11-22T08:39:32.000Z</Modified>
+      <Modifier>100213018</Modifier>
+      <Position>2</Position>
+      <FinishDate/>
+      <Childs>
+          <NodeID>6315</NodeID>
+          <MapID>216</MapID>
+          <ParentNodeID>6306</ParentNodeID>
+          <Content>增加設備</Content>
+          <ps>null</ps>
+          <starttime>11/11/2014</starttime>
+          <endtime>11/16/2014</endtime>
+          <budget>100000</budget>
+          <leader>許展祐</leader>
+          <Created>1416646559487</Created>
+          <Creater>100213018</Creater>
+          <Modified>2014-11-22T08:56:05.000Z</Modified>
+          <Modifier>100213018</Modifier>
+          <Position>2</Position>
+          <FinishDate/>
+          <Childs>
+</Childs>
+          <icons>
+</icons>
+
+</Childs>
+      <icons>full-3
+</icons>
+
+      <NodeID>6309</NodeID>
+      <MapID>216</MapID>
+      <ParentNodeID>6300</ParentNodeID>
+      <Content>實驗室104</Content>
+      <ps>null</ps>
+      <starttime>11/14/2014</starttime>
+      <endtime>11/25/2014</endtime>
+      <budget>200000</budget>
+      <leader>紀柏齊</leader>
+      <Created>1416645720426</Created>
+      <Creater>100213059</Creater>
+      <Modified>2014-11-22T08:42:00.000Z</Modified>
+      <Modifier>100213018</Modifier>
+      <Position>2</Position>
+      <FinishDate/>
+      <Childs>
+          <NodeID>6424</NodeID>
+          <MapID>216</MapID>
+          <ParentNodeID>6309</ParentNodeID>
+          <Content>購買電腦</Content>
+          <ps>undefined</ps>
+          <starttime>undefined</starttime>
+          <endtime>undefined</endtime>
+          <budget>undefined</budget>
+          <leader>undefined</leader>
+          <Created>1440401563956</Created>
+          <Creater>100213018</Creater>
+          <Modified>2015-08-24T07:32:43.000Z</Modified>
+          <Modifier>100213018</Modifier>
+          <Position>2</Position>
+          <FinishDate/>
+          <Childs>
+</Childs>
+          <icons>
+</icons>
+
+          <NodeID>6425</NodeID>
+          <MapID>216</MapID>
+          <ParentNodeID>6309</ParentNodeID>
+          <Content>資料蒐集</Content>
+          <ps>undefined</ps>
+          <starttime>undefined</starttime>
+          <endtime>undefined</endtime>
+          <budget>undefined</budget>
+          <leader>undefined</leader>
+          <Created>1440401604946</Created>
+          <Creater>100213018</Creater>
+          <Modified>2015-08-24T07:33:24.000Z</Modified>
+          <Modifier>100213018</Modifier>
+          <Position>2</Position>
+          <FinishDate/>
+          <Childs>
+</Childs>
+          <icons>
+</icons>
+
+          <NodeID>6491</NodeID>
+          <MapID>216</MapID>
+          <ParentNodeID>6309</ParentNodeID>
+          <Content>去年目標</Content>
+          <ps>undefined</ps>
+          <starttime>undefined</starttime>
+          <endtime>undefined</endtime>
+          <budget>undefined</budget>
+          <leader>undefined</leader>
+          <Created>1440665302918</Created>
+          <Creater>100213018</Creater>
+          <Modified>2015-08-27T08:48:22.000Z</Modified>
+          <Modifier>100213018</Modifier>
+          <Position>2</Position>
+          <FinishDate/>
+          <Childs>
+</Childs>
+          <icons>
+</icons>
+
+</Childs>
+      <icons>full-4
+</icons>
+
+      <NodeID>6319</NodeID>
+      <MapID>216</MapID>
+      <ParentNodeID>6300</ParentNodeID>
+      <Content>休息室</Content>
+      <ps>null</ps>
+      <starttime>11/05/2014</starttime>
+      <endtime>11/25/2014</endtime>
+      <budget>300000</budget>
+      <leader>曾祥慈</leader>
+      <Created>1416673305303</Created>
+      <Creater>100213018</Creater>
+      <Modified>2014-11-22T16:21:45.000Z</Modified>
+      <Modifier>100213018</Modifier>
+      <Position>1</Position>
+      <FinishDate/>
+      <Childs>
+</Childs>
+      <icons>full-7
+</icons>
+
+      <NodeID>6320</NodeID>
+      <MapID>216</MapID>
+      <ParentNodeID>6300</ParentNodeID>
+      <Content/>
+      <ps/>
+      <starttime/>
+      <endtime/>
+      <budget/>
+      <leader/>
+      <Created>1416673363375</Created>
+      <Creater>100213018</Creater>
+      <Modified>2014-11-22T16:22:43.000Z</Modified>
+      <Modifier>100213018</Modifier>
+      <Position>1</Position>
+      <FinishDate/>
+      <Childs>
+          <NodeID>6453</NodeID>
+          <MapID>216</MapID>
+          <ParentNodeID>6320</ParentNodeID>
+          <Content>測試用</Content>
+          <ps>undefined</ps>
+          <starttime>undefined</starttime>
+          <endtime>undefined</endtime>
+          <budget>undefined</budget>
+          <leader>undefined</leader>
+          <Created>1440562805347</Created>
+          <Creater>100213018</Creater>
+          <Modified>2015-08-26T04:20:05.000Z</Modified>
+          <Modifier>100213018</Modifier>
+          <Position>1</Position>
+          <FinishDate/>
+          <Childs>
+              <NodeID>6454</NodeID>
+              <MapID>216</MapID>
+              <ParentNodeID>6453</ParentNodeID>
+              <Content>1</Content>
+              <ps>undefined</ps>
+              <starttime>08/10/2015</starttime>
+              <endtime>08/27/2015</endtime>
+              <budget>undefined</budget>
+              <leader>undefined</leader>
+              <Created>1440565158877</Created>
+              <Creater>100213018</Creater>
+              <Modified>2015-08-26T04:59:18.000Z</Modified>
+              <Modifier>100213018</Modifier>
+              <Position>1</Position>
+              <FinishDate/>
+              <Childs>
+</Childs>
+              <icons>
+</icons>
+
+              <NodeID>6500</NodeID>
+              <MapID>216</MapID>
+              <ParentNodeID>6453</ParentNodeID>
+              <Content>9</Content>
+              <ps>undefined</ps>
+              <starttime>undefined</starttime>
+              <endtime>undefined</endtime>
+              <budget>undefined</budget>
+              <leader>undefined</leader>
+              <Created>1440682438107</Created>
+              <Creater>100213018</Creater>
+              <Modified>2015-08-27T13:33:58.000Z</Modified>
+              <Modifier>111</Modifier>
+              <Position>1</Position>
+              <FinishDate/>
+              <Childs>
+</Childs>
+              <icons>
+</icons>
+
+</Childs>
+          <icons>
+</icons>
+
+</Childs>
+      <icons>messagebox_warning
+</icons>
+
+</Childs>
+  <icons>idea
+</icons>
+</mapdata>

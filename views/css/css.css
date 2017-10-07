@@ -1,0 +1,86 @@
+@import url(//font-awesome.min.css);
+head{font-size: 80px;}
+
+body { padding-top: 60px; background:#9ACD32;}
+.nav.nav-justified > li > a { position: relative; }
+.nav.nav-justified > li > a:hover,
+.nav.nav-justified > li > a:focus { background-color: transparent; }
+.nav.nav-justified > li > a > .quote {
+    position: relative;
+    left: 0px;
+    top: 0;
+    opacity: 0;
+    width: 45px;
+    height: 30px;
+    padding: 15px;
+	margin: 15px;
+    border-radius: 5px;
+    color: #fff;  
+}
+.nav.nav-justified > li.active > a > .quote { opacity: 2; }
+.nav.nav-justified > li > a > img { box-shadow: 0 0 0 2px #B0E0E6; }
+.nav.nav-justified > li > a > img { 
+    max-width: 65%; 
+    opacity: .8; 
+    -webkit-transform: scale(1.2,1.2);
+            transform: scale(1.2,1.2);
+    -webkit-transition: all 0.3s 0s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s 0s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.nav.nav-justified > li:hover > a > img{ 
+    opacity: 1; 
+    -webkit-transform: scale(2,2);
+            transform: scale(2,2);
+    -webkit-transition: all 1.15s 0s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 1.15s 0s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.tab-pane .tab-inner { padding: 20px 15px 20px 15px; margin:20px 15px 20px 15px;}
+
+@font-face {
+	font-family: 'cwTeXHei';
+	font-style: normal;
+	font-weight: 500;
+	src:url(../fonts/cwTeXHei-zhonly.eot);
+	src:url(../fonts/cwTeXHei-zhonly.eot?#iefix) format('embedded-opentype'),
+		url(../fonts/cwTeXHei-zhonly.woff2) format('woff2'),
+		url(../fonts/cwTeXHei-zhonly.woff) format('woff'),
+		url(../fonts/cwTeXHei-zhonly.ttf) format('truetype');
+}
+.tab-content {
+	font-family: 'cwTeXHei', serif;
+	font-size:x-large;
+	color:#F8F8FF;
+	padding: 0px;
+	margin: 0px;
+}
+.col-xs-12{
+	font-family: 'Droid Serif', serif;
+	font-size:60px;
+	font-style: normal;
+	color: #FFFF00;
+	font-weight: 500;
+	src:url(../fonts/DroidSerif.woff2) format('woff2');
+}
+
+@font-face {
+	font-family: 'Montserrat';
+	font-style: normal;
+	font-weight: 500;
+	src:url(../fonts/Montserrat.woff2) format('woff2'),
+}
+.stitle{
+	font-family: 'Montserrat', sans-serif;
+	font-size:x-large;
+	color:#F8F8FF;
+	padding: 0px;
+	margin: 0px;
+}
+
+@media (min-width: 768px) {
+    .nav.nav-justified > li > a > .quote {
+        left: auto;
+        top: auto;
+        right: 0px;
+        bottom: 0px;
+    }  
+}

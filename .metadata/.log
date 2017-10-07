@@ -1,0 +1,199 @@
+!SESSION 2012-05-04 10:27:21.751 -----------------------------------------------
+eclipse.buildId=M20110210-1200
+java.version=1.7.0_02
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=zh_TW
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86 -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.equinox.p2.operations 4 0 2012-05-04 10:35:40.611
+!MESSAGE Operation details
+!SUBENTRY 1 org.eclipse.equinox.p2.operations 1 10001 2012-05-04 10:35:40.611
+!MESSAGE Your original request has been modified.
+!SUBENTRY 2 org.eclipse.equinox.p2.operations 1 10003 2012-05-04 10:35:40.611
+!MESSAGE "ChromeDevTools SDK WIP Backends" is already installed, so an update will be performed instead.
+!SUBENTRY 2 org.eclipse.equinox.p2.operations 1 10003 2012-05-04 10:35:40.611
+!MESSAGE "Chromium JavaScript Debugger Bridge to JSDT" is already installed, so an update will be performed instead.
+!SUBENTRY 2 org.eclipse.equinox.p2.operations 1 10003 2012-05-04 10:35:40.611
+!MESSAGE "Chromium JavaScript Remote Debugger" is already installed, so an update will be performed instead.
+!SUBENTRY 1 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:35:40.611
+!MESSAGE Cannot complete the install because of a conflicting dependency.
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE Software being installed: Chromium JavaScript Remote Debugger 0.3.4.201202250214 (org.chromium.debug.feature.group 0.3.4.201202250214)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE Software currently installed: ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.group 0.3.2.201112130208)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:35:40.611
+!MESSAGE Only one of the following can be installed at once: 
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE ChromeDevTools SDK 0.2.0.201012100304 (org.chromium.sdk.feature.jar 0.2.0.201012100304)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE ChromeDevTools SDK 0.1.6.201008092223 (org.chromium.sdk.feature.jar 0.1.6.201008092223)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE ChromeDevTools SDK 0.2.2.201102182139 (org.chromium.sdk.feature.jar 0.2.2.201102182139)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE ChromeDevTools SDK 0.3.0.201108190405 (org.chromium.sdk.feature.jar 0.3.0.201108190405)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE ChromeDevTools SDK 0.3.4.201202250214 (org.chromium.sdk.feature.jar 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.jar 0.3.2.201112130208)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:35:40.611
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE From: Chromium JavaScript Remote Debugger 0.3.4.201202250214 (org.chromium.debug.feature.group 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE To: org.chromium.sdk.feature.group [0.3.4,1.0.0)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:35:40.611
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE From: ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.group 0.3.2.201112130208)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE To: org.chromium.sdk.feature.jar [0.3.2.201112130208]
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:35:40.611
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE From: ChromeDevTools SDK 0.3.4.201202250214 (org.chromium.sdk.feature.group 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.611
+!MESSAGE To: org.chromium.sdk.feature.jar [0.3.4.201202250214]
+
+!ENTRY org.eclipse.equinox.p2.operations 4 0 2012-05-04 10:35:40.619
+!MESSAGE Operation details
+!SUBENTRY 1 org.eclipse.equinox.p2.operations 1 10001 2012-05-04 10:35:40.619
+!MESSAGE Your original request has been modified.
+!SUBENTRY 2 org.eclipse.equinox.p2.operations 1 10003 2012-05-04 10:35:40.619
+!MESSAGE "ChromeDevTools SDK WIP Backends" is already installed, so an update will be performed instead.
+!SUBENTRY 2 org.eclipse.equinox.p2.operations 1 10003 2012-05-04 10:35:40.619
+!MESSAGE "Chromium JavaScript Debugger Bridge to JSDT" is already installed, so an update will be performed instead.
+!SUBENTRY 2 org.eclipse.equinox.p2.operations 1 10003 2012-05-04 10:35:40.619
+!MESSAGE "Chromium JavaScript Remote Debugger" is already installed, so an update will be performed instead.
+!SUBENTRY 1 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:35:40.619
+!MESSAGE Cannot complete the install because of a conflicting dependency.
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.619
+!MESSAGE Software being installed: Chromium JavaScript Remote Debugger 0.3.4.201202250214 (org.chromium.debug.feature.group 0.3.4.201202250214)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.619
+!MESSAGE Software currently installed: ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.group 0.3.2.201112130208)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:35:40.619
+!MESSAGE Only one of the following can be installed at once: 
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.619
+!MESSAGE ChromeDevTools SDK 0.2.0.201012100304 (org.chromium.sdk.feature.jar 0.2.0.201012100304)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.619
+!MESSAGE ChromeDevTools SDK 0.1.6.201008092223 (org.chromium.sdk.feature.jar 0.1.6.201008092223)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.619
+!MESSAGE ChromeDevTools SDK 0.2.2.201102182139 (org.chromium.sdk.feature.jar 0.2.2.201102182139)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.619
+!MESSAGE ChromeDevTools SDK 0.3.0.201108190405 (org.chromium.sdk.feature.jar 0.3.0.201108190405)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.619
+!MESSAGE ChromeDevTools SDK 0.3.4.201202250214 (org.chromium.sdk.feature.jar 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.620
+!MESSAGE ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.jar 0.3.2.201112130208)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:35:40.620
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.620
+!MESSAGE From: Chromium JavaScript Remote Debugger 0.3.4.201202250214 (org.chromium.debug.feature.group 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.620
+!MESSAGE To: org.chromium.sdk.feature.group [0.3.4,1.0.0)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:35:40.620
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.620
+!MESSAGE From: ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.group 0.3.2.201112130208)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.620
+!MESSAGE To: org.chromium.sdk.feature.jar [0.3.2.201112130208]
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:35:40.620
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.620
+!MESSAGE From: ChromeDevTools SDK 0.3.4.201202250214 (org.chromium.sdk.feature.group 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:35:40.620
+!MESSAGE To: org.chromium.sdk.feature.jar [0.3.4.201202250214]
+
+!ENTRY org.eclipse.equinox.p2.operations 4 0 2012-05-04 10:36:34.916
+!MESSAGE Operation details
+!SUBENTRY 1 org.eclipse.equinox.p2.operations 1 10001 2012-05-04 10:36:34.916
+!MESSAGE Your original request has been modified.
+!SUBENTRY 2 org.eclipse.equinox.p2.operations 1 10003 2012-05-04 10:36:34.916
+!MESSAGE "ChromeDevTools SDK WIP Backends" is already installed, so an update will be performed instead.
+!SUBENTRY 2 org.eclipse.equinox.p2.operations 1 10003 2012-05-04 10:36:34.917
+!MESSAGE "Chromium JavaScript Remote Debugger" is already installed, so an update will be performed instead.
+!SUBENTRY 1 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:36:34.917
+!MESSAGE Cannot complete the install because of a conflicting dependency.
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE Software being installed: Chromium JavaScript Remote Debugger 0.3.4.201202250214 (org.chromium.debug.feature.group 0.3.4.201202250214)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE Software currently installed: ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.group 0.3.2.201112130208)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:36:34.917
+!MESSAGE Only one of the following can be installed at once: 
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE ChromeDevTools SDK 0.2.0.201012100304 (org.chromium.sdk.feature.jar 0.2.0.201012100304)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE ChromeDevTools SDK 0.1.6.201008092223 (org.chromium.sdk.feature.jar 0.1.6.201008092223)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE ChromeDevTools SDK 0.2.2.201102182139 (org.chromium.sdk.feature.jar 0.2.2.201102182139)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE ChromeDevTools SDK 0.3.0.201108190405 (org.chromium.sdk.feature.jar 0.3.0.201108190405)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE ChromeDevTools SDK 0.3.4.201202250214 (org.chromium.sdk.feature.jar 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.jar 0.3.2.201112130208)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:36:34.917
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE From: Chromium JavaScript Remote Debugger 0.3.4.201202250214 (org.chromium.debug.feature.group 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE To: org.chromium.sdk.feature.group [0.3.4,1.0.0)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:36:34.917
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE From: ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.group 0.3.2.201112130208)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE To: org.chromium.sdk.feature.jar [0.3.2.201112130208]
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:36:34.917
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE From: ChromeDevTools SDK 0.3.4.201202250214 (org.chromium.sdk.feature.group 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.917
+!MESSAGE To: org.chromium.sdk.feature.jar [0.3.4.201202250214]
+
+!ENTRY org.eclipse.equinox.p2.operations 4 0 2012-05-04 10:36:34.920
+!MESSAGE Operation details
+!SUBENTRY 1 org.eclipse.equinox.p2.operations 1 10001 2012-05-04 10:36:34.920
+!MESSAGE Your original request has been modified.
+!SUBENTRY 2 org.eclipse.equinox.p2.operations 1 10003 2012-05-04 10:36:34.920
+!MESSAGE "ChromeDevTools SDK WIP Backends" is already installed, so an update will be performed instead.
+!SUBENTRY 2 org.eclipse.equinox.p2.operations 1 10003 2012-05-04 10:36:34.920
+!MESSAGE "Chromium JavaScript Remote Debugger" is already installed, so an update will be performed instead.
+!SUBENTRY 1 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:36:34.920
+!MESSAGE Cannot complete the install because of a conflicting dependency.
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.920
+!MESSAGE Software being installed: Chromium JavaScript Remote Debugger 0.3.4.201202250214 (org.chromium.debug.feature.group 0.3.4.201202250214)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.920
+!MESSAGE Software currently installed: ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.group 0.3.2.201112130208)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:36:34.920
+!MESSAGE Only one of the following can be installed at once: 
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.920
+!MESSAGE ChromeDevTools SDK 0.2.0.201012100304 (org.chromium.sdk.feature.jar 0.2.0.201012100304)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.920
+!MESSAGE ChromeDevTools SDK 0.1.6.201008092223 (org.chromium.sdk.feature.jar 0.1.6.201008092223)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.921
+!MESSAGE ChromeDevTools SDK 0.2.2.201102182139 (org.chromium.sdk.feature.jar 0.2.2.201102182139)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.921
+!MESSAGE ChromeDevTools SDK 0.3.0.201108190405 (org.chromium.sdk.feature.jar 0.3.0.201108190405)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.921
+!MESSAGE ChromeDevTools SDK 0.3.4.201202250214 (org.chromium.sdk.feature.jar 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.921
+!MESSAGE ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.jar 0.3.2.201112130208)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:36:34.921
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.921
+!MESSAGE From: Chromium JavaScript Remote Debugger 0.3.4.201202250214 (org.chromium.debug.feature.group 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.921
+!MESSAGE To: org.chromium.sdk.feature.group [0.3.4,1.0.0)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:36:34.921
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.921
+!MESSAGE From: ChromeDevTools SDK 0.3.2.201112130208 (org.chromium.sdk.feature.group 0.3.2.201112130208)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.921
+!MESSAGE To: org.chromium.sdk.feature.jar [0.3.2.201112130208]
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2012-05-04 10:36:34.921
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.921
+!MESSAGE From: ChromeDevTools SDK 0.3.4.201202250214 (org.chromium.sdk.feature.group 0.3.4.201202250214)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2012-05-04 10:36:34.921
+!MESSAGE To: org.chromium.sdk.feature.jar [0.3.4.201202250214]

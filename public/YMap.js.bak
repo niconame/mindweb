@@ -1,0 +1,4536 @@
+///////////////////////////////////////////////////////////
+var rtmpSite='163.22.34.103';
+var nodeWebSite='163.22.34.103:8080';
+// YMAP CONSTANT
+var NODE_POS_ROOT		= 0;
+var NODE_POS_LEFT		= 1;
+var NODE_POS_RIGHT		= 2;
+
+var NODE_POS_CHILD		= 3;
+var NODE_POS_UP			= 4;
+
+var NODE_SIB_PREV		= 0;
+var NODE_SIB_NEXT		= 1;
+
+var CARET_ORG_START		= 0;
+var CARET_ORG_END		= 1;
+var CARET_ORG_SEL		= 2;
+
+var NODE_NAV_PAGEUP		= 0;
+var NODE_NAV_PAGEDN		= 1;
+var NODE_NAV_LEFT		= 2;
+var NODE_NAV_UP			= 3;
+var NODE_NAV_RIGHT		= 4;
+var NODE_NAV_DOWN		= 5;
+
+var NODE_VIEW_PREFIX	= "NV";
+var NODE_VIEW_HGAP		= 20;
+var NODE_VIEW_VGAP		= 3;
+var NODE_VIEW_BGCOLOR	= "FFFFFF";
+var NODE_VIEW_SELCOLOR	= "D0D0D0";
+
+var NODE_VIEW_ICON		= 0;
+var NODE_VIEW_TEXT		= 1;
+var NODE_VIEW_LINK		= 2;
+
+var NODE_FORMAT_FGCOL	= "0";
+var NODE_FORMAT_BGCOL	= "1";
+var NODE_FORMAT_EGCOL	= "2";
+
+var NODE_STYLE_BOLD		= 0;
+var NODE_STYLE_ITALIC	= 1;
+
+var NODE_FONT_NAME		= "SansSerif";
+var NODE_FONT_SIZE		= 12;
+var NODE_FONT_COLOR		= "000000";
+
+var NODE_LINK_PREFIX	= "LNK";
+var NODE_LNK_WIDTH		= 1;
+var NODE_LNK_COLOR		= "888888";
+
+var ROOT_SHAPE_ID		= "V_ROOT";
+var ROOT_SHAPE_HEIGHT	= 60;
+var ROOT_SHAPE_STCOLOR	= "888888";
+var ROOT_SHAPE_COLOR	= "FFFFFF";
+var ROOT_SHAPE_SELCOLOR	= "D0D0D0";
+
+var SVG_NAMESPACE		= "http://www.w3.org/2000/svg";
+var SVG_RIGHTGRADIENT_ID= "V_RGRA_ID";
+var SVG_LEFTGRADIENT_ID	= "V_LGRA_ID";
+var SVG_UPGRADIENT_ID	= "V_UGRA_ID";
+var SVG_NUTRALGRADIENT_ID= "V_NGRA_ID";
+
+var YMAP_ICON_PATH		= "icons";
+var YMAP_UIIMG_PATH		= "ui";
+
+var YMAP_STAT_NODENAV	= 0x00000000;
+var YMAP_STAT_NODEEDIT	= 0x00000001;
+var YMAP_STAT_EDITLOCK	= 0x00000002;
+
+var ACT_NODE_INSERT_C	= 10;	// [nodeClone(a)]
+var ACT_NODE_INSERT_PS	= 11;	// [nodeClone(a)]
+var ACT_NODE_INSERT_NS	= 12;	// [nodeClone(a)]
+var ACT_NODE_INSERT_P	= 13;	// [nodeClone(a),nodeClone(b)]
+var ACT_NODE_REMOVE		= 20;	// [nodeClone(b)]
+var ACT_NODE_JOIN		= 21;	// [nodeClone(t),nodeClone(m)
+var ACT_NODE_EDIT		= 30;	// [nodeClone(b),nodeClone(a)]
+var ACT_NODE_ICON		= 31;	// [nodeClone(b),nodeClone(a)]
+var ACT_NODE_HYPERLINK	= 32;	// [nodeClone(b),nodeClone(a)]
+var ACT_NODE_IMAGE		= 33;	// [nodeClone(b),nodeClone(a)]
+var ACT_NODE_MOVE		= 40;	// [nodeClone(b),nodeClone(a)]
+var ACT_NODE_PASTE		= 50;	// [nodeClone(b),[nodeClones(a)]]
+var ACT_NODE_TOGGLE		= 70;	// [folded, node.id]
+var ACT_NODE_FMT_PSTYLE	= 60;	// [nodeClone(b),nodeClone(a)]
+var ACT_NODE_FMT_FNAME	= 61;	// [val(b),val(a),node.id]
+var ACT_NODE_FMT_FSIZE	= 62;	// [val(b),val(a),node.id]
+var ACT_NODE_FMT_ITALIC	= 63;	// [val(b),val(a),node.id]
+var ACT_NODE_FMT_BOLD	= 64;	// [val(b),val(a),node.id]
+var ACT_NODE_FMT_FGCOL	= 65;	// [val(b),val(a),node.id]
+var ACT_NODE_FMT_BLCOL	= 66;	// [val(b),val(a),node.id]
+var ACT_NODE_FMT_BGCOL	= 67;	// [val(b),val(a),node.id]
+var ACT_NODE_FMT_EGCOL	= 68;	// [val(b),val(a),node.id]
+var ACT_NODE_FMT_EGWTH	= 69;	// [val(b),val(a),node.id]
+
+var YMAP_MODE_WEB		= 0;
+var YMAP_MODE_HTA		= 1;
+
+var YMAP_ATT_FILEPATH	= "filepath";
+
+// Key Code
+var YKEYCODE_ENTER		= 13;
+var YKEYCODE_ESC		= 27;
+
+var YKEYCODE_INSERT		= 45;
+var YKEYCODE_DELETE		= 46;
+
+var YKEYCODE_SPACE		= 32;
+var YKEYCODE_PAGEUP		= 33;
+var YKEYCODE_PAGEDN		= 34;
+var YKEYCODE_END		= 35;
+var YKEYCODE_HOME		= 36;
+var YKEYCODE_LEFT		= 37;
+var YKEYCODE_UP			= 38;
+var YKEYCODE_RIGHT		= 39;
+var YKEYCODE_DOWN		= 40;
+
+var YKEYCODE_A			= 65;
+var YKEYCODE_B			= 66;
+var YKEYCODE_C			= 67;
+var YKEYCODE_E			= 69;
+var YKEYCODE_F			= 70;
+var YKEYCODE_I			= 73;
+var YKEYCODE_K			= 75;
+var YKEYCODE_N			= 78;
+var YKEYCODE_V			= 86;
+var YKEYCODE_X			= 88;
+var YKEYCODE_Y			= 89;
+var YKEYCODE_Z			= 90;
+
+var YKEYCODE_F1			= 112;
+var YKEYCODE_F2			= 113;
+var YKEYCODE_F3			= 114;
+var YKEYCODE_F4			= 115;
+var YKEYCODE_F5			= 116;
+var YKEYCODE_F6			= 117;
+var YKEYCODE_F7			= 118;
+var YKEYCODE_F8			= 119;
+var YKEYCODE_F9			= 120;
+var YKEYCODE_F10		= 121;
+var YKEYCODE_F11		= 122;
+var YKEYCODE_F12		= 123;
+
+var YKEYCODE_PLUS		= 107;
+var YKEYCODE_MINUS		= 109;
+
+///////////////////////////////////////////////////////////
+// YMAP util function
+function F_TrimStr(str) {
+	var whitespace= " \n\r\t\f";
+
+	for( var i= 0; i < str.length; i++ )
+		if( whitespace.indexOf( str.charAt(i) ) < 0 )
+			break;
+
+	for( var j= str.length - 1; j >= i; j-- )
+		if( whitespace.indexOf( str.charAt(j) ) < 0 )
+			break;
+
+	return str.substring( i,j+1 );
+}
+
+function F_IsNaturalNumber(str) {
+	var numstr = F_TrimStr(str);
+
+	if ( isNaN(numstr) || numstr.indexOf(".") >= 0 || numstr.indexOf("-") >= 0 ) return false;
+	
+	return true;
+}
+
+function F_CheckKey(evt, codes) {
+	evt = (evt) ? evt:window.event;
+	code = (evt.keyCode)? evt.keyCode:evt.charCode;
+	
+	for ( var i=0; i<codes.length; i++ ) {
+		if ( codes[i] == code ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function F_GetMouseOffset(target, evt){
+    evt = evt || window.event;
+
+    var docPos    = F_GetPosition(target);
+    var mousePos  = F_GetMouseCoords(evt);
+    return {x:mousePos.x - docPos.x, y:mousePos.y - docPos.y};
+}
+
+function F_GetMouseCoords(evt){
+    if(evt.pageX || evt.pageY){
+        return {x:evt.pageX, y:evt.pageY};
+    }
+    return {
+        x:evt.clientX + document.body.scrollLeft - document.body.clientLeft,
+        y:evt.clientY + document.body.scrollTop  - document.body.clientTop
+    };
+}
+
+function F_GetPosition(e){
+    var left = 0;
+    var top  = 0;
+
+    while (e.offsetParent){
+        left += e.offsetLeft;
+        top  += e.offsetTop;
+        e     = e.offsetParent;
+    }
+
+    left += e.offsetLeft;
+    top  += e.offsetTop;
+
+    return {x:left, y:top};
+}
+
+function F_RGB2Hex(red, green, blue)
+{
+    var decColor = red + 256 * green + 65536 * blue;
+    var clr = decColor.toString(16);
+	for(var i =clr.length;i<6;i++){
+		clr = "0"+clr;
+	}
+	return clr;
+}
+
+function F_BlendHexColor(a,b) {
+	if ( !F_IsHexColor(a) || !F_IsHexColor(b) ) return "888888";
+	
+	var aRGB = new Array;
+	var bRGB = new Array;
+	for ( var i=0; i<3; i++ ) {
+		aRGB[i] = eval("0X"+a.substring(i*2, i*2+2));
+		bRGB[i] = eval("0X"+b.substring(i*2, i*2+2));
+	}
+	
+	return F_RGB2Hex(
+		parseInt( (3*aRGB[2] + bRGB[2])/4, 10),
+		parseInt( (3*aRGB[1] + bRGB[1])/4, 10),
+		parseInt( (3*aRGB[0] + bRGB[0])/4, 10)
+	);
+}
+
+function F_IsHexColor(val)
+{
+    return (/^([A-F0-9]{6})$/i.test(val));
+}
+
+///////////////////////////////////////////////////////////
+// YMAP Menu from XulMenu
+
+function YMenu(id) {
+	this.type = "horizontal";
+	this.position = {
+		"level1": { "top": 0, "left": 0},
+		"levelX": { "top": 0, "left": 0}
+	}
+	this.zIndex = {
+		"visible": 500,
+		"hidden": 200
+	}
+
+	// Browser detection
+	this.browser = {
+		"ie": Boolean(document.body.currentStyle)
+	};
+
+    // Initialize the menu
+	this.init = function() {
+		if (!document.getElementById(this.id)) alert("Element '"+ this.id +"' does not exist in this document. YMenu cannot be initialized.");
+		if (this.type != "horizontal" && this.type != "vertical") { return alert("YMenu.init() failed. Unknown menu type: '"+this.type+"'"); }
+		//document.onmousedown = click;
+		this.parse(document.getElementById(this.id).childNodes, this.tree, this.id);
+	}
+
+	// Parse menu structure, create events, position elements 只能用在IE上嗎?
+	this.parse = function(nodes, tree, id) {
+		for (var i = 0; i < nodes.length; i++) {
+			if (nodes[i].nodeType != 1) { continue };
+			switch (nodes[i].className) {
+				case "menu":
+					nodes[i].id = id + "-" + tree.length;
+					tree.push(new Array());
+					nodes[i].onmouseover = menuOver;
+					nodes[i].onclick = menuClick;
+					break;
+				case "context":
+					nodes[i].id = id + "-" + tree.length;
+					tree.push(new Array());
+					nodes[i].style.display = "none";
+					nodes[i].onmouseover = menuOver;
+					nodes[i].onclick = menuClick;
+					self.conID = nodes[i].id;
+					break;
+				case "item":
+					nodes[i].id = id + "-" + tree.length;
+					tree.push(new Array());
+					nodes[i].onmouseover = itemOver;
+					nodes[i].onmouseout = itemOut;
+					nodes[i].onclick = itemClick;
+					break;
+				case "button":
+					nodes[i].onmouseover = buttonOver;
+					nodes[i].onmouseout = buttonOut;
+					nodes[i].onclick = buttonClick;
+					break;				
+				case "section":
+					nodes[i].id = id + "-" + (tree.length - 1) + "-section";
+					var box1 = document.getElementById(id + "-" + (tree.length - 1));
+					var box2 = document.getElementById(nodes[i].id);
+					var el = new Element(box1.id);
+					if (el.level == 1) {
+						if (this.type == "horizontal") {
+							box2.style.top = (box1.offsetTop + box1.offsetHeight + this.position.level1.top) + "px";
+							box2.style.left = (box1.offsetLeft + this.position.level1.left) + "px";
+						} else if (this.type == "vertical") {
+							box2.style.top = (box1.offsetTop + this.position.level1.top) + "px";
+							box2.style.left = (box1.offsetLeft + box1.offsetWidth + this.position.level1.left) + "px";
+						}
+					} else {
+						box2.style.top = (box1.offsetTop + this.position.levelX.top) + "px";
+						box2.style.left = (box1.offsetLeft + box1.offsetWidth + this.position.levelX.left) + "px";
+					}
+					break;
+			}
+			if (nodes[i].childNodes) {
+				if (nodes[i].className == "section") {
+					this.parse(nodes[i].childNodes, tree[tree.length - 1], id + "-" + (tree.length - 1));
+				} else {
+					this.parse(nodes[i].childNodes, tree, id);
+				}
+			}
+		}
+	}
+
+	// Hide all sections
+	this.hideAll = function() {
+		for (var i = this.visible.length - 1; i >= 0; i--) {
+			this.hide(this.visible[i]);
+		}
+	}
+
+	// Hide higher or equal levels
+	this.hideHigherOrEqualLevels = function(n) {
+		for (var i = this.visible.length - 1; i >= 0; i--) {
+			var el = new Element(this.visible[i]);
+			if (el.level >= n) {
+				this.hide(el.id);
+			} else {
+				return;
+			}
+		}
+	}
+
+	// Hide a section
+	this.hide = function(id) {
+		var el = new Element(id);
+		document.getElementById(id).className = (el.level == 1 ? "menu" : "item");
+		document.getElementById(id + "-section").style.visibility = "hidden";
+		document.getElementById(id + "-section").style.zIndex = this.zIndex.hidden;
+		if (this.visible.contains(id)) {
+			if (this.visible.getLast() == id) {
+				this.visible.pop();
+			} else {
+				throw "YMenu.hide("+id+") failed, trying to hide element that is not deepest visible element";
+			}
+		} else {
+			throw "YMenu.hide("+id+") failed, cannot hide element that is not visible";
+		}
+	}
+
+	// Show a section
+	this.show = function(id) {
+		var el = new Element(id);
+		document.getElementById(id).className = (el.level == 1 ? "menu-active" : "item-active");
+		document.getElementById(id + "-section").style.visibility = "visible";
+		document.getElementById(id + "-section").style.zIndex = this.zIndex.visible;
+		this.visible.push(id);
+	}
+    
+	this.showContextMenu = function(e) {
+		if ( self.conID == "" ) return;
+    	
+		var el = document.getElementById(self.conID + "-section");
+
+		el.style.left = e.clientX + "px";
+		el.style.top = e.clientY + "px";
+		el.style.zIndex = this.zIndex.visible;
+		el.style.display="inline";
+		el.style.visibility="visible";
+		this.visible.push(self.conID);
+	}
+	
+	this.isContextMenuPopuped = function() {
+		if ( self.conID == "" ) return false;
+		
+		var el = document.getElementById(self.conID + "-section");
+		
+		return ( el.style.visibility == "visible" );
+	}
+
+	// event, document.onmousedown
+	function click(e) {
+		var el;
+		if (e) {
+			el = e.target.tagName ? e.target : e.target.parentNode;
+		} else {
+			el = window.event.srcElement;
+			if (el.parentNode && /item/.test(el.parentNode.className)) {
+				el = el.parentNode;
+			}
+		}
+		if (!self.visible.length) { return };
+		if (!el.onclick) { self.hideAll(); }
+	}
+    
+	// event, menu.onmouseover
+	function menuOver() {
+		if (!self.visible.length) { return; }
+		if (self.visible.contains(this.id)) { return };
+		self.hideAll();
+		var el = new Element(this.id);
+		if (el.hasChilds()) {
+			self.show(this.id);
+		}
+	}
+
+	// event, menu.onclick
+	function menuClick() {
+		this.blur();
+		if (self.visible.length) {
+			self.hideAll();
+		} else {
+			var el = new Element(this.id);
+			if (el.hasChilds()) {
+				self.show(this.id);
+			}
+		}
+	}
+
+	// event, item.onmouseover
+	function itemOver() {
+		var el = new Element(this.id);
+		document.getElementById(this.id).className = "item-active";
+		self.hideHigherOrEqualLevels(el.level);
+		if (el.hasChilds()) {
+			self.show(this.id);
+		}
+	}
+
+	// event, item.onmouseout
+	function itemOut() {
+		var el = new Element(this.id);
+		if (!el.hasChilds()) {
+			document.getElementById(this.id).className = "item";
+		}
+	}
+
+	// event, item.onclick
+	function itemClick() {
+		this.blur();
+		var el = new Element(this.id);
+		self.hideHigherOrEqualLevels(el.level);
+		if (el.hasChilds()) {
+			self.show(this.id);
+		}
+		self.hideAll();
+	}
+	
+	function buttonOver() {
+		this.className="button-active";
+	}
+
+	function buttonOut() {
+		this.className="button";
+	}
+	
+	function buttonClick() {
+		self.hideAll();
+	}
+    
+	function Element(id) {
+		// Get Level of given id
+		// Examples: menu-1 (1 level), menu-1-4 (2 level)
+		this.getLevel = function() {
+			var s = this.id.substr(this.menu.id.length);
+			return s.substrCount("-");
+		}
+
+		// Check whether an element has a sub-section
+		this.hasChilds = function() {
+			return Boolean(document.getElementById(this.id + "-section"));
+		}
+
+		if (!id) { throw "YMenu.Element(id) failed, id cannot be empty"; }
+		this.menu = self;
+		this.id = id;
+		this.level = this.getLevel();
+	}
+
+	this.id = id;
+	var self = this;
+	this.conID = "";
+
+	this.tree = new Array(); // Multidimensional array, structure of the menu
+	this.visible = new Array(); // Example: Array("menu-0", "menu-0-4", ...), succession is important !
+}
+
+// Check whether array contains given string
+if (typeof Array.prototype.contains == "undefined") {
+	Array.prototype.contains = function(s) {
+		for (var i = 0; i < this.length; i++) {
+			if (this[i] === s) { return true; }
+		}
+		return false;
+	}
+}
+
+// Get the last element from the array
+if (typeof Array.prototype.getLast == "undefined") {
+	Array.prototype.getLast = function() {
+		return this[this.length-1];
+	}
+}
+
+// Counts the number of substring occurrences
+if (typeof String.prototype.substrCount == "undefined") {
+	String.prototype.substrCount = function(s) {
+		return this.split(s).length - 1;
+	}
+}
+
+///////////////////////////////////////////////////////////
+// YMAP BrowserDetect object from http://www.quirksmode.org/js/detect.html
+
+var gBrowserDetect = {
+	init: function () {
+		this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+		this.version = this.searchVersion(navigator.userAgent)
+			|| this.searchVersion(navigator.appVersion)
+			|| "an unknown version";
+		this.OS = this.searchString(this.dataOS) || "an unknown OS";
+	},
+	searchString: function (data) {
+		for (var i=0;i<data.length;i++)	{
+			var dataString = data[i].string;
+			var dataProp = data[i].prop;
+			this.versionSearchString = data[i].versionSearch || data[i].identity;
+			if (dataString) {
+				if (dataString.indexOf(data[i].subString) != -1)
+					return data[i].identity;
+			}
+			else if (dataProp)
+				return data[i].identity;
+		}
+	},
+	searchVersion: function (dataString) {
+		var index = dataString.indexOf(this.versionSearchString);
+		if (index == -1) return;
+		return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
+	},
+	dataBrowser: [
+		{	string: navigator.userAgent,	subString: "Chrome",	identity: "Chrome"		},
+		{ 	string: navigator.userAgent,	subString: "OmniWeb",	versionSearch: "OmniWeb/",		identity: "OmniWeb"		},
+		{	string: navigator.vendor,		subString: "Apple",		identity: "Safari",				versionSearch: "Version"		},
+		{	prop: window.opera,				identity: "Opera"		},
+		{	string: navigator.vendor,		subString: "iCab",		identity: "iCab"		},
+		{	string: navigator.vendor,		subString: "KDE",		identity: "Konqueror"		},
+		{	string: navigator.userAgent,	subString: "Firefox",	identity: "Firefox"		},
+		{	string: navigator.vendor,		subString: "Camino",	identity: "Camino"		},
+		{	// for newer Netscapes (6+)
+			string: navigator.userAgent,	subString: "Netscape",	identity: "Netscape"		},
+		{	string: navigator.userAgent,	subString: "MSIE",		identity: "Explorer",			versionSearch: "MSIE"		},
+		{	string: navigator.userAgent,	subString: "Gecko",		identity: "Mozilla",			versionSearch: "rv"		},
+		{	// for older Netscapes (4-)
+			string: navigator.userAgent,	subString: "Mozilla",	identity: "Netscape",			versionSearch: "Mozilla"		}
+	],
+	dataOS : [
+		{	string: navigator.platform,		subString: "Win",		identity: "Windows"		},
+		{	string: navigator.platform,		subString: "Mac",		identity: "Mac"		},
+		{	string: navigator.userAgent,	subString: "iPhone",	identity: "iPhone/iPod"	    },
+		{	string: navigator.platform,		subString: "Linux",		identity: "Linux"		}
+	]
+
+};
+gBrowserDetect.init();
+
+///////////////////////////////////////////////////////////
+// YHistory, YAction
+
+YHistory.prototype				= new Object();
+YHistory.prototype.constructor	= YHistory;
+YHistory.superclass				= Object.prototype;
+
+function YHistory(view, max) {
+	this.view		= view;
+	this.max		= max;
+	this.actions	= new Array;
+	this.idx		= -1;
+	this.pos		= -1;
+}
+
+YHistory.prototype.isMapModified = function() {
+	return ( this.idx !=  this.pos );
+}
+
+YHistory.prototype.clear = function() {
+	for ( var i=this.actions.length-1; i>=0; i-- ) {
+		this.drop(i);
+	}
+	this.actions.splice(0, this.actions.length);
+	this.idx = -1;
+	this.pos = -1;
+}
+
+YHistory.prototype.snapshot = function() {
+	this.pos = this.idx;
+}
+
+YHistory.prototype.drop = function(idx) {
+	if ( idx < 0 || idx >= this.actions.length ) {
+		return;
+	}
+	
+	var action = this.actions[idx];
+	var i, j;
+	if ( action.type == ACT_NODE_INSERT_C || action.type == ACT_NODE_INSERT_PS || action.type == ACT_NODE_INSERT_NS ) {
+		for (i=0; i<action.arr.length; i++ ) {
+			var node = this.view.tree.getNodeById(action.arr[i].id);
+			if ( node == undefined || node == null ) continue;
+			this.view.tree.removeDetachedNode(node);
+		}
+	} else if ( action.type == ACT_NODE_INSERT_P ) {
+		for (i=0; i<action.arr.length; i+=2 ) {
+			var node = this.view.tree.getNodeById(action.arr[i].id);
+			if ( node == undefined || node == null ) continue;
+			this.view.tree.removeDetachedNode(node);
+		}
+	} else if ( action.type == ACT_NODE_PASTE ) {
+		for (i=0; i<action.arr.length; i+=2 ) {
+			arrTopClones = action.arr[i+1];
+			for (j=arrTopClones.length - 1; j>=0; j--) {
+				var node = this.view.tree.getNodeById(arrTopClones[j].id);
+				if ( node == undefined || node == null ) continue;
+				this.view.tree.removeDetachedNode(node);
+			}
+		}
+	} else if ( action.type == ACT_NODE_JOIN ) {
+		for (i=1; i<action.arr.length; i++ ) {
+			var node = this.view.tree.getNodeById(action.arr[i].id);
+			if ( node == undefined || node == null ) continue;
+			this.view.tree.removeDetachedNode(node);
+		}
+	}
+}
+
+YHistory.prototype.push = function (type, arr) {
+	if ( arr.length == 0 ) return false;
+
+	for ( var i=this.actions.length-1; i>this.idx; i-- ) {
+		this.drop(i);
+		this.actions.splice(i, 1);
+	}
+	
+	if ( this.max != 0 && this.actions.length >= this.max ) {
+		this.drop(0);
+		this.actions.splice(0, 1);
+		this.idx--;
+	}
+	
+	var action = new YAction(type, arr);
+	this.actions.push(action);
+	this.idx++;
+	
+	var curDateTime	= new Date();
+	var strDateTime = curDateTime.getTime();
+	
+	switch(type) {
+		case ACT_NODE_EDIT:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.modified = strDateTime;
+			}
+			break;
+		case ACT_NODE_ICON:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var node = this.view.tree.getNodeById(cloneB.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.modified = strDateTime;
+			}
+			break;
+		case ACT_NODE_HYPERLINK:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var node = this.view.tree.getNodeById(cloneB.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.modified = strDateTime;
+			}
+			break;
+		case ACT_NODE_IMAGE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.modified = strDateTime;
+			}
+			break;
+		case ACT_NODE_MOVE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.modified = strDateTime;
+			}
+			break;
+		case ACT_NODE_TOGGLE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var val = !(action.arr[i]);
+				var node = this.view.tree.getNodeById(action.arr[i+1]);
+				if ( node == undefined || node == null || node.childNodes.length == 0 ) continue;
+				
+				node.modified = strDateTime;
+			}
+			break;
+		case ACT_NODE_FMT_PSTYLE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var node = this.view.tree.getNodeById(cloneB.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.modified = strDateTime;
+			}
+			break;
+		case ACT_NODE_FMT_FNAME:
+		case ACT_NODE_FMT_FSIZE:
+		case ACT_NODE_FMT_ITALIC:
+		case ACT_NODE_FMT_BOLD:
+		case ACT_NODE_FMT_FGCOL:
+		case ACT_NODE_FMT_BLCOL:
+		case ACT_NODE_FMT_BGCOL:
+		case ACT_NODE_FMT_EGCOL:
+		case ACT_NODE_FMT_EGWTH:
+			for (i=0; i<action.arr.length; i+=3) {
+				var nodeID = action.arr[i+2];
+				var node = this.view.tree.getNodeById(nodeID);
+				if ( node == undefined || node == null ) continue;
+				
+				node.modified = strDateTime;
+			}
+			break;
+		case ACT_NODE_JOIN:
+			var clone = action.arr[0];
+			var node = this.view.tree.getNodeById(clone.id);
+			if ( node ) {
+				node.modified = strDateTime;
+			}
+			break;
+	}
+
+	return true;
+}
+
+YHistory.prototype.undo = function () {
+	if ( this.idx < 0 || this.idx >= this.actions.length ) {
+		return false;
+	}
+
+	var action = this.actions[this.idx];
+	var i,j;
+
+	switch(action.type) {
+		case ACT_NODE_INSERT_C:
+		case ACT_NODE_INSERT_PS:
+		case ACT_NODE_INSERT_NS:
+			var parentNode = null;
+			var prevNode = null;
+			var nextNode = null;
+			
+			this.view.deSelectNodes();
+			for (i=0; i<action.arr.length; i++) {
+				var clone = action.arr[i];
+				var node = this.view.tree.getNodeById(clone.id);
+				if ( node == undefined || node == null ) continue;
+				
+				parentNode	= node.parentNode;
+				prevNode	= node.prevNode;
+				nextNode	= node.nextNode;
+
+				this.view.deleteNode(node);
+			}
+			this.view.redrawTree(false);
+			if ( action.type == ACT_NODE_INSERT_C && parentNode ) {
+				this.view.selectNode(parentNode, false, false);
+			} else if ( action.type == ACT_NODE_INSERT_PS && nextNode ) {
+				this.view.selectNode(nextNode, false, false);
+			} else if ( action.type == ACT_NODE_INSERT_NS && prevNode ) {
+				this.view.selectNode(prevNode, false, false);
+			} else {
+				this.view.selectNode(parentNode, false, false);
+			}
+			break;
+		case ACT_NODE_INSERT_P:
+			this.view.deSelectNodes();
+			var selNode = null;
+			for (i=0; i<action.arr.length; i+=2) {
+				var nodeP = this.view.tree.getNodeById(action.arr[i].id);
+				var nodeC = this.view.tree.getNodeById(action.arr[i+1].id);
+				
+				if ( nodeP == undefined || nodeP == null || nodeC == undefined || nodeC == null ) continue;
+				
+				this.view.deleteNode(nodeP);
+				this.view.tree.detachChild(nodeP, nodeC);
+				this.view.tree.revertNodeHierarchy(nodeC, action.arr[i+1]);
+				this.view.tree.attachChild(nodeC.parentNode, nodeC);
+				
+				selNode = nodeC;
+			}
+			this.view.redrawTree(false);
+			this.view.selectNode(selNode, false, false);
+			break;
+		case ACT_NODE_REMOVE:
+			for(i=action.arr.length-1; i>=0; i--) {
+				var clone = action.arr[i];
+				var node = this.view.tree.getNodeById(clone.id);
+				if ( node == undefined || node == null ) continue;
+				
+				this.view.tree.revertNodeHierarchy(node, clone);
+				this.view.tree.attachChild(node.parentNode, node);
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_JOIN:
+			var clone = action.arr[0];
+			var node = this.view.tree.getNodeById(clone.id);
+			if ( node ) {
+				node.text = clone.text;
+				this.view.setNodeViewText(node);
+			}
+			for(i=action.arr.length-1; i>=1; i--) {
+				clone = action.arr[i];
+				node = this.view.tree.getNodeById(clone.id);
+				if ( node == undefined || node == null ) continue;
+				
+				this.view.tree.revertNodeHierarchy(node, clone);
+				this.view.tree.attachChild(node.parentNode, node);
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_EDIT:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.text = cloneB.text;
+				this.view.setNodeViewText(node, this.view.getNodeView(node));
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_ICON:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var node = this.view.tree.getNodeById(cloneB.id);
+				if ( node == undefined || node == null ) continue;
+				
+				this.view.tree.revertNodeContent(node, cloneB);
+				this.view.setNodeViewIcon(node);
+				this.view.drawNode(node, true, false);
+			}
+			break;
+		case ACT_NODE_HYPERLINK:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.hyperlink = cloneB.hyperlink;
+				this.view.setNodeViewHyperlink(node);
+				this.view.drawNode(node, true, false);
+			}
+			break;
+		case ACT_NODE_IMAGE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.text = cloneB.text;
+				this.view.setNodeViewText(node, this.view.getNodeView(node));
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_MOVE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				this.view.tree.detachChild(node.parentNode, node);
+				this.view.tree.revertNodeHierarchy(node, cloneB);
+				this.view.tree.attachChild(node.parentNode, node);
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_PASTE:
+			this.view.deSelectNodes();
+			for (i=0; i<action.arr.length; i+=2) {
+				var node = this.view.tree.getNodeById(action.arr[i].id);
+				if ( node == undefined || node == null ) continue;
+
+				var arrTopClones = action.arr[i+1];
+				for (j=arrTopClones.length - 1; j>=0; j--) {
+					var cnode = this.view.tree.getNodeById(arrTopClones[j].id);
+					if ( cnode == undefined || cnode == null ) continue;
+					
+					this.view.deleteNode(cnode);
+				}
+				this.view.selectNode(node);
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_TOGGLE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var val = !(action.arr[i]);
+				var node = this.view.tree.getNodeById(action.arr[i+1]);
+			//for (i=action.arr.length-1; i>=0; i-=2) {
+			//	var val = !(action.arr[i-1]);
+			//	var node = this.view.tree.getNodeById(action.arr[i]);
+				if ( node == undefined || node == null || node.childNodes.length == 0 ) continue;
+				
+				this.view.toggleNode(node,val);
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_FMT_PSTYLE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var node = this.view.tree.getNodeById(cloneB.id);
+				
+				if ( node == undefined || node == null ) continue;
+				
+				this.view.tree.revertNodeAttribute(node, cloneB);
+				this.view.setNodeViewStyle(node);
+			}
+			this.view.redrawTree(false);
+			this.view.refreshSelectedNodes();
+			break;
+		case ACT_NODE_FMT_FNAME:
+		case ACT_NODE_FMT_FSIZE:
+		case ACT_NODE_FMT_ITALIC:
+		case ACT_NODE_FMT_BOLD:
+		case ACT_NODE_FMT_FGCOL:
+		case ACT_NODE_FMT_BLCOL:
+		case ACT_NODE_FMT_BGCOL:
+		case ACT_NODE_FMT_EGCOL:
+		case ACT_NODE_FMT_EGWTH:
+			var bRedraw = false;
+			var bRefreshSelectedNode = false;
+			for (i=0; i<action.arr.length; i+=3) {
+				var valB = action.arr[i];
+				var nodeID = action.arr[i+2];
+				var node = this.view.tree.getNodeById(nodeID);
+				
+				if ( node == undefined || node == null ) continue;
+				
+				if ( action.type == ACT_NODE_FMT_FNAME ) {
+					node.font.name = valB;
+				} else if ( action.type == ACT_NODE_FMT_FSIZE ) {
+					node.font.size = valB;
+					bRedraw = true;
+				} else if ( action.type == ACT_NODE_FMT_ITALIC ) {
+					node.font.italic = valB;
+				} else if ( action.type == ACT_NODE_FMT_BOLD ) {
+					node.font.bold = valB;
+				} else if ( action.type == ACT_NODE_FMT_FGCOL || action.type == ACT_NODE_FMT_BLCOL ) {
+					node.color = valB;
+				} else if ( action.type == ACT_NODE_FMT_BGCOL ) {
+					node.bgcolor = valB;
+				} else if ( action.type == ACT_NODE_FMT_EGCOL ) {
+					node.edge.color = valB;
+				} else if ( action.type == ACT_NODE_FMT_EGWTH ) {
+					node.edge.width = valB;
+				} else {
+					continue;
+				}
+				
+				if ( action.type == ACT_NODE_FMT_EGCOL || action.type == ACT_NODE_FMT_EGWTH ) {
+					this.view.setNodeLinkerStyle(node);
+				} else {
+					this.view.setNodeViewStyle(node);
+					bRefreshSelectedNode = true;
+				}
+			}
+			if ( bRedraw == true ) this.view.redrawTree(false);
+			if ( bRefreshSelectedNode == true )this.view.refreshSelectedNodes();
+			break;
+	}
+	
+	this.idx--;
+	
+	return true;
+}
+
+YHistory.prototype.redo = function () {
+	if ( this.idx < -1 || this.idx >= (this.actions.length-1) ) {
+		return false;
+	}
+
+	var action = this.actions[this.idx+1];
+	var i;
+
+	switch(action.type) {
+		case ACT_NODE_INSERT_C:
+		case ACT_NODE_INSERT_PS:
+		case ACT_NODE_INSERT_NS:
+			for (i=0; i<action.arr.length; i++) {
+				var clone = action.arr[i];
+				var node = this.view.tree.getNodeById(clone.id);
+				if ( node == undefined || node == null ) continue;
+				
+				this.view.tree.revertNodeHierarchy(node, clone);
+				this.view.tree.attachChild(node.parentNode, node);
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_INSERT_P:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneP = action.arr[i];
+				var nodeP = this.view.tree.getNodeById(action.arr[i].id);
+				var nodeC = this.view.tree.getNodeById(action.arr[i+1].id);
+				
+				if ( nodeP == undefined || nodeP == null || nodeC == undefined || nodeC == null ) continue;
+
+				if ( cloneP.parentId != nodeC.parentNode.id || cloneP.childNodes.length != 1 || cloneP.childNodes[0] != nodeC.id ) continue;
+				
+				this.view.tree.detachChild(nodeC.parentNode, nodeC);
+				this.view.tree.revertNodeHierarchy(nodeP, cloneP, true);
+				this.view.tree.attachChild(nodeP.parentNode, nodeP);
+				nodeC.parentNode = nodeP;
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_REMOVE:
+			this.view.deSelectNodes();
+			for(i=0; i<action.arr.length; i++) {
+				var clone = action.arr[i];
+				var node = this.view.tree.getNodeById(clone.id);
+				if ( node == undefined || node == null ) continue;
+				
+				this.view.selectNode(node, true, false);
+			}
+			this.view.deleteSelectedNode();
+			break;
+		case ACT_NODE_JOIN:
+			this.view.deSelectNodes();
+			var clone;
+			var node;
+			var str = "";
+			for(i=1; i<action.arr.length; i++) {
+				clone = action.arr[i];
+				node = this.view.tree.getNodeById(clone.id);
+				if ( node == undefined || node == null ) continue;
+				
+				str += "\n" + node.text;
+				
+				this.view.deleteNode(node);
+			}
+			clone = action.arr[0];
+			node = this.view.tree.getNodeById(clone.id);
+			if ( node ) {
+				node.text = clone.text + str;
+				this.view.setNodeViewText(node);
+				this.view.selectNode(node, false, false);
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_EDIT:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.text = cloneA.text;
+				this.view.setNodeViewText(node, this.view.getNodeView(node));
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_ICON:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				this.view.tree.revertNodeContent(node, cloneA);
+				this.view.setNodeViewIcon(node);
+				this.view.drawNode(node, true, false);
+			}
+			break;
+		case ACT_NODE_HYPERLINK:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.hyperlink = cloneA.hyperlink;
+				this.view.setNodeViewHyperlink(node);
+				this.view.drawNode(node, true, false);
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_IMAGE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				node.text = cloneA.text;
+				this.view.setNodeViewText(node, this.view.getNodeView(node));
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_MOVE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneB = action.arr[i];
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				if ( node == undefined || node == null ) continue;
+				
+				this.view.tree.detachChild(node.parentNode, node);
+				this.view.tree.revertNodeHierarchy(node, cloneA);
+				this.view.tree.attachChild(node.parentNode, node);
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_PASTE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var node = this.view.tree.getNodeById(action.arr[i].id);
+				if ( node == undefined || node == null ) continue;
+
+				var arrTopClones = action.arr[i+1];
+				for (j=0; j<arrTopClones.length; j++) {
+					var cnode = this.view.tree.getNodeById(arrTopClones[j].id);
+					if ( cnode == undefined || cnode == null ) continue;
+					
+					this.view.tree.revertNodeHierarchy(cnode, arrTopClones[j]);
+					this.view.tree.attachChild(node, cnode);
+				}
+			}
+			this.view.redrawTree(false);
+			break;
+		case ACT_NODE_TOGGLE:
+			//for (i=0; i<action.arr.length; i+=2) {
+			for (i=action.arr.length-1; i>=0; i-=2) {
+				var val = action.arr[i-1];
+				var node = this.view.tree.getNodeById(action.arr[i]);
+				if ( node == undefined || node == null || node.childNodes.length == 0 ) continue;
+				
+				this.view.toggleNode(node,val);
+			}
+			this.view.redrawTree(false);
+		case ACT_NODE_FMT_PSTYLE:
+			for (i=0; i<action.arr.length; i+=2) {
+				var cloneA = action.arr[i+1];
+				var node = this.view.tree.getNodeById(cloneA.id);
+				
+				if ( node == undefined || node == null ) continue;
+				
+				this.view.tree.revertNodeAttribute(node, cloneA);
+				this.view.setNodeViewStyle(node);
+			}
+			this.view.redrawTree(false);
+			this.view.refreshSelectedNodes();
+		case ACT_NODE_FMT_FNAME:
+		case ACT_NODE_FMT_FSIZE:
+		case ACT_NODE_FMT_ITALIC:
+		case ACT_NODE_FMT_BOLD:
+		case ACT_NODE_FMT_FGCOL:
+		case ACT_NODE_FMT_BLCOL:
+		case ACT_NODE_FMT_BGCOL:
+		case ACT_NODE_FMT_EGCOL:
+		case ACT_NODE_FMT_EGWTH:
+			var bRedraw = false;
+			var bRefreshSelectedNode = false;
+			for (i=0; i<action.arr.length; i+=3) {
+				var valA = action.arr[i+1];
+				var nodeID = action.arr[i+2];
+				var node = this.view.tree.getNodeById(nodeID);
+				
+				if ( node == undefined || node == null ) continue;
+				
+				if ( action.type == ACT_NODE_FMT_FNAME ) {
+					node.font.name = valA;
+				} else if ( action.type == ACT_NODE_FMT_FSIZE ) {
+					node.font.size = valA;
+					bRedraw = true;
+				} else if ( action.type == ACT_NODE_FMT_ITALIC ) {
+					node.font.italic = valA;
+				} else if ( action.type == ACT_NODE_FMT_BOLD ) {
+					node.font.bold = valA;
+				} else if ( action.type == ACT_NODE_FMT_FGCOL || action.type == ACT_NODE_FMT_BLCOL ) {
+					node.color = valA;
+				} else if ( action.type == ACT_NODE_FMT_BGCOL ) {
+					node.bgcolor = valA;
+				} else if ( action.type == ACT_NODE_FMT_EGCOL ) {
+					node.edge.color = valA;
+				} else if ( action.type == ACT_NODE_FMT_EGWTH ) {
+					node.edge.width = valA;
+				} else {
+					continue;
+				}
+				
+				if ( action.type == ACT_NODE_FMT_EGCOL || action.type == ACT_NODE_FMT_EGWTH ) {
+					this.view.setNodeLinkerStyle(node);
+				} else {
+					this.view.setNodeViewStyle(node);
+					bRefreshSelectedNode = true;
+				}
+			}
+			if ( bRedraw == true ) this.view.redrawTree(false);
+			if ( bRefreshSelectedNode == true )this.view.refreshSelectedNodes();
+			break;
+	}
+	
+	this.idx++;
+	
+	return true;
+}
+
+YAction.prototype				= new Object();
+YAction.prototype.constructor	= YAction;
+YAction.superclass				= Object.prototype;
+
+function YAction(type, arr) {
+	this.type		= type;
+	this.arr		= new Array;
+	
+	for ( var i=0; i<arr.length; i++ ) {
+		this.arr.push(arr[i]);
+	}
+}
+
+///////////////////////////////////////////////////////////
+// YMap Application
+// Require : YTree.js, YView.js
+
+YApp.prototype				= new Object();
+YApp.prototype.constructor	= YApp;
+YApp.superclass				= Object.prototype;
+
+var gYApp	= null;
+
+function YApp(view) {
+	this.view				= view;
+	this.menu				= null;
+	
+	this.mapStat			= YMAP_STAT_NODENAV;
+	this.mapMode			= YMAP_MODE_WEB;
+	
+	// hold custom attributes for user data
+	// eg. attributes["userid"] = "yeonisalive"
+	this.attributes			= new Array;
+
+	// dragging object status
+	this.dragObject			= null;
+	this.dragPos			= 0;
+	this.dragOldLeft		= 0;
+	this.dragOldTop			= 0;
+	this.dragXOff			= 0;
+	this.dragYOff			= 0;
+	this.mouseOffset		= null;
+	
+	// node clipboard (array of clone)
+	this.clones				= new Array;
+	// used for copy & paste format ( clone of node )
+	this.formatter			= null;
+	
+	// history
+	this.history			= new YHistory(view,100);
+	
+	if (logplay) {
+		document.onmousemove	= null;
+		document.onmouseup		= null;
+		document.onkeydown		= null;
+	} else {
+		document.onmousemove	= EVT_MouseMove;
+		document.onmouseup		= EVT_MouseUp;
+		document.onkeydown		= EVT_KeyPress;
+	}
+	
+	document.oncontextmenu	= function () {return false;}  // 滑鼠右鍵失效
+	
+	gYApp 					= this;
+	
+	// Firefox ENTER key head-ache :(
+	// Firefox ENTER key will produce unexpected another key event. I guess so...
+	this.keyEnterHit		= 0;
+	
+	if ( gBrowserDetect.browser == "Explorer" ) {
+		view.panelD.ondragstart = function() { return false; }
+		view.panelD.onselectstart = function() { return (gYApp.isStatSet(YMAP_STAT_NODEEDIT))? true:false; }
+	}
+	
+	view.panelD.onclick = function() {
+		if ( gYApp.menu ) gYApp.menu.hideAll();
+		if ( !gYApp.isStatSet(YMAP_STAT_NODEEDIT) && !logplay) EVT_MakeDraggable(view.panelD);
+	}
+}
+
+YApp.prototype.getView = function () {
+	return this.view;
+}
+
+YApp.prototype.createMenu = function (menuId, bReplace) {
+	if ( this.menu && !bReplace ) return;
+
+	if ( this.menu && bReplace ) {
+		delete this.menu;
+		this.menu = null;
+	}
+	
+	this.menu = new YMenu(menuId);
+	this.menu.init();
+}
+
+YApp.prototype.setStat = function (flag) {
+	this.mapStat |= flag;
+}
+
+YApp.prototype.clearStat = function (flag) {
+	this.mapStat &= ~(flag);
+}
+
+YApp.prototype.isStatSet = function (flag) {
+	return (this.mapStat & flag);
+}
+
+YApp.prototype.setMapMode = function (mode) {
+	this.mapMode = mode;
+}
+
+YApp.prototype.getMapMode = function (mode) {
+	return this.mapMode;
+}
+
+YApp.prototype.setAttribute = function(key, val) {
+	this.attributes[key] = val;
+}
+
+YApp.prototype.getAttribute = function(key) {
+	if ( this.attributes[key] == undefined || this.attributes[key] == null ) {
+		return null;
+	}
+	
+	return this.attributes[key];
+}
+
+YApp.prototype.removeAttribute = function(key) {
+	if ( this.attributes[key] == undefined || this.attributes[key] == null ) {
+		return null;
+	}
+	
+	val = this.attributes[key];
+	delete this.attributes[key];
+	
+	return val;
+}
+
+///////////////////////////////////////////////////////////
+// YMap event handler
+
+function EVT_MouseMove(evt){
+	evt = evt || window.event;
+	var mousePos = F_GetMouseCoords(evt);
+    
+	var view = gYApp.getView();
+
+	if(gYApp.dragObject && !gYApp.isStatSet(YMAP_STAT_NODEEDIT) ) {
+		if ( gYApp.dragObject.getAttribute("nodeID") && view.getSelectedNodeCount() > 1 ) return false;
+		gYApp.dragObject.style.top	= (mousePos.y - gYApp.mouseOffset.y + gYApp.dragYOff)+"px";
+		gYApp.dragObject.style.left	= (mousePos.x - gYApp.mouseOffset.x + gYApp.dragXOff)+"px";
+	}
+
+	if ( gYApp.dragObject ) {
+		view.panelD.style.cursor = "move";
+	}
+
+	return false;
+}
+
+function EVT_MouseUp(evt){	
+	evt = evt || window.event;
+	
+	var view = gYApp.getView();
+	
+	if ( gYApp.dragObject != null && gYApp.dragObject.getAttribute("nodeID") ) {
+		var nodeID = gYApp.dragObject.getAttribute("nodeID");
+		gYApp.dragObject.style.left	= gYApp.dragOldLeft + "px";
+		gYApp.dragObject.style.top	= gYApp.dragOldTop + "px";
+
+		gYApp.dragObject.style.zIndex = 10;
+		
+		view.hideNodeSelector();
+		view.selectNode(nodeID, false, false);
+
+	}
+	
+	gYApp.dragObject = null;
+	view.panelD.style.cursor = "default";
+    
+	return false;
+}
+
+function EVT_NodeMouseUp(evt,nodeID) {	
+	evt = evt || window.event;
+	var view = gYApp.getView();
+		
+	if ( gYApp.dragObject != null && gYApp.dragObject.getAttribute("nodeID") ) {		
+		var snode = view.tree.getNodeById(gYApp.dragObject.getAttribute("nodeID")); // 被操作的節點 source node
+		var tnode = view.tree.getNodeById(nodeID); // 被移到的節點 target node
+		var bAttached = false;
+
+		// 設定node被拖曳時 滑鼠放開後所要執行的動作
+		if ( snode != null && tnode != null && snode.id != tnode.id && !logplay) {
+			var mousePos = F_GetMouseCoords(evt);
+			var oView = view.getNodeView(tnode);
+			var oPos = F_GetPosition(oView);
+			var cloneB = snode.clone();			
+			
+			if ( tnode.indent == 0 ) { // 當有node被加入到跟節點下方時
+				bAttached = view.tree.attachToNode(tnode, snode, gYApp.dragPos);
+			} else {
+				if ( gYApp.dragPos == NODE_POS_UP ) { // 當某一節點 拖到某一節點上方時 其順序會改變至該節點的前面 (非變成parent)
+					bAttached = view.tree.attachToNode(tnode, snode, tnode.pos, true);
+				} else { // 當有節點加入到非根節點的下方時
+					bAttached = view.tree.attachToNode(tnode, snode, tnode.pos);
+				}
+			}
+
+			
+			if ( bAttached ) { // 如果node有被拖曳成功過
+				updatenodeposition(tnode.NodeID, snode.NodeID, snode.pos); // 去DB更新資訊 (假設DB均操作成功的話 目前不處理ERROR)
+				socket_send_node_drag(tnode.NodeID, snode.NodeID, gYApp.dragPos); // socket廣播 遠端同步
+				if ( tnode.folded ) { // 如果拖曳到一個已經folded的節點上 會加入到該node後面 並將該node展開
+					view.toggleNode(tnode);
+				}
+				view.redrawTree(false);
+				
+				var cloneA = snode.clone();
+				gYApp.history.push(ACT_NODE_MOVE, [cloneB, cloneA]);
+			}
+			
+		}
+
+		if ( !bAttached ) { // 拖曳無更動
+			gYApp.dragObject.style.left = gYApp.dragOldLeft + "px";
+			gYApp.dragObject.style.top = gYApp.dragOldTop + "px";
+		} else {
+			view.selectNode(snode, false, false);
+		}
+		
+		gYApp.dragObject.style.zIndex = 10;
+		
+		view.hideNodeSelector();
+	}
+		
+	gYApp.dragObject = null;
+	view.panelD.style.cursor = "default";
+	
+	
+	if ( gBrowserDetect.browser == "Explorer" ) {
+		evt.cancelBubble = true;
+	} else {
+		evt.stopPropagation();
+	}
+    
+	return false;
+}
+
+function EVT_NodeMouseOver(evt,nodeID) {
+	if ( gYApp.isStatSet(YMAP_STAT_NODEEDIT) ) return false;
+	
+	if ( gYApp.menu && gYApp.menu.isContextMenuPopuped() ) return false;
+
+	evt = evt || window.event;
+	
+	var view = gYApp.getView();
+	
+	if ( evt.shiftKey || evt.ctrlKey || view.getSelectedNodeCount() > 1) {
+		return false;
+	}
+	
+	if ( gYApp.dragObject && gYApp.dragObject.getAttribute("nodeID") ) {
+		view.selectNode(nodeID, false, true);
+		return false;
+	} else {
+		view.selectNode(nodeID, false, false);
+	}
+	
+	if ( view.getSelectedNodeCount() == 1 && !gYApp.isStatSet(YMAP_STAT_NODEEDIT) && nodeID != gYApp.view.tree.rootNodeID) {
+		
+		if ( gYApp.isStatSet(YMAP_STAT_EDITLOCK) ) return true;
+		
+		EVT_MakeDraggable(view.getNodeView(view.tree.getNodeById(nodeID)));
+	}
+	
+	return false;
+}
+
+function EVT_NodeMouseMove(evt,nodeID) {
+	if ( gYApp.isStatSet(YMAP_STAT_NODEEDIT) ) return false;
+	
+	if ( gYApp.menu && gYApp.menu.isContextMenuPopuped() ) return false;
+
+	var view = gYApp.getView();
+	
+	if ( gYApp.dragObject && gYApp.dragObject.getAttribute("nodeID") && gYApp.dragObject.getAttribute("nodeID") != nodeID ) {
+		var node = view.tree.getNodeById(nodeID);
+		var oView = view.getNodeView(node);
+		var oPos = F_GetPosition(oView);
+		var mousePos = F_GetMouseCoords(evt);
+
+		if ( mousePos.x > (oPos.x + (oView.offsetWidth>>1)) ) {
+			if ( view.tree.isRootNode(node) ) {
+				view.selectNodePos(node, NODE_POS_RIGHT);
+				gYApp.dragPos = NODE_POS_RIGHT;
+			} else if ( node.pos == NODE_POS_RIGHT ) {
+				view.selectNodePos(node, NODE_POS_CHILD);
+				gYApp.dragPos = NODE_POS_CHILD;
+			} else {
+				view.selectNodePos(node, NODE_POS_UP);
+				gYApp.dragPos = NODE_POS_UP;
+			}
+		} else {
+			if ( view.tree.isRootNode(node) ) {
+				view.selectNodePos(node, NODE_POS_LEFT);
+				gYApp.dragPos = NODE_POS_LEFT;
+			} else if ( node.pos == NODE_POS_RIGHT ) {
+				view.selectNodePos(node, NODE_POS_UP);
+				gYApp.dragPos = NODE_POS_UP;
+			} else {
+				view.selectNodePos(node, NODE_POS_CHILD);
+				gYApp.dragPos = NODE_POS_CHILD;
+			}
+		}
+	}
+	/*
+	if ( gBrowserDetect.browser == "Explorer" ) {
+		evt.cancelBubble = true;
+	} else {
+		evt.stopPropagation();
+	}
+	*/
+	return false;
+}
+
+
+function EVT_NodeContextMenu(evt,nodeID) {
+	if ( gYApp.menu == null ) return false;
+	
+	evt = evt || window.event;
+	
+	var node = gYApp.view.tree.getNodeById(nodeID);
+	if ( node == null ) return false;
+	
+	gYApp.view.selectNode(node, evt.shiftKey || evt.ctrlKey, false);
+	
+	gYApp.menu.showContextMenu(evt);
+}
+
+function EVT_MakeDraggable(item){
+    if(!item) return false;
+
+    item.onmousedown = function(evt){
+    	var nodeID = this.getAttribute("nodeID");
+    	
+    	if ( gYApp.dragObject && nodeID ) gYApp.dragObject.onmousedown = null;
+
+        gYApp.dragObject = this;
+        gYApp.dragOldLeft = this.offsetLeft;
+        gYApp.dragOldTop = this.offsetTop;
+        gYApp.mouseOffset = F_GetMouseOffset(this, evt);
+        
+        if( nodeID != null && nodeID != "" ) {
+        	gYApp.dragYOff = 0 - gYApp.view.panelD.offsetTop + item.offsetHeight + 10;
+        	gYApp.dragXOff = 0 - gYApp.view.panelD.offsetLeft;
+        	this.style.zIndex = 50;
+        } else {
+        	gYApp.dragYOff = 0;
+        	gYApp.dragXOff = 0;
+        }
+        
+        evt = evt || window.event;
+        
+        if ( gBrowserDetect.browser == "Explorer" ) {
+        	if ( evt.srcElement.tagName == "IMG" ) {
+        		evt.srcElement.fireEvent("onmouseup");
+			}			
+        	evt.cancelBubble = true;
+        } else {
+        	evt.stopPropagation();
+        }
+        
+        return false;
+    }
+    return true;
+}
+
+
+function EVT_KeyPress(evt) {
+	if ( document.activeElement.id == 'mapname') return true; // 當焦點在建立新專案的textbox中的時候
+	if ( document.activeElement.id == 'message') // 當焦點在聊天室輸入訊息的時候
+	{
+		evt = evt || window.event;
+		var code = evt.keyCode;
+		if (code == YKEYCODE_ENTER)
+			sendmessage();
+		return true; 
+	}
+	
+	if ( document.activeElement.id == 'Node_Content') // 當焦點在Node編輯時
+	{
+		return true; 
+	}
+	
+	if ( document.activeElement.id == 'keUrl') // 當焦點在討論編輯器的超連節視窗時
+	{
+		return true;
+	}
+	
+	if ( gYApp.isStatSet(YMAP_STAT_NODEEDIT) ) return true;
+	
+	if ( gYApp.menu && gYApp.menu.isContextMenuPopuped() ) return true;
+
+	evt = evt || window.event;
+
+	//var code = (evt.keyCode)? evt.keyCode:evt.charCode;
+	var code = evt.keyCode;
+	
+	var view = gYApp.view;
+
+	switch( code ) {
+		case YKEYCODE_A:
+			if ( evt.ctrlKey ) {
+			} else if ( evt.ctrlKey && evt.shiftKey) {
+			}
+			break;
+		case YKEYCODE_B:
+			if ( evt.ctrlKey ) {
+				M_FormatFontStyle("bold");
+			}
+			break;
+		case YKEYCODE_C:
+			if ( evt.ctrlKey ) {
+				M_EditCopy(true);
+			} else if ( evt.ctrlKey && evt.shiftKey ) {
+				M_EditCopy(false);
+			} else if ( !evt.ctrlKey && evt.altKey ) {
+				M_EditCopyFormat();
+			}
+			break;
+		case YKEYCODE_F:
+			if ( evt.altKey ) {
+				M_FormatColor(NODE_FORMAT_FGCOL);
+			}
+			break;
+		case YKEYCODE_I:
+			if ( evt.ctrlKey ) {
+				M_FormatFontStyle("italic");
+			}
+			break;
+		case YKEYCODE_K:
+			if ( evt.ctrlKey ) {
+				M_InsertHyperlink();
+			} else if ( evt.altKey ) {
+				M_InsertImage();
+			}
+			break;
+		case YKEYCODE_N:
+			if ( evt.ctrlKey && evt.shiftKey ) {
+				M_FormatPhysicalStyle("Normal");
+			}
+			break;
+		case YKEYCODE_V:
+			if ( evt.ctrlKey ) {
+				M_EditPaste();
+			} else if ( evt.altKey ) {
+				M_EditPasteFormat();
+			}
+			break;
+		case YKEYCODE_X:
+			if ( evt.ctrlKey ) {
+				M_EditCut();
+			}
+			break;
+		case YKEYCODE_Y:
+			if ( evt.ctrlKey ) {
+				M_EditRedo();
+			}
+			break;
+		case YKEYCODE_Z:
+			if ( evt.ctrlKey ) {
+				M_EditUndo();
+			}
+			break;
+		case YKEYCODE_F1:
+			if ( evt.ctrlKey ) {
+				M_FormatPhysicalStyle("WatingTopic");
+			} else {
+				M_FormatPhysicalStyle("Default");
+			}
+			break;
+		case YKEYCODE_F2:
+			if ( evt.ctrlKey ) {
+				M_FormatPhysicalStyle("ObjectKeyword");
+			} else {
+				M_EditEditNode();
+			}
+			break;
+		case YKEYCODE_F3:
+			if ( evt.ctrlKey ) {
+				M_FormatPhysicalStyle("ObjectOfCode");
+			} else {
+				M_FormatPhysicalStyle("OK");
+			}
+			break;
+		case YKEYCODE_F4:
+			if ( evt.ctrlKey ) {
+				M_FormatPhysicalStyle("Question");
+			} else {
+				M_FormatPhysicalStyle("NeedsAction");
+			}
+			break;
+		case YKEYCODE_F5:
+			if ( evt.ctrlKey ) {
+				M_FormatPhysicalStyle("OpenQuestion");
+			} else {
+				M_FormatPhysicalStyle("Hot");
+			}
+			break;
+		case YKEYCODE_F6:
+			if ( evt.ctrlKey ) {
+				M_FormatPhysicalStyle("Bad");
+			} else {
+				M_FormatPhysicalStyle("Detail");
+			}
+			break;
+		case YKEYCODE_F7:
+			if ( evt.ctrlKey ) {
+				M_FormatPhysicalStyle("Blue");
+			} else {
+				M_FormatPhysicalStyle("Folder");
+			}
+			break;
+		case YKEYCODE_F8:
+			if ( evt.ctrlKey ) {
+				M_FormatPhysicalStyle("Pink");
+			} else {
+				M_FormatPhysicalStyle("Topic");
+			}
+			break;
+		case YKEYCODE_F9:
+			if ( evt.ctrlKey ) {
+				M_FormatPhysicalStyle("Cyan");
+			} else {
+				M_FormatPhysicalStyle("LargerTopic");
+			}
+			break;
+		case YKEYCODE_ENTER:
+			if ( gBrowserDetect.browser == "Firefox" ) {
+				this.keyEnterHit		= 0;
+			}
+			if ( evt.ctrlKey ) {
+				M_EditEditLongNode();
+			} else if ( evt.shiftKey ) {
+				M_InsertNewPreviousSiblingNode();
+			} else {
+				//M_InsertNewSiblingNode();
+			}
+			break;
+		case YKEYCODE_ESC:
+			break;
+		case YKEYCODE_DELETE:
+			M_EditRemoveNode();
+			break;
+		case YKEYCODE_SPACE:
+			if ( evt.ctrlKey ) {
+				M_NavigateToggleChildren();
+			} else {
+				M_NavigateToggleFolded();
+			}
+			break;
+		case YKEYCODE_PAGEUP:
+			view.navigateNode(NODE_NAV_PAGEUP, false);
+			break;
+		case YKEYCODE_PAGEDN:
+			view.navigateNode(NODE_NAV_PAGEDN, false);
+			break;
+		case YKEYCODE_END:
+			M_EditEditNode(CARET_ORG_END);
+			break;
+		case YKEYCODE_HOME:
+			M_EditEditNode(CARET_ORG_START);
+			break;
+		case YKEYCODE_LEFT:
+		case YKEYCODE_UP:
+		case YKEYCODE_RIGHT:
+		case YKEYCODE_DOWN:
+			if ( evt.ctrlKey && (code == YKEYCODE_UP || code == YKEYCODE_DOWN) ) {
+				M_NavigateNodeUpDown( (code == YKEYCODE_UP)? 'up' : 'down' );
+			} else {
+				var navPos;
+				if ( code == YKEYCODE_LEFT ) {
+					navPos = NODE_NAV_LEFT;
+				} else if ( code == YKEYCODE_UP ) {
+					navPos = NODE_NAV_UP;
+				} else if ( code == YKEYCODE_RIGHT ) {
+					navPos = NODE_NAV_RIGHT;
+				} else if ( code == YKEYCODE_DOWN ) {
+					navPos = NODE_NAV_DOWN;
+				} else {
+					break;
+				}
+				view.navigateNode( navPos, evt.shiftKey);
+			}
+			break;
+		case YKEYCODE_INSERT:
+			if ( evt.shiftKey ) {
+				M_InsertNewParentNode();
+			} else {
+				//M_InsertNewChildNode();
+				M_node_InsertNewChildNode();
+			}
+			break;
+		case YKEYCODE_PLUS:
+			if ( evt.ctrlKey) {
+				M_FormatFontSize("+");
+			}
+			break;
+		case YKEYCODE_MINUS:
+			if ( evt.ctrlKey) {
+				M_FormatFontSize("-");
+			}
+			break;
+	}
+
+	if ( gBrowserDetect.browser == "Explorer" ) {
+		evt.cancelBubble = true;
+	} else {
+		evt.stopPropagation();
+	}
+	return false;
+}
+
+function EVT_NodeEditKey(evt) {
+	evt = evt || window.event;
+
+	if (F_CheckKey(evt,[27])) {
+		M_EditEditNode(false);
+	} else if (F_CheckKey(evt,[13])) {
+		if ( gBrowserDetect.browser == "Firefox" && gYApp.keyEnterHit++ == 0 ) {
+			return false;
+		}
+		_M_EditEditNode(true);
+
+		return false;
+	}
+	
+	return true;
+}
+
+function EVT_NodeClick(evt,nodeID) {
+	if ( gYApp.isStatSet(YMAP_STAT_NODEEDIT) ) return false;
+
+	evt = evt || window.event;
+	
+	var view = gYApp.getView();
+
+	var node = view.tree.getNodeById(nodeID);
+
+	if ( node == undefined || node == null ) {
+		return true;
+	}
+	
+	var selNodeCnt = view.getSelectedNodeCount();
+	if ( node.childNodes.length > 0 && selNodeCnt == 1 && !evt.shiftKey && !evt.ctrlKey ) {
+		if (view.toggleNode(node)) {
+			gYApp.history.push( ACT_NODE_TOGGLE, [node.folded, node.id]);
+		}
+		view.redrawTree(false);
+		return false;
+	}
+
+	if ( selNodeCnt > 1 && evt.ctrlKey && view.isSelectedNode(node) ) {
+		view.deSelectNodes(node);
+		return false;
+	}
+	view.selectNode(node, evt.ctrlKey, false);
+
+	if ( selNodeCnt <= 1 && view.getSelectedNodeCount() == 1 && node.childNodes.length == 0 &&
+		!evt.shiftKey && !evt.ctrlKey) {
+
+		if ( gYApp.isStatSet(YMAP_STAT_EDITLOCK) ) return false;
+		
+		// 跳出node編輯視窗JY
+		dbarinit();
+		M_dbarNodeInfo(node);
+		node_dbar = node;
+		
+		//M_EditEditNode(CARET_ORG_SEL);
+		//if ( view.startNodeEdit(node, CARET_ORG_SEL) ) {
+		//	gYApp.setStat(YMAP_STAT_NODEEDIT);
+		//}
+	}
+	
+	return true;
+}
+
+function EVT_NodeIconClick(evt, oImg, nodeID) {
+	evt = (evt) ? evt:window.event;
+	
+	if ( gBrowserDetect.browser == "Explorer" ) {
+		evt.cancelBubble = true;
+	} else {
+		evt.stopPropagation();
+	}
+	
+	return false;
+}
+
+function EVT_NodeIconDblClick(evt, oImg, nodeID) {
+	if ( gYApp.isStatSet(YMAP_STAT_NODEEDIT) ) return false;
+
+	var view = gYApp.getView();
+	
+	if ( oImg == null ) {
+		return false;
+	}
+
+	var arr = view.removeIcon(nodeID, oImg);
+	if ( arr ) {
+		var node = view.tree.getNodeById(nodeID);
+		var icon =  geticonfromoImg(oImg);
+		socket.emit('node_iconremove', [node.NodeID,icon]);
+		gYApp.history.push(ACT_NODE_ICON, arr);
+	}
+	
+	return false;
+}
+
+function EVT_NodeHyperlinkClick(evt) {
+	evt = (evt) ? evt:window.event;
+	
+	if ( gBrowserDetect.browser == "Explorer" ) {
+		evt.cancelBubble = true;
+	} else {
+		evt.stopPropagation();
+	}
+	
+	return false;
+}
+
+///////////////////////////////////////////////////////////
+// YMap Menu Handler
+
+function M_DEBUG_TEST() {
+	var view = gYApp.getView();
+	if ( view.getSelectedNodeCount() != 1 ) {
+		return;
+	}
+	
+	var indent = view.tree.getUnfoldedMaxIndent(view.getLastSelectedNode());
+	
+	/*
+	var arr = gYApp.getView().getSelectedBranchTopNodes();
+	
+	var str = ">> ";
+	for ( var i=0; i<arr.length; i++ ) {
+		var node = gYApp.getView().tree.getNodeById(arr[i]);
+		str += node.text + ";";
+	}
+	alert(str);
+	*/
+}
+
+// File //////////////////////
+function M_FileNew() {
+	if($('#mapname').val() == "")
+		return;
+
+	// 建立新map
+	if(gYApp != null)
+	{
+		var view = gYApp.getView();
+		view.deleteNodeView(view.tree.rootNode);
+	}
+	
+	init();
+	socket.emit('set_mapid', prjID);
+	document.onkeydown		= EVT_KeyPress;
+	//gYApp.view.initMap("Start");
+	//setCurrentPrjID(0); //By JC
+	dbarinit();
+	jQuery('#dropdowntoolbarcontainer').accordion("activate",-1);
+	$.unblockUI();
+	
+
+
+}
+
+
+/*
+// File //////////////////////
+function M_FileNew() {
+	if(gYApp != null)
+	{
+		var view = gYApp.getView();
+		view.deleteNodeView(view.tree.rootNode);		
+	}
+	
+	init();
+	//gYApp.view.initMap("Start");
+	setCurrentPrjID(0); //By JC
+	$.unblockUI();
+
+}
+*/
+// 20120513 移除
+// 因為它是menubar 所以在init()時 不能再create一次 不然會GG
+function M_FileNew0() {
+	if(gYApp != null)
+	{
+		var view = gYApp.getView();
+		view.deleteNodeView(view.tree.rootNode);		
+	}
+	
+	yTree = new YTree("Start");
+	yView = new YView(yTree, document.getElementById("panelDOM"), document.getElementById("panelSVG"));
+	yView.setNodeEditor(document.getElementById("nodeEditor"));
+	yView.setLongNodeEditor(document.getElementById("longNodeEditor"));
+	yView.setImageChooser(document.getElementById("imageChooser"));
+	yView.setHyperlinkChooser(document.getElementById("hyperlinkChooser"));
+	yView.setColorChooser(document.getElementById("colorChooser"));
+	yView.setFontNameSelector(document.getElementById("fontNameSelector"));
+	yView.setFontSizeSelector(document.getElementById("fontSizeSelector"));
+
+	yApp = new YApp(yView);
+	//yApp.createMenu("menu1");
+	yView.redrawTree(true);	
+
+	//gYApp.view.initMap("Start");
+	//setCurrentPrjID(0); //By JC
+	$.unblockUI();
+
+}
+
+function M_FileNew_view() {
+	//document.onkeydown		= null;
+	var loadhtml = "<table width=100%><tr><td  width=30% rowspan='2'>新會議：</td><td  width=25%>名稱：</td><td><input type='text' id='mapname' MAXLENGTH=20 style='width:100%'/></td></tr><tr><td>匿名：</td><td><p><label><input name='RadioGroup_isanonymity' type='radio' id='RadioGroup_isanonymity_0' value='1' checked='checked' />是</label><label><input type='radio' name='RadioGroup_isanonymity' value='0' id='RadioGroup_isanonymity_1' />否</label><br /></p></td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td  align='right'><input type='button' value='建立' onclick='M_FileNew()' /><input type='button' value='取消' onclick='M_FileNew_view_cancel();' /></td></tr></table>";	
+	$.blockUI({ message: loadhtml, css: {
+		top: '30%'
+	}});	
+}
+
+function M_FileNew_view_cancel() {
+	//document.onkeydown		= EVT_KeyPress;
+	$.unblockUI();
+}
+
+// IE HTA only!!!
+function checkForSave()
+{ 
+	var checkSave=showModalDialog('YMapCheckForSave.htm','','dialogHeight:125px;dialogWidth:250px;scroll:off');
+  	return checkSave;
+}
+
+function M_FileOpen() {
+	//get current project list from ajax	
+	$.post( "update", 
+			{act: 'listPrj'},
+			function (prjList) {
+
+				// 建立讀檔畫面
+				var loadhtml = "</br><table align='center'><caption> 會議清單 </caption><tr><td>" + prjList + "</td></tr>";
+				loadhtml += "<tr><td align='center'><input type='button' value='開啟' onclick='LoadMap()')>";
+				loadhtml += "<input type = 'button' value = '取消' onclick='$.unblockUI()'></td></tr></table></br>";
+				
+				$.blockUI({ message: loadhtml, css: {
+					top: '30%'
+				}}); 
+	});
+}
+
+function LoadMap() {
+	
+	var mapid = $('#prjselect').val();
+	if( mapid != null) {
+		ajaxLoadMap(mapid);
+		dbarinit();
+		jQuery('#dropdowntoolbarcontainer').accordion("activate",-1);
+	}
+	socket.emit('set_mapid', mapid);
+}
+
+//
+function M_EnterSite() {
+
+	//get current project list from ajax
+	$.post( "update",
+			{act: 'listPrj'},
+			function (prjList) {
+
+				// 建立讀檔畫面
+				//var loadhtml = "<br/>新會議：<input type='button' value='建立' onclick='M_FileNew()')>";
+				var loadhtml = "<div style='width:100%;'><table width=100%><tr><td width=30% rowspan='2'>新會議：</td><td  width=25%>名稱：</td><td><input type='text' id='mapname' MAXLENGTH=20 style='width:100%'/></td></tr><tr><td>匿名：</td><td><p><label><input name='RadioGroup_isanonymity' type='radio' id='RadioGroup_isanonymity_0' value='1' checked='checked' />是</label><label><input type='radio' name='RadioGroup_isanonymity' value='0' id='RadioGroup_isanonymity_1' />否</label><br /></p></td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td  align='right'><input type='button' value='建立' onclick='M_FileNew()' /></td></tr></table>";
+				
+				
+				//loadhtml += "名稱：<input type='text' id='mapid'>";
+				loadhtml += "<hr></br><table align='center' width=100%><caption> 會議清單: </caption><tr><td>" + prjList + "</td></tr>";
+				loadhtml += "<tr><td align='center'><input type='button' value='開啟' onclick='LoadMap()')>";
+				loadhtml += "</td></tr></table></br></div>";
+				
+				$.blockUI({ message: loadhtml, css: {
+					top: '30%'
+				}}); 
+	});
+}
+
+
+/*
+function M_FileOpen() {
+	
+	if ( gYApp.getMapMode() == YMAP_MODE_HTA ) {
+		if ( gYApp.history.isMapModified() ) {
+			var ret = checkForSave();
+			if ( ret == null ) {
+				if ( gYApp.menu ) gYApp.menu.hideAll();
+				return;
+			}
+			if ( ret ) {
+				M_FileSave();
+			}
+		}
+				
+		cDialog.CancelError=true;
+		var xmlSTR = "";
+		try{
+			cDialog.Filter="FreeMind Files (*.mm)"
+			cDialog.ShowOpen();
+			var ForReading = 1;
+			var fso = new ActiveXObject("Scripting.FileSystemObject");
+		   	var f = fso.OpenTextFile(cDialog.filename, ForReading);
+		  	var xmlSTR = f.ReadAll();
+		  	f.close();
+		  	
+		  	gYApp.view.initMap("");
+		  	gYApp.view.tree.loadFreeMind(xmlSTR);
+		  	gYApp.view.redrawTree(true);
+		  	if ( gYApp.menu ) gYApp.menu.hideAll();
+		  	gYApp.setAttribute(YMAP_ATT_FILEPATH, cDialog.filename);
+		  	gYApp.history.clear();
+		} catch(e) {
+			var sCancel="true";
+			return sCancel;
+		}
+	} else {		
+		if ( gYApp.history.isMapModified() ) {
+			var ret = confirm("Save changes to this document?");
+			if ( ret ) {
+				M_FileSave();
+			}
+		}
+		
+		//gYApp.view.initMap("");
+				// replace xmlSTR with your mm document
+				//var xmlSTR = '<map version="0.8.0"><node CREATED="1244913838583" MODIFIED="" TEXT="Start"><node CREATED="1244913838583" MODIFIED="" POSITION="left" TEXT="Left"><node CREATED="1244913838583" MODIFIED="" TEXT="Children1"></node><node CREATED="1244913838583" MODIFIED="" COLOR="E0000ff" BACKGROUND_COLOR="#00ff00" TEXT="Children2"><edge COLOR="#00ff00" /><font NAME="SansSerif" SIZE="18" BOLD="true" /></node><node CREATED="1244913838583" MODIFIED="" TEXT="Children3"></node><node CREATED="1244913838583" MODIFIED="1244913845961" TEXT="Right"><edge COLOR="#ff0000" /><icon BUILTIN="attach" /></node></node></node></map>';
+				//gYApp.view.tree.loadFreeMind(xmlSTR);
+		
+		ajaxListProject(); //Added by JC
+		gYApp.view.redrawTree(true);
+		if ( gYApp.menu ) gYApp.menu.hideAll();
+		gYApp.history.clear();
+	}	
+}
+*/
+/*
+function M_FileOpen() {
+	getloadstate(); 
+	if(loadstate)
+	{
+		if ( gYApp.getMapMode() == YMAP_MODE_HTA ) {		
+			if ( gYApp.history.isMapModified() ) {
+				var ret = checkForSave();
+				if ( ret == null ) {
+					if ( gYApp.menu ) gYApp.menu.hideAll();
+					return;
+				}
+				if ( ret ) {
+					M_FileSave();
+				}
+			}
+			
+			cDialog.CancelError=true;
+			var xmlSTR = "";
+	   		try{
+	   			cDialog.Filter="FreeMind Files (*.mm)"
+	  			cDialog.ShowOpen();
+	   			var ForReading = 1;
+	  			var fso = new ActiveXObject("Scripting.FileSystemObject");
+	   			var f = fso.OpenTextFile(cDialog.filename, ForReading);
+	  			var xmlSTR = f.ReadAll();
+	  			f.close();
+	  			
+	  			gYApp.view.initMap("");
+	  			gYApp.view.tree.loadFreeMind(xmlSTR);
+	  			gYApp.view.redrawTree(true);
+	  			if ( gYApp.menu ) gYApp.menu.hideAll();
+	  			
+	  			gYApp.setAttribute(YMAP_ATT_FILEPATH, cDialog.filename);
+	  			gYApp.history.clear();
+			} catch(e) {
+				var sCancel="true";
+				return sCancel;
+			}
+		} else {
+			if ( gYApp.history.isMapModified() ) {
+				var ret = confirm("Save changes to this document?");
+				if ( ret ) {
+					M_FileSave();
+				}
+			}
+			gYApp.view.initMap("");
+			// replace xmlSTR with your mm document
+			//var xmlSTR = '<map version="0.8.0"><node CREATED="1244913838583" MODIFIED="" TEXT="Start"><node CREATED="1244913838583" MODIFIED="" POSITION="left" TEXT="Left"><node CREATED="1244913838583" MODIFIED="" TEXT="Children1"></node><node CREATED="1244913838583" MODIFIED="" COLOR="E0000ff" BACKGROUND_COLOR="#00ff00" TEXT="Children2"><edge COLOR="#00ff00" /><font NAME="SansSerif" SIZE="18" BOLD="true" /></node><node CREATED="1244913838583" MODIFIED="" TEXT="Children3"></node><node CREATED="1244913838583" MODIFIED="1244913845961" TEXT="Right"><edge COLOR="#ff0000" /><icon BUILTIN="attach" /></node></node></node></map>';
+			//gYApp.view.tree.loadFreeMind(xmlSTR);
+	
+			//ajaxListProject(); //Added by JC
+			gYApp.view.redrawTree(true);
+			if ( gYApp.menu ) gYApp.menu.hideAll();
+			gYApp.history.clear();
+		}
+	} else {
+		ajaxListProject();
+	}	
+}
+
+*/
+
+
+// 20120509刪除此功能 改成自動儲存
+function M_FileSave() {
+	if ( gYApp.getMapMode() == YMAP_MODE_HTA ) {
+		var filepath = gYApp.getAttribute(YMAP_ATT_FILEPATH);
+		if ( filepath == undefined || filepath == null || filepath == "" ) {
+			cDialog.CancelError=true;
+			try{
+				cDialog.Filter="FreeMind Files (*.mm)"
+				cDialog.ShowSave();
+				var fso = new ActiveXObject("Scripting.FileSystemObject");
+				var f = fso.CreateTextFile(cDialog.filename,  true);
+				var xmlSTR = gYApp.view.tree.unLoadFreeMind();
+				f.write(xmlSTR);
+				f.Close();
+				
+				if ( gYApp.menu ) gYApp.menu.hideAll();
+			} catch(e) {
+				var sCancel="true";
+				return sCancel;
+			}
+		} else {
+			try{
+				var fso = new ActiveXObject("Scripting.FileSystemObject");
+				var f = fso.CreateTextFile(filepath,  true);
+				var xmlSTR = gYApp.view.tree.unLoadFreeMind();
+				f.write(xmlSTR);
+				f.Close();
+				
+				gYApp.history.snapshot();
+				if ( gYApp.menu ) gYApp.menu.hideAll();
+			} catch(e) {
+				var sCancel="true";
+				return sCancel;
+			}
+		}
+	} else {
+		var xmlSTR = gYApp.view.tree.unLoadFreeMind();
+		ajaxSaveArray(); //added by JC
+		// save xmlSTR into your database table
+		
+		gYApp.history.snapshot();
+		if ( gYApp.menu ) gYApp.menu.hideAll();
+	}
+}
+
+function M_FileSaveAs() {
+			ajaxSaveArray(); //added by JC
+}
+
+function M_FileRevert() {
+}
+
+function M_FileClose() {
+}
+
+function M_FileExport(type) {
+}
+
+function M_FileImport(type) {
+}
+
+function M_FilePrint() {
+}
+
+function M_FileQuit() {
+}
+
+
+// Edit //////////////////////
+function M_EditUndo() {
+	alert('Undo功能暫時不開放');
+	//gYApp.history.undo();
+}
+
+function M_EditRedo() {
+	alert('Rndo功能暫時不開放');
+	gYApp.history.redo();
+}
+
+function M_EditCut() {
+	M_EditCopy(true);
+	M_EditRemoveNode();
+}
+
+function M_EditCopy(bfull) {
+	var view = gYApp.getView();
+
+	if (view.getSelectedNodeCount() < 1 ) return;
+
+	gYApp.clones.splice(0,gYApp.clones.length);;
+	for ( var i = view.getSelectedNodeCount()-1; i>=0; i-- ) {
+		var id = view.selectedNodes[i];
+		var node = view.tree.getNodeById(id);
+		if ( node == undefined || node == null ) continue;
+		view.tree.branchClone(node, gYApp.clones, bfull, 0);
+	}
+}
+
+function M_EditPaste() {
+	var view = gYApp.getView();
+	
+	if (view.getSelectedNodeCount() < 1 ) return;
+	
+	if ( gYApp.clones.length == 0 ) return;
+	
+	var arr = new Array;
+	for ( var i = view.getSelectedNodeCount()-1; i>=0; i-- ) {
+		var id = view.selectedNodes[i];
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		if ( node == undefined || node == null ) continue;
+		
+		var topNodeIDs = new Array;
+		view.tree.attachClone(node, gYApp.clones, topNodeIDs, 0, 0);
+
+		var arrTopClones = new Array;
+		for (var j=0; j<topNodeIDs.length; j++ ) {
+			arrTopClones.push(view.tree.getNodeById(topNodeIDs[j]).clone());
+		}
+		arr.push(node.clone());
+		arr.push(arrTopClones);
+	}
+	gYApp.history.push(ACT_NODE_PASTE, arr);
+	
+	gYApp.view.redrawTree(false);
+}
+
+function M_EditCopyFormat() {
+	var view = gYApp.getView();
+	
+	var node = view.getFirstSelectedNode();
+	if ( node == null ) return;
+	
+	gYApp.formatter = node.clone();
+}
+
+function M_EditPasteFormat() {
+	var view = gYApp.getView();
+	
+	if (view.getSelectedNodeCount() < 1 || gYApp.formatter == null ) return;
+	
+	for ( var i=0; i<view.selectedNodes.length; i++ ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		if ( node == undefined || node == null ) continue;
+		node.setCloneFormat(gYApp.formatter);
+		view.setNodeViewStyle(node);
+	}
+	view.redrawTree(false);
+	view.refreshSelectedNodes();
+}
+
+/*
+function M_EditEditNode(arg) {
+	var view = gYApp.getView();
+
+	if ( view.getSelectedNodeCount() == 1 ) {
+		var node = view.getLastSelectedNode();
+		if ( node == null ) {
+			return false;
+		}
+		if ( view.startNodeEdit(node, arg) ) {
+			gYApp.setStat(YMAP_STAT_NODEEDIT);
+			return true;
+		}
+	}
+	return false;
+}
+
+function _M_EditEditNodeEnd(nodeID) {
+	var view = gYApp.getView();
+
+	view.stopNodeEdit(nodeID)
+	
+	gYApp.clearStat(YMAP_STAT_NODEEDIT);
+
+	return true;
+}
+*/
+
+function M_EditEditNode(arg) {
+	var view = gYApp.getView();
+
+	var node = view.getLastSelectedNode();
+
+	if ( node == null ) {
+		return false;
+	}
+	
+	dbarinit(); // 清除dbar所有資料
+	
+	node_dbar = node;
+	M_dbarNodeInfo(node);
+	
+	return true;
+	/*
+	if ( view.startNodeEdit(node, CARET_ORG_SEL) ) {
+		gYApp.setStat(YMAP_STAT_NODEEDIT);
+		return true;
+	}
+	
+	return false;
+	*/
+}
+
+// 離開編輯時 執行這邊
+function _M_EditEditNode(res) {
+	var view = gYApp.getView();
+
+	var clone = view.stopNodeEdit(res);
+
+	if ( res && clone ) {
+		var node = view.tree.getNodeByNodeID(clone.NodeID);
+		gYApp.history.push(ACT_NODE_EDIT, [clone, view.tree.getNodeById(clone.id).clone()]);
+		updatenodecontent(node); // by JY 更新node資訊
+		socket_send_node_edit(clone.NodeID, node.text);
+	}
+	gYApp.clearStat(YMAP_STAT_NODEEDIT);
+
+	return true;;
+}
+
+function M_EditEditLongNode() {
+	var view = gYApp.getView();
+
+	var node = view.getLastSelectedNode();
+	if ( node == null ) {
+		return false;
+	}
+
+	if ( view.startLongNodeEdit(node) ) {
+		gYApp.setStat(YMAP_STAT_NODEEDIT);		
+		return true;
+	}
+	return false;
+}
+
+function _M_EditEditLongNode(res) {
+	var view = gYApp.getView();
+	
+	var clone = view.stopLongNodeEdit(res);
+	if ( res && clone ) {
+		gYApp.history.push(ACT_NODE_EDIT, [clone, view.tree.getNodeById(clone.id).clone()]);
+	}
+	
+	gYApp.clearStat(YMAP_STAT_NODEEDIT);
+
+	return true;;
+}
+
+function M_EditRemoveNode() {
+	var view = gYApp.getView();
+	var clones = view.deleteSelectedNode();
+	
+	gYApp.history.push(ACT_NODE_REMOVE, clones);
+	//socket_send_node_delete();
+	
+}
+
+// Insert ////////////////////
+function M_InsertNewChildNode() {
+	var view = gYApp.getView();
+
+	var node = view.getLastSelectedNode();
+	if ( node == null ) {
+		return false;
+	}
+	
+	var tmpNode = view.appendChildNode(node);
+	if ( tmpNode ) {
+		gYApp.history.push(ACT_NODE_INSERT_C, [tmpNode.clone()]);
+		//M_EditEditNode(CARET_ORG_SEL);
+			
+		return true;
+	}
+	return false;
+}
+
+function M_node_InsertNewChildNode() {	// local activities
+	var view = gYApp.getView();
+
+	var node = view.getLastSelectedNode();
+	if ( node == null ) {
+		return false;
+	}
+
+	//var NodeID_Send = view.getNodeByID(node.id);	
+
+	var tmpNode = view.appendChildNode(node);
+	if ( tmpNode ) {
+		gYApp.history.push(ACT_NODE_INSERT_C, [tmpNode.clone()]);
+		//M_EditEditNode(CARET_ORG_SEL);
+		socket_send_node_create(tmpNode); // socket broadcast 給被加入的node
+		return true;
+	}
+	return false;	
+}
+
+
+function M_InsertNewSiblingNode() {
+	var view = gYApp.getView();
+
+	var node = view.getLastSelectedNode();
+	if ( node == null ) {
+		return false;
+	}
+
+	var tmpNode = null;
+	if ( node.indent == 0 ) {
+		tmpNode = view.appendChildNode(node);
+	} else {
+		tmpNode = view.appendSiblingNode(node, NODE_SIB_NEXT);
+	}
+	if ( tmpNode ) {
+		gYApp.history.push((node.indent == 0)? ACT_NODE_INSERT_C:ACT_NODE_INSERT_NS, [tmpNode.clone()]);
+		M_EditEditNode(CARET_ORG_SEL);
+				
+		return true;		
+	}
+	
+	return false;
+}
+
+function M_InsertNewPreviousSiblingNode() {
+	var view = gYApp.getView();
+
+	var node = view.getLastSelectedNode();
+	if ( node == null ) {
+		return false;
+	}
+
+	var tmpNode = null;
+	if ( node.indent == 0 ) {
+		tmpNode = view.appendChildNode(node);
+	} else {
+		tmpNode = view.appendSiblingNode(node, NODE_SIB_PREV);
+	}
+	if ( tmpNode ) {
+		gYApp.history.push((node.indent == 0)? ACT_NODE_INSERT_C:ACT_NODE_INSERT_PS, [tmpNode.clone()]);
+		M_EditEditNode(CARET_ORG_SEL);
+		return true;
+	}
+	
+	return false;
+}
+
+function M_InsertNewParentNode() {
+	var view = gYApp.getView();
+
+	var node = view.getLastSelectedNode();
+	if ( node == null ) {
+		return false;
+	}
+
+	var cloneC = node.clone();
+	var tmpNode = view.appendParentNode(node);
+	if ( tmpNode ) {
+		var cloneP = tmpNode.clone();
+		gYApp.history.push(ACT_NODE_INSERT_P, [cloneP, cloneC]);
+		if ( view.startNodeEdit(tmpNode, CARET_ORG_SEL) ) {
+			gYApp.setStat(YMAP_STAT_NODEEDIT);
+		}
+		return true;
+	}
+	
+	return false;
+}
+
+function M_RemoveLastIcon() {
+	var view = gYApp.getView();
+	var arr = view.removeLastIcon();
+	
+	if ( arr ) {
+		gYApp.history.push(ACT_NODE_ICON, arr);
+	}
+}
+
+// 收到socket訊息
+function M_RemoveAllIcons(NodeID) {
+	var view = gYApp.getView();
+	var bRootSelected = false;
+	var node = view.getNodeByNodeID(NodeID);
+	
+	if ( node == undefined || node == null ) {
+		return false;
+	}
+	
+	if (node.id == 'r')
+		bRootSelected = true;
+	
+	var arr = new Array;
+		
+	var cloneB = node.clone();
+	var cnt = node.removeIcons();
+		
+	if ( cnt > 0 ) {
+		var oArea = view.getNodeViewArea(node, NODE_VIEW_ICON);
+		while (oArea.firstChild) {
+			oArea.removeChild(oArea.firstChild);
+		}
+		arr.push(cloneB);
+		arr.push(node.clone());
+	}
+	
+	if ( !bRootSelected && cnt > 0 ) {
+		view.drawNode(node, true, false);
+	}
+	
+	if ( bRootSelected && cnt > 0 ) {
+		view.drawNode(view.tree.rootNode, true, false);
+	}
+	
+	var arr = (arr.length > 0)? arr:null;
+	
+	if ( arr ) {
+		gYApp.history.push(ACT_NODE_ICON, arr);
+	}
+}
+
+function M_node_RemoveAllIcons() {
+	var view = gYApp.getView();
+	var arr = view.removeAllIcon();
+	if ( arr ) {
+		gYApp.history.push(ACT_NODE_ICON, arr);
+		socket.emit('node_iconremoveall',arr[0].NodeID); 
+	}
+}
+
+// 20120523 移除
+// 加入小圖示
+function M_InsertIcons(NodeID, name) {
+	var view = gYApp.getView();
+	var bRootSelected = false;
+	var node = view.getNodeByNodeID(NodeID);
+	
+	if ( node == undefined || node == null ) {
+		return false;
+	}
+	
+	if ( node.id == 'r') {
+		bRootSelected = true;		
+	}
+
+	var arr = new Array;
+	var cloneB = node.clone();	
+	node.appendIcon(name);
+			
+	arr.push(cloneB);
+	arr.push(node.clone());
+	
+	view.appendIconImg(node, node.getIconCount()-1);
+				
+	if ( !bRootSelected ) {
+		view.drawNode(node, true, false);
+	}
+	if ( bRootSelected ) {
+		view.drawNode(node, true, true);
+	}
+	
+	arr = (arr.length > 0)? arr:null;		
+	
+	if ( arr ) {
+		gYApp.history.push(ACT_NODE_ICON, arr);		
+	}
+	
+	
+}
+
+function M_node_InsertIcons(name) {
+	var view = gYApp.getView();
+	var arr = view.appendIcon(name);
+	if ( arr ) {
+		gYApp.history.push(ACT_NODE_ICON, arr);
+		socket.emit('node_iconadd', [arr[0].NodeID,name]);
+	}
+}
+
+function M_InsertImage() {
+	var view = gYApp.getView();
+	if ( view.startAppendImage() ) {
+		gYApp.setStat(YMAP_STAT_NODEEDIT);
+	}
+}
+
+function _M_InsertImage(res) {
+	var view = gYApp.getView();
+
+	var clone = view.stopAppendImage(res);
+	if ( res && clone ) {
+		gYApp.history.push(ACT_NODE_IMAGE, [clone, view.tree.getNodeById(clone.id).clone()]);
+	}
+	
+	gYApp.clearStat(YMAP_STAT_NODEEDIT);
+}
+
+function M_InsertHyperlink() {
+	var view = gYApp.getView();
+	if ( view.startAppendHyperlink() ) {
+		gYApp.setStat(YMAP_STAT_NODEEDIT);
+	}
+}
+
+function _M_InsertHyperlink(res) {
+	var view = gYApp.getView();
+
+	var clone = view.stopAppendHyperlink(res);
+	if ( res && clone ) {
+		gYApp.history.push(ACT_NODE_HYPERLINK, [clone, view.tree.getNodeById(clone.id).clone()]);
+	}
+	
+	gYApp.clearStat(YMAP_STAT_NODEEDIT);
+}
+
+// Format ////////////////////
+function M_FormatPhysicalStyle(arg) {
+	var view = gYApp.getView();
+
+	if (view.getSelectedNodeCount() < 1 ) return;
+	
+	var arr = new Array;
+	for ( var i=view.getSelectedNodeCount()-1; i>=0; i-- ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		
+		if ( node == undefined || node == null ) continue;
+		
+		var cloneB = node.clone();
+		
+		with (node){ color = ""; bgcolor = ""; }
+		
+		switch (arg) {
+			case "Default":
+				with (node.font){ name = "SansSerif"; size = 12; italic = ""; bold = ""; }
+				with (node.edge){ color = ""; style = ""; width = ""; }
+				node.removeIcons();
+				break;
+			case "Normal":
+				break;
+			case "OK":
+				node.color	= "338800";
+				break;
+			case "NeedsAction":
+				node.color	= "990000";
+				break;
+			case "Hot":
+				node.color	= "ff0000";
+				break;
+			case "Detail":
+				node.color	= "999999";
+				with (node.font){ name = "SansSerif"; size = 12; italic = ""; bold = ""; }
+				break;
+			case "Folder":
+				node.color	= "006699";
+				break;
+			case "Topic":
+				node.color	= "669900";
+				break;
+			case "LargerTopic":
+				node.color	= "006633";
+				break;
+			case "WatingTopic":
+				node.color	= "b3b95c";
+				break;
+			case "ObjectKeyword":
+				node.color	= "996600";
+				break;
+			case "ObjectOfCode":
+				node.color	= "cc6600";
+				break;
+			case "Question":
+				node.color	= "999900";
+				break;
+			case "OpenQuestion":
+				node.color	= "cc3300";
+				break;
+			case "Bad":
+				node.color	= "990099";
+				break;
+			case "Blue":
+				node.color	= "0033ff";
+				break;
+			case "Pink":
+				node.color	= "ff6666";
+				break;
+			case "Cyan":
+				node.color	= "009999";
+				break;
+			case "BlueWithEdges":
+				node.color	= "000099";
+				with (node.edge){ color = "009999"; width = 4; }
+				break;
+		}
+		
+		arr.push(cloneB);
+		arr.push(node.clone());
+		
+		view.setNodeViewStyle(node);
+	}
+	
+	if ( arr.length > 0 ) {
+		gYApp.history.push(ACT_NODE_FMT_PSTYLE, arr);
+	}
+	
+	view.redrawTree(false);
+	view.refreshSelectedNodes();
+}
+
+function M_FormatFontName(arg) {
+	var view = gYApp.getView();
+
+	if (view.getSelectedNodeCount() < 1 ) return;
+	
+	var arr = new Array;
+	for ( var i=view.getSelectedNodeCount()-1; i>=0; i-- ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		
+		if ( node == undefined || node == null ) continue;
+		
+		if ( node.font.name == "" ) {
+			node.font.name = NODE_FONT_NAME;
+		}
+		
+		arr.push(node.font.name);
+		node.font.name = arg;
+
+		arr.push(node.font.name);
+		arr.push(node.id);
+		
+		view.setNodeViewStyle(node);
+	}
+	
+	if ( arr.length > 0 ) {
+		gYApp.history.push(ACT_NODE_FMT_FNAME, arr);
+	}
+	
+	view.redrawTree(false);
+	view.refreshSelectedNodes();
+}
+
+function M_FormatFontSize(arg) {
+	var view = gYApp.getView();
+
+	if (view.getSelectedNodeCount() < 1 ) return;
+	
+	var arr = new Array;
+	var fsize = 0;
+	for ( var i=view.getSelectedNodeCount()-1; i>=0; i-- ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		
+		if ( node == undefined || node == null ) continue;
+		
+		fsize = (node.font.size == "")? NODE_FONT_SIZE:node.font.size;
+		
+		if ( fsize == 1 && arg == "-" ) {
+			continue;
+		}
+		
+		if ( arg == "+" ) {
+			arr.push(fsize);
+			node.font.size++;
+		} else if ( arg == "-" ) {
+			arr.push(fsize);
+			node.font.size--;
+		} else if ( arg != "" && !isNaN(arg) ) {
+			arr.push(fsize);
+			node.font.size = parseInt(arg, 10);
+		} else if ( arg == "" ) {
+			arr.push(fsize);
+			node.font.size = "";
+		} else {
+			continue;
+		}
+
+		arr.push(node.font.size);
+		arr.push(node.id);
+		
+		view.setNodeViewStyle(node);
+	}
+	
+	if ( arr.length > 0 ) {
+		gYApp.history.push(ACT_NODE_FMT_FSIZE, arr);
+	}
+	
+	view.redrawTree(false);
+	view.refreshSelectedNodes();
+}
+
+function M_FormatFontStyle(arg) {
+	var view = gYApp.getView();
+
+	if (view.getSelectedNodeCount() < 1 ) return;
+	
+	var val = "";
+	if ( arg == "bold" ) {
+		val = (view.getLastSelectedNode().font.bold == "true")? "":"true";
+	} else if ( arg == "italic" ) {
+		val = (view.getLastSelectedNode().font.italic == "true")? "":"true";
+	} else {
+		return;
+	}
+	
+	var arr = new Array;
+	for ( var i=view.getSelectedNodeCount()-1; i>=0; i-- ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		
+		if ( node == undefined || node == null ) continue;
+		
+		if ( arg == "bold" ) {
+			arr.push(node.font.bold);
+			node.font.bold = val;
+		} else if ( arg == "italic" ) {
+			arr.push(node.font.italic);
+			node.font.italic = val;
+		} else {
+			continue;
+		}
+		
+		arr.push(val);
+		arr.push(node.id);
+		
+		view.setNodeViewStyle(node);
+	}
+	
+	if ( arr.length > 1 ) {
+		gYApp.history.push((arg == "bold")? ACT_NODE_FMT_BOLD:ACT_NODE_FMT_ITALIC, arr);
+	}
+	
+	//view.redrawTree(false);
+	view.refreshSelectedNodes();
+}
+
+function M_FormatColor(arg) {
+	var view = gYApp.getView();
+
+	if (view.getSelectedNodeCount() < 1 ) return;
+	
+	if ( view.startFormatColor(arg) ) {
+		gYApp.setStat(YMAP_STAT_NODEEDIT);
+	}
+}
+
+function _M_FormatColor(res) {
+	var view = gYApp.getView();
+
+	var ret = view.stopFormatColor(res);
+	if ( ret[1].length > 0 ) {
+		if ( ret[0] == NODE_FORMAT_FGCOL ) {
+			gYApp.history.push(ACT_NODE_FMT_FGCOL, ret[1]);
+		} else if ( ret[0] == NODE_FORMAT_BGCOL ) {
+			gYApp.history.push(ACT_NODE_FMT_BGCOL, ret[1]);
+		} else if ( ret[0] == NODE_FORMAT_EGCOL ) {
+			gYApp.history.push(ACT_NODE_FMT_EGCOL, ret[1]);
+		}
+	}
+	
+	view.refreshSelectedNodes();
+
+	gYApp.clearStat(YMAP_STAT_NODEEDIT);
+}
+
+function M_FormatBlendColor() {
+	var view = gYApp.getView();
+
+	if (view.getSelectedNodeCount() < 1 ) return;
+	
+	var arr = new Array;
+	for ( var i=view.getSelectedNodeCount()-1; i>=0; i-- ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		
+		if ( node == undefined || node == null ) continue;
+		
+		arr.push(node.color);
+		node.color = F_BlendHexColor("FFFFFF", bCol = (node.color == "")? NODE_FONT_COLOR:node.color);
+		arr.push(node.color);
+		arr.push(node.id);
+		
+		view.setNodeViewStyle(node);
+	}
+	
+	if ( arr.length > 0 ) {
+		gYApp.history.push(ACT_NODE_FMT_BLCOL, arr);
+	}
+	
+	view.refreshSelectedNodes();
+}
+
+function M_RemoveNodeBGColor() {
+	var view = gYApp.getView();
+
+	if (view.getSelectedNodeCount() < 1 ) return;
+	
+	var arr = new Array;
+	for ( var i=view.getSelectedNodeCount()-1; i>=0; i-- ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		if ( node == undefined || node == null ) {
+			continue;
+		}
+		
+		arr.push(node.bgcolor);
+		node.bgcolor = NODE_VIEW_BGCOLOR;
+		arr.push(node.bgcolor);
+		arr.push(node.id);
+	}
+	
+	if ( arr.length > 0 ) {
+		gYApp.history.push(ACT_NODE_FMT_BGCOL, arr);
+	}
+}
+
+function M_FormatEdgeWidth(arg) {
+	var view = gYApp.getView();
+
+	if (view.getSelectedNodeCount() < 1 ) return;
+	
+	if ( arg != "parent" && arg != "thin" && arg != 1 && arg != 2 && arg != 4 && arg != 8 ) {
+		return;
+	}
+	
+	var arr = new Array;
+	for ( var i=view.getSelectedNodeCount()-1; i>=0; i-- ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		if ( node == undefined || node == null || node.parentNode == null ) {
+			continue;
+		}
+		
+		arr.push(node.edge.width);
+		switch(arg) {
+			case "parent":
+				node.edge.width = node.parentNode.edge.width;
+				break;
+			case "thin":
+				node.edge.width = "";
+				break;
+			case 1:
+			case 2:
+			case 4:
+			case 8:
+				node.edge.width = arg;
+				break;
+		}
+		
+		arr.push(node.edge.width);
+		arr.push(node.id);
+		
+		view.drawNodeLinker(node);
+	}
+	
+	if ( arr.length > 0 ) {
+		gYApp.history.push(ACT_NODE_FMT_EGWTH, arr);
+	}
+}
+
+// Navigate //////////////////
+function M_NavigateNodeUpDown(arg) {
+	var view = gYApp.getView();
+	var arr = view.swapSibNode( (arg == 'up')? NODE_SIB_PREV : NODE_SIB_NEXT );
+	
+	if ( arr ) {
+		gYApp.history.push(ACT_NODE_MOVE, arr);
+	}
+}
+
+function M_NavigateMoveToRoot() {
+	var view = gYApp.getView();
+	
+	view.selectNode(view.tree.rootNode, false, false);
+	view.centerPanelView();
+}
+
+function M_NavigateToggleFolded() {
+	var view = gYApp.getView();
+
+	var selCnt = view.getSelectedNodeCount();
+	var unfoldedCnt = 0;
+	var foldedCnt = 0;
+
+	if (selCnt < 1 ) return;
+	
+	var i;
+	var bCollapsed = false;
+	
+	for ( i=selCnt; i>=0; i-- ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		if ( node == undefined || node == null ) continue;
+		if ( node.childNodes.length == 0 ) continue;
+		
+		(node.folded)? foldedCnt++:unfoldedCnt++;
+	}
+	
+	if ( foldedCnt == 0 && unfoldedCnt == 0 ) {
+		return;
+	}
+	
+	bCollapsed = (unfoldedCnt > 0)? true:false;
+	
+	var arr = new Array;
+	for ( i=selCnt; i>=0; i-- ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		if ( node == undefined || node == null ||
+			node.childNodes.length == 0 || view.tree.isRootNode(node) ) continue;
+		
+		if( view.toggleNode(node, bCollapsed) ) {
+			arr.push(bCollapsed);
+			arr.push(node.id);
+		}
+	}
+	
+	if ( arr.length > 0 ) {
+		gYApp.history.push(ACT_NODE_TOGGLE, arr);
+	}
+	
+	view.redrawTree(false);
+	
+	var selectedBranchTopNodes = view.getSelectedBranchTopNodes();
+
+	view.deSelectNodes();	
+
+	for ( i=selectedBranchTopNodes.length-1; i>=0; i-- ) {
+		view.selectNode(selectedBranchTopNodes[i], true, false);
+	}
+}
+
+function M_NavigateToggleChildren() {
+	var view = gYApp.getView();
+
+	var selCnt = view.getSelectedNodeCount();
+
+	if (selCnt < 1 ) return;
+	
+	var i,j;
+	var affectedNodeCnt = 0;
+	
+	var selectedBranchTopNodes = view.getSelectedBranchTopNodes();
+	
+	var arr = new Array;
+	for ( i=selectedBranchTopNodes.length-1; i>=0; i-- ) {
+		var node = view.tree.getNodeById(selectedBranchTopNodes[i]);
+		
+		if ( node == undefined || node == null || node.childNodes.length == 0 ) continue;
+		
+		var unfoldedCnt = 0;
+		var foldedCnt = 0;
+		var bCollapsed = false;
+		
+		for ( j=node.childNodes.length -1; j>=0; j-- ) {
+			var cnode = view.tree.getNodeById(node.childNodes[j]);
+			if ( cnode == undefined || cnode == null ||
+				cnode.childNodes.length == 0 ) continue;
+			
+			(cnode.folded)? foldedCnt++:unfoldedCnt++;
+		}
+		
+		if ( foldedCnt == 0 && unfoldedCnt == 0 ) {
+			continue;
+		}
+		
+		bCollapsed = (unfoldedCnt > 0)? true:false;
+		
+		for ( j=node.childNodes.length -1; j>=0; j-- ) {
+			var cnode = view.tree.getNodeById(node.childNodes[j]);
+			if ( cnode == undefined || cnode == null || 
+				cnode.childNodes.length == 0 ) continue;
+			
+			affectedNodeCnt++;
+			if ( view.toggleNode(cnode, bCollapsed) ) {
+				arr.push(bCollapsed);
+				arr.push(cnode.id);
+			}
+		}
+	}
+	
+	if ( affectedNodeCnt == 0 ) {
+		return;
+	}
+	
+	if ( arr.length > 0 ) {
+		gYApp.history.push(ACT_NODE_TOGGLE, arr);
+	}
+	
+	view.redrawTree(false);
+	view.deSelectNodes();
+
+	for ( i=selectedBranchTopNodes.length-1; i>=0; i-- ) {
+		view.selectNode(selectedBranchTopNodes[i], true, false);
+	}
+}
+
+function M_NavigateToggleAll(arg) {
+	var view = gYApp.getView();
+	
+	var selCnt = view.getSelectedNodeCount();
+
+	if (selCnt < 1 ) return;
+	
+	var i;
+	var affectedNodeCnt = 0;
+	
+	var selectedBranchTopNodes = view.getSelectedBranchTopNodes();
+	var affectedNodes = new Array;
+	var bRootNodeSelected = view.isSelectedNode(view.tree.rootNode);
+	
+	if ( bRootNodeSelected ) {
+		for ( i=view.tree.rootNode.childNodes.length-1; i>=0; i-- ) {
+			var node = view.tree.getNodeById(view.tree.rootNode.childNodes[i]);
+
+			if ( node == undefined || node == null || node.childNodes.length == 0 ) continue;
+			
+			view.tree.toggleChildren(node, arg, affectedNodes);
+			if ( node.folded != arg ) affectedNodes.push(node.id);
+		}
+	} else {
+		for ( i=selectedBranchTopNodes.length-1; i>=0; i-- ) {
+			var node = view.tree.getNodeById(selectedBranchTopNodes[i]);
+			
+			if ( node == undefined || node == null || node.childNodes.length == 0 ) continue;
+			
+			view.tree.toggleChildren(node, arg, affectedNodes);
+			if ( node.folded != arg ) affectedNodes.push(node.id);
+		}
+	}
+
+	if ( affectedNodes.length == 0 ) {
+		return;
+	}
+
+	var arr = new Array;
+	for ( i=0; i<affectedNodes.length; i++ ) {
+		var tmpNode = view.tree.getNodeById(affectedNodes[i]);
+		view.toggleNode(tmpNode, arg);
+
+		arr.push(arg);
+		arr.push(affectedNodes[i]);
+	}
+	gYApp.history.push(ACT_NODE_TOGGLE, arr);
+	
+	view.redrawTree(false);
+	view.deSelectNodes();
+	
+	for ( i=selectedBranchTopNodes.length-1; i>=0; i-- ) {
+		view.selectNode(selectedBranchTopNodes[i], true, false);
+	}
+	
+	if ( bRootNodeSelected ) {
+		view.selectNode(view.tree.rootNode, true, false);
+	}
+	
+}
+
+// Tool //////////////////////
+function M_ToolJoin() {
+	var view = gYApp.getView();
+	
+	var selCnt = view.getSelectedNodeCount();
+	
+	if ( selCnt < 2 ) return;
+	
+	var arr = new Array;
+	
+	var tnode = gYApp.view.getLastSelectedNode();
+	
+	arr.push(tnode.clone());
+	for ( var i=0;i<selCnt; i++ ) {
+		var node = view.tree.getNodeById(view.selectedNodes[i]);
+		if ( node == undefined || node == null || node.childNodes.length > 0 ) {
+			alert("Cannot join nodes with children");
+			if ( gYApp.menu ) gYApp.menu.hideAll();
+			return false;
+		}
+		
+		if ( tnode.id == node.id ) {
+			continue;
+		}
+		
+		tnode.text += "\n" + node.text;
+		
+		arr.push(node.clone());
+		gYApp.view.deleteNode(node);
+	}
+	
+	gYApp.history.push(ACT_NODE_JOIN, arr);
+	
+	gYApp.view.setNodeViewText(tnode);
+	gYApp.view.redrawTree(false);
+	
+}
+
+// 離開操作node時 資訊更新到DB中
+function updatenodecontent(node) {
+	var view = gYApp.getView();		
+	var ParentNodeID = (node.parentNode==undefined)?0:node.parentNode.NodeID; // undefined 表示為 root	
+
+	$.post( "update", 
+		{NodeID: node.NodeID, act:'node_edit', Content:node.text, ParentNodeID:ParentNodeID, Modified:node.modified, Position:node.pos},
+		function (res) {
+	});
+}
+
+// 把tid設為sid's parentNodeID 並儲存新位置(左/右)
+function updatenodeposition(tid, sid, newpos) {
+
+/*	$.post( "update", 
+		{act:'node_drag', tid:tid, sid:sid, pos:newpos},
+		function (res) {
+	});	
+*/
+	$.ajax({
+		async: false,
+		url: 'update',
+		type: 'POST',
+		dataType: 'text',
+		data: {act:'node_drag', tid:tid, sid:sid, pos:newpos},
+		error: function(res){
+			alert('DB Error');
+			return false;
+		},
+		success: function(res){
+			return true;
+		}
+	});	
+
+
+	
+	//updatenodeposition(tnode.NodeID, snode.NodeID);
+}
+
+function M_Quit() {
+	window.location = '/logout';
+}
+
+function M_dbarNodeInfo(node) {
+	if (node == null) return;
+
+	if ($('#dropdowntoolbar_NodeEdit').is(':hidden')) {  // 跳出node編輯視窗
+		//$('#dropdowntoolbar_NodeEdit').show('normal');
+		var accordions = jQuery('#dropdowntoolbarcontainer');
+		accordions.accordion("activate", 0);		
+	}
+	node_dbar = node;
+	M_LoadNodeInfo(node);
+	M_LoadNodeDiscusstion (node.NodeID); // 將node的討論串連帶讀取
+	getfilelist(); // 將檔案清單連帶讀取
+//Node_Content Node_Created Node_Modified Node_Creater Node_Modifier Node_MapID	
+}
+
+function M_LoadNodeInfo(node) {
+	if (node == null ) return ;
+
+	$.ajax({
+		//async: false,
+		url: 'update',
+		type: 'POST',
+		dataType: 'text',
+		data: {act:'loadnodeinfo', NodeID: node.NodeID},
+		error: function(res){
+			alert('Connection Error');
+			return false;
+		},
+		success: function(res){
+			var nodeinfo = JSON.parse(res);			
+			$('#Node_Content').attr('value',nodeinfo.Content);
+			$('#Node_Created').text(dataformat(nodeinfo.Created));
+			$('#Node_Modified').text(dataformat(nodeinfo.Modified));
+			$('#Node_Creater').text(nodeinfo.CreaterName);
+			$('#Node_Modifier').text(nodeinfo.ModifierName);
+			return true;
+		}
+	});
+}
+
+
+function dataformat (ms)
+{
+	var date = new Date(ms);
+	var year = date.getYear() + 1900;
+	var seperator = "-";
+	var month = date.getMonth()+1;
+	var strDate = date.getDate();
+	var strHour = date.getHours();
+	var strMinutes = date.getMinutes();
+	var strSeconds = date.getSeconds();
+	
+	if(month>=1 && month<=9) {
+		month = "0"+month;
+	}
+	if(strDate>=0&& strDate<=9)	{
+		strDate = "0"+ strDate;
+	}
+	if(strHour>=0 && strHour<=9) {
+		strHour = '0' + strHour;
+	}
+	if(strMinutes>=0 && strMinutes<=9) {
+		strMinutes = '0' + strMinutes;
+	}
+	if(strSeconds>=0 && strSeconds<=9) {
+		strSeconds = '0' + strSeconds;
+	}
+	
+	 return year+seperator+month+seperator+strDate+' '+strHour+':'+strMinutes+':'+strSeconds;
+}
+
+var tmpnodecontent; // 用來暫存目前node content 
+function dbarNodeEdit() {
+	if (node_dbar == null || node_dbar == undefined)
+		return false;
+		
+	if( $('#dbar_Node_edit').val() == "編輯") {
+		// 判斷目前是否屬於lock狀態
+		
+		$.ajax({
+			async: false,
+			url: 'update',
+			type: 'POST',
+			dataType: 'text',
+			data: {act:'node_islock', NodeID:node_dbar.NodeID},
+			error: function(res){
+				alert('DB Error');
+				return false;
+			},
+			success: function(res){
+				if (res == 'true') {
+					alert('有人正在編輯中 請耐心等候');
+				} else {
+					tmpnodecontent = $('#Node_Content').val();
+					$('#Node_Content').attr('disabled',false).focus();
+					$('#dbar_Node_edit').attr('value', '取消');
+					document.getElementById("dbar_Node_update").style.display="inline";
+					return true;
+				}				
+			}
+		});	
+	
+	} else if( $('#dbar_Node_edit').val() == "取消") {
+		
+		// 設回unlock 讓其他人可進行編輯
+		$.ajax({
+			async: false,
+			url: 'update',
+			type: 'POST',
+			dataType: 'text',
+			data: {act:'node_unlock', NodeID:node_dbar.NodeID},
+			error: function(res){
+				alert('DB Error');
+				return false;
+			},
+			success: function(res){				
+				$('#Node_Content').val(tmpnodecontent);
+				$('#Node_Content').attr('disabled',"block");
+				$('#dbar_Node_edit').attr('value', '編輯');
+				document.getElementById("dbar_Node_update").style.display="none";
+			}
+		});
+	}
+}
+
+function dbarNodeUpdate() {
+	if (node_dbar == null || node_dbar == undefined)
+		return false;
+
+	var view = gYApp.getView();	
+	var curDateTime	= new Date();
+	node_dbar.modified = curDateTime.getTime();
+	node_dbar.text = $('#Node_Content').val();
+	updatenodecontent(node_dbar);
+	socket_send_node_edit(node_dbar.NodeID, node_dbar.text);
+	$('#Node_Content').attr('disabled',true);
+	document.getElementById("dbar_Node_update").style.display="none";
+	$('#dbar_Node_edit').attr('value', '編輯');
+	
+	view.drawNode(node_dbar, true, true);	
+	M_LoadNodeInfo(node_dbar); // 更新dropdown的node資訊
+	
+	return true;;
+	
+}
+
+function dbarinit() {
+	node_dbar = null;
+	$('#Node_Content').attr('value','');
+	$('#Node_Content').attr('disabled',true);
+	$('#dbar_Node_edit').attr('value', '編輯');	
+	document.getElementById("dbar_Node_update").style.display="none";
+	$('#Node_Created').text('');
+	$('#Node_Modified').text('');
+	$('#Node_Creater').text('');
+	$('#Node_Modifier').text('');
+	//$('#discusstion').text('');
+	$('#discusstion').empty();
+	editor.html('');	
+	$('#filelist').text('');
+	getfilelist();
+	$('#loglist').text('');
+}
+
+// 因為圖片加入後 位子都會噴掉 所以加上這段  原是M_NavigateToggleAll的內容
+function M_icon() {
+	jQuery('#dropdowntoolbarcontainer').accordion("activate",-1);
+	//var view = gYApp.getView();
+	//view.redrawTree(false);
+}
+
+function geticonfromoImg (oImg) {
+	if (oImg == null || oImg == undefined)
+		return;
+	var src = oImg.src;  //  src = http://xxxx.xxxx.xxxx/ooo/aaa.gif
+	arr = src.split('/');  // arr[arr.length-1] = aaa.gif
+	var arr2 = arr[arr.length-1].split('.'); // arr2[0] = aaa
+	return arr2[0];	
+}
+
+function geticonsfromnode(node) {
+	var view = gYApp.getView();
+	var nodeview = view.getNodeView(node);
+	alert(nodeview.rows[0].cells[0]);
+} 
+
+function nodediscusstionsubmit() {
+	if (node_dbar == null || node_dbar == undefined)
+		return false;
+	
+	var html = "<p>" + editor.html() + "</p>";
+	var msgdata = editor.html();
+	editor.html('');
+	var nowtime = new Date();
+	var posttime = nowtime.getTime();
+	var strtime = nowtime.getFullYear() + "-" + nowtime.getMonth() + "-" + nowtime.getDate() + " " + nowtime.getHours() + ":"+ nowtime.getMinutes() + ":" + nowtime.getSeconds();
+	
+	
+	html += "<div style='text-align:right'><font size='1'>由 我 於 " + strtime + " 發表</font></div><hr>";
+	$('#discusstion').append(html);
+	$('#nodediscusstion').scrollTop(+1000); // 自動下捲
+
+	$.post( "update", 
+		{act: 'discusstion_save', NodeID:node_dbar.NodeID, Content:msgdata,posttime:posttime},
+		function (res) {
+
+	});
+	
+	socket.emit('nodediscuss', [node_dbar.NodeID,msgdata,posttime]);  // NodeID 討論內容本文 跟時間
+}
+function nodediscusstionclear() {
+	editor.html('');
+}
+
+function M_Nodediscusstion() {
+	var view = gYApp.getView();
+	var node = view.getLastSelectedNode();
+
+	if ( node == null ) {
+		return false;
+	}
+	
+	dbarinit();
+	node_dbar = node;
+	
+	M_LoadNodeDiscusstion(node.NodeID);
+	M_LoadNodeInfo(node); // 將node資訊連帶讀取
+	getfilelist(); // 將檔案清單連帶讀取
+	if ($('#dropdowntoolbar_NodeDiscusstion').is(':hidden')) {  // 跳出node編輯視窗
+		//$('#dropdowntoolbar_NodeEdit').show('normal');
+		var accordions = jQuery('#dropdowntoolbarcontainer');
+		accordions.accordion("activate", 1);
+	}
+
+	return true;
+}
+
+function M_LoadNodeDiscusstion (NodeID) {
+	
+	$.ajax({
+		//async: false,
+		url: 'update',
+		type: 'POST',
+		dataType: 'text',
+		data: {act:'discusstion_load', NodeID:NodeID},
+		error: function(res){
+			alert('DB Error');
+			return false;
+		},
+		success: function(res){
+			var objnodediscusstion = JSON.parse(res);
+			// objnodediscusstion.length 表示有五筆資料 
+			var html = '';
+			for( var i=0; i<objnodediscusstion.length; i++) {
+				html += "<p>" +  objnodediscusstion[i]['Content'] + "</p>";  // 內容
+				html += "<div style='text-align:right'><font size='1'>由 " + objnodediscusstion[i]['Poster'] + " 於 " + timeformat(objnodediscusstion[i]['Time']) + " 發表</font></div><hr>";
+			}
+			$('#discusstion').append(html);
+			return true;
+		}
+	});
+}
+
+function timeformat (ms) {
+	var date = new Date(ms);
+	var year = date.getYear() + 1900;
+	var seperator = "-";
+	var month = date.getMonth()+1;
+	var strDate = date.getDate();
+	var strHour = date.getHours();
+	var strMin = date.getMinutes();
+	var strSec = date.getSeconds();
+	
+	if(month>=1 && month<=9)
+	{
+		month = "0"+month;
+	}
+	if(strDate>=0&& strDate<=9)
+	{
+		strDate = "0"+ strDate;
+	}
+	 return year+seperator+month+seperator+strDate+" "+strHour+":"+strMin+":"+strSec;
+}
+
+function socket_get_node_discuss(data) {
+	if (node_dbar != null || node_dbar != undefined)
+	{
+		var NodeID = data[0];
+		var msgdata = data[1];
+		var posttime = data[2];
+		var poster = data[3];
+		
+		if (node_dbar.NodeID == NodeID) // 如果正在觀看此node的討論資訊時  才會更新內容
+		{		
+			var html = msgdata + "<div style='text-align:right'><font size='1'>由 " + poster + "於 " + timeformat(posttime) + " 發表</font></div><hr>";
+			$('#discusstion').append(html);
+			$('#nodediscusstion').scrollTop(+1000); // 自動下捲
+		}
+	}
+}
+
+function fileupload() {
+	//alert($('#thumbnail').attr('title'));
+	
+	var type;
+	var NodeID;
+
+	type = $('#filetypeselect').val();
+	
+	if (node_dbar == null || node_dbar == undefined) 
+	{
+		if (type == "node")
+		{
+			$('#fileuploadstate').text('請先選擇節點');
+			return false;
+		}
+	}
+
+	$('#fileuploadstate').text('uploading...');
+
+	if (type == "node") NodeID = node_dbar.NodeID;
+	else if (type == "map") NodeID = 0;
+	
+
+	$.ajax({
+			//async: false,
+			url: 'update',
+			type: 'POST',
+			dataType: 'text',
+			data: {act:'setnodeid', NodeID:NodeID},
+			error: function(res){
+				alert('DB Error');
+				return false;
+			},
+			success: function(res){
+				
+			    $('#thumbnail').upload('/upload', function(res) {
+			    	$('#fileuploadstate').text(res);
+			    	getfilelist(); // 重讀檔案清單
+			    	socket.emit('renewfilelist');
+					//alert('File uploaded');
+					//$(res).insertAfter('#thumbnail');
+				}, 'html');
+				//$('#fileuploadform').submit();
+			}
+		});
+
+
+
+	
+	
+
+}
+
+function M_getfilelist() {
+	var view = gYApp.getView();
+	var node = view.getLastSelectedNode();
+	
+	if( node == null || node == undefined) return false;
+	
+	dbarinit();
+	node_dbar = node;
+	getfilelist();
+	
+	M_LoadNodeDiscusstion(node.NodeID); // 將討論串連帶讀取
+	M_LoadNodeInfo(node); // 將node資訊連帶讀取
+	if ($('#dropdowntoolbar_NodeFiles').is(':hidden')) {  // 跳出node編輯視窗
+		//$('#dropdowntoolbar_NodeEdit').show('normal');
+		var accordions = jQuery('#dropdowntoolbarcontainer');
+		accordions.accordion("activate", 2);
+	}
+	
+	
+}
+
+function getfilelist() {
+	var type = $('#filetypeselect').val();	
+	
+	if(type == "map")
+	{
+		$.ajax({
+			//async: false,
+			url: 'update',
+			type: 'POST',
+			dataType: 'text',
+			data: {act:'getfilelist_map'},
+			error: function(res){
+				alert('DB Error');
+				return false;
+			},
+			success: function(res){
+				res = JSON.parse(res);
+				
+				var html = "<table style='font-size:12'><tr><td>瀏覽</td><td>刪除</td><td>檔案名稱</td><td>上傳者</td><td>上傳時間</td></tr>";
+	
+				for ( var i=0; i<res.length; i++)
+				{				
+					//filedelete(arrfilename);   
+					//html += "<div style='text-align:left'> <input type='button' onclick='fileopen(" + res[i].toString() + ")' value='瀏覽'/> <font size='2'>檔案名稱： " + res[i] + " </font></div>";
+					html += "<tr><td><a href='/files?filename=" + res[i]['filename'].toString() + "' target='_blank'><img src='/ui/btn_find.gif'></a></td>";				
+					html += "<td><a onclick=\"filedelete(" + res[i]['no'] + ");\"><img src='/ui/btn_x.gif'></a></td>";
+					html += "<td>" + res[i]['filename'] + "</td>";
+					html += "<td>" + res[i]['poster'] + "</td>";
+					html += "<td>" + timeformat(res[i]['time']) + "</td></tr>";
+				}
+				//"onclick=\"" + onClick + ";\" " +
+				
+				html += "</table>";
+				$('#filelist').text(''); // 清空檔案清單
+				$('#filelist').append(html);
+				return true;
+				
+			}
+		});
+	} else if (type == "node") 
+	{
+		if (node_dbar == null || node_dbar == undefined) 
+			$('#filelist').text(''); // 清空檔案清單
+		else {
+			$.ajax({
+				//async: false,
+				url: 'update',
+				type: 'POST',
+				dataType: 'text',
+				data: {act:'getfilelist_node',NodeID:node_dbar.NodeID},
+				error: function(res){
+					alert('DB Error');
+					return false;
+				},
+				success: function(res){
+					res = JSON.parse(res);
+					
+					var html = "<table style='font-size:12'><tr><td>瀏覽</td><td>刪除</td><td>檔案名稱</td><td>上傳者</td><td>上傳時間</td></tr>";
+		
+					for ( var i=0; i<res.length; i++)
+					{
+						//filedelete(arrfilename);   
+						//html += "<div style='text-align:left'> <input type='button' onclick='fileopen(" + res[i].toString() + ")' value='瀏覽'/> <font size='2'>檔案名稱： " + res[i] + " </font></div>";
+						html += "<div style='text-align:left'><tr><td><a href='/files?filename=" + res[i]['filename'].toString() + "' target='_blank'><img src='/ui/btn_find.gif'></a></td>";				
+						html += "<td><a onclick=\"filedelete(" + res[i]['no'] + ");\"><img src='/ui/btn_x.gif'></a></td>";
+						html += "<td>" + res[i]['filename'] + "</td>";
+						html += "<td>" + res[i]['poster'] + "</td>";
+						html += "<td>" + timeformat(res[i]['time']) + "</td>";
+					}
+					//"onclick=\"" + onClick + ";\" " +
+					
+					html += "</table>";
+					$('#filelist').text(''); // 清空檔案清單
+					$('#filelist').append(html);
+					return true;					
+				}
+			});
+		}
+	}
+	
+	
+}
+
+function filedelete(fileno) {
+	$.ajax({
+		//async: false,
+		url: 'update',
+		type: 'POST',
+		dataType: 'text',
+		data: {act:'delfile',no:fileno},
+		error: function(res){
+			alert('DB Error');
+			return false;
+		},
+		success: function(res){
+			getfilelist();
+			$('#fileuploadstate').text('delete success');
+			socket.emit('renewfilelist');
+			return true;
+		}
+	});
+}
+
+function M_logplay() {
+	window.open('/play','Log Play','height=600,width=600');
+}
+
+
+function updatmessage_public(data) {  // 得到 msg prjID uname
+	var html = '';
+	html = data[2] + '\t\t\t:\t\t\t' + data[0] + '<br/>';
+	$('#lines').append(html);
+	$('#messages').scrollTop(+1000);
+}
+
+function updatmessage_private(data) {   // data = [session.uname+'[私信]',msg,prjID]
+	if ($('#chatroommessagecontainer').is(':hidden')) {
+		$('#chatroommessagecontainer').show('normal');
+	}
+	
+	var html = '';
+	html = data[0] + '\t\t\t:\t\t\t' + data[1] + '<br/>';
+	$('#lines').append(html);
+	$('#messages').scrollTop(+1000);
+}
+
+function updatmessage_error(data) { // data = [to_uname,msg]
+	var html = '';
+	html = '發送給 ' + data[0] + ' 的訊息失敗 (' + data[1] + ')<br/>';
+	$('#lines').append(html);
+	$('#messages').scrollTop(+1000);
+}
+	
+function onconnecting() {
+	if(isconnect) return;
+	$.blockUI({ message: '<h3><img src="ui/busy.gif" /> Server connecting...</h3>' });
+}
+
+// 送出聊天訊息
+function sendmessage() {
+	var msgdata = $('#message').val();
+	//alert(msg);
+
+	if (msgdata.substring(0,1) == '@') // 表示這是私人訊息
+	{
+		var arr = msgdata.split(' ');
+		var to_uname = arr[0].substring(1); // 接收者的uname
+		$('#message').val( arr[0] + ' '); // 清除送出內容
+		
+		var msg = ''; // 去除掉 @xxx 後的訊息內容
+		for( var i=1; i<arr.length; i++)
+		{
+			msg += arr[i] + ' ';
+		}
+		
+		$('#lines').append('to ' + to_uname + '\t\t\t:\t\t\t' + msg + '<br/>');
+		socket.emit('privatemessage', [to_uname,msg,prjID]);
+		
+	} else {
+		$('#message').val(""); // 清除送出內容
+		$('#lines').append('我\t\t\t:\t\t\t' + msgdata + '<br/>');
+		socket.emit('publicmessage', [msgdata,prjID]);
+	}
+	
+	$('#messages').scrollTop(+1000); // 自動下捲	
+	$('#message').focus();
+}
+
+function socket_send_node_create(node) {
+  	socket.emit('node_create', [node.NodeID,node.MapID,node.parentNode.NodeID,node.text,node.created,node.pos]); // 
+}
+	
+// 收到node_create訊息所要進行的動作 data包含了新增節點的資訊 依序為 NodeID,MapID,ParentNodeID,Content,Created,Position
+function socket_get_node_create(data) {
+	var NodeID = parseInt(data[0]),
+		MapID = parseInt(data[1]),
+		ParentNodeID = parseInt(data[2]),
+		Content = data[3],
+		Created = parseInt(data[4]),
+		Position = parseInt('0' + data[5],10);	
+
+	var view = gYApp.getView();
+
+	var pnode = view.getNodeByNodeID(ParentNodeID); // 先抓到parent node
+	var cnode = view.createNode(pnode, Content, Position, MapID, NodeID);
+
+	if ( pnode == null ) {
+		return false;
+	}
+	
+	var isappend = view.appendChildNode_fromsocket(pnode,cnode);
+	if ( isappend ) {
+		gYApp.history.push(ACT_NODE_INSERT_C, [cnode.clone()]);
+		//M_EditEditNode(CARET_ORG_SEL);
+		return true;
+	}
+	return false;
+}
+
+function socket_send_node_edit(nodeid, content) {
+	socket.emit('node_edit', [nodeid,content]);
+}
+
+function socket_get_node_edit(data) {
+	var NodeID = parseInt(data[0]),
+		Content = data[1];
+
+	var view = gYApp.getView();
+	var node = view.tree.getNodeByNodeID(NodeID);
+	
+	if (node)
+	{
+		node.text = Content;
+		view.setNodeViewText(node, view.getNodeView(node));
+		
+		if ( node.isLongNode() ) {
+			view.redrawTree(false);
+		} else {
+			view.drawNode(node, true, false);
+		}
+		
+		if (node_dbar != undefined && node_dbar != null && node_dbar.NodeID == NodeID) { // 讓dropdownbar的node資訊可以同步更新
+			M_LoadNodeInfo(node);
+		}
+	}
+}
+
+function socket_send_node_delete(arrnodeids) {
+  	socket.emit('node_delete', arrnodeids); 
+}
+
+function socket_get_node_delete(arrnodeids) {
+	//alert('delete' + arrnodeids);
+	var arr = new Array;
+	var view = gYApp.getView();
+	for ( var i=0; i<arrnodeids.length; i++ ) {
+		var node = view.tree.getNodeByNodeID(arrnodeids[i]);
+		if( node != undefined)
+		{
+			var clone = node.clone();
+			if ( view.deleteNode(node) ) {
+				arr.push(clone);
+			}
+		}
+	}
+
+	view.selectedNodes.splice(0,view.selectedNodes.length);
+	if ( arr.length > 0 ) {
+		view.redrawTree(false);
+	}
+	
+	gYApp.history.push(ACT_NODE_REMOVE, arr);
+}
+
+function showonline(n) {
+	var html = '';
+	n.forEach(function(v){
+		//html += '<div style="border:1px solid #cccccc;" onclick="private_message(\'' + v + '\')">' + v + '</div>';		
+		html += '<div style="border:1px solid #cccccc;"><input type="text" style="border:0px;TEXT-ALIGN:center;" size="5" onclick="private_message(\'' + v + '\')" value="' + v + '" readonly="readonly"><img src="/ui/webcam.gif" onclick="vediochat(\'' + v + '\')"></div>';
+	});
+	$('#onlinelist').html(html);
+	//$('onlinelistcontrol').("線上人員 ( ++ )");
+	$('#onlinepeople').text('線上人員 ( ' + n.length + ' )');
+}
+
+function socket_get_node_iconadd(data) { // 得到[NodeID,icon]
+	//M_InsertIcons(data[0],data[1]);
+	//socket_get_node_iconadd(data[0],data[1]);
+	//alert(data);
+		
+	var NodeID = data[0];
+	var name = data[1];
+	var view = gYApp.getView();
+	var bRootSelected = false;
+	var node = view.getNodeByNodeID(NodeID);
+	
+	if ( node == undefined || node == null ) {
+		return false;
+	}
+	
+	if ( node.id == 'r') {
+		bRootSelected = true;		
+	}
+
+	var arr = new Array;
+	var cloneB = node.clone();	
+	node.appendIcon(name);
+			
+	arr.push(cloneB);
+	arr.push(node.clone());
+	
+	view.appendIconImg(node, node.getIconCount()-1);
+				
+	if ( !bRootSelected ) {
+		view.drawNode(node, true, false);
+	}
+	if ( bRootSelected ) {
+		view.drawNode(node, true, true);
+	}
+	
+	arr = (arr.length > 0)? arr:null;		
+	
+	if ( arr ) {
+		gYApp.history.push(ACT_NODE_ICON, arr);		
+	}
+		
+	
+	
+}
+
+function socket_get_node_iconremove(data) { // data = NodeID,icon
+	//alert('');
+	/*
+	var NodeID = parseInt(data[0]);
+	var icon = data[1];
+	var view = gYApp.getView();
+	var node = view.getNodeByNodeID(NodeID);
+	if ( node == undefined || node == null ) return null;
+			
+	var arricons = geticonsfromnode(node); // jy
+	
+	var oView = view.getNodeView(node);
+	var oArea = view.getNodeViewArea(node, NODE_VIEW_ICON, oView);
+	var iconIdx = 0; // 設定該icon前方有幾個icon 預設0	
+
+	// find image index from node position
+	var tmpImg = oImg.previousSibling;
+	while ( tmpImg ) {
+		tmpImg = tmpImg.previousSibling;
+		iconIdx++; // 去找前方有幾個icon
+	}
+
+	var cloneB = node.clone();
+	node.removeIcon(iconIdx);
+	oArea.removeChild(oImg);
+	
+	if ( node.pos == NODE_POS_LEFT ) {
+		var pView = view.getNodeView(node.parentNode);
+		oView.style.left = pView.offsetLeft - oView.offsetWidth - NODE_VIEW_HGAP + "px";
+	}				
+	view.drawNode(node, true, false);
+					
+	var arr = [cloneB, node.clone()];	
+	
+	if ( arr ) {
+		gYApp.history.push(ACT_NODE_ICON, arr);
+	}
+	
+	return false;	
+	*/
+}
+
+function socket_get_node_iconremoveall(data) { // data = nodeid
+	M_RemoveAllIcons(parseInt(data));
+}
+
+//////////////////
+//  http://api.jquery.com/attr/
+function private_message(uname) { // 要跟uname的人聊天	
+	
+	if ($('#chatroommessagecontainer').is(':hidden')) {
+		$('#chatroommessagecontainer').show();
+	}
+
+	$('#message').focus();
+	$('#message').val('@' + uname + ' ');	
+
+	/*
+	// 動態創建div 跳出個別交談視窗 
+	var divname = "chatprivatecontainer_" + uname;
+	var div = document.createElement('div');
+
+	$('div').attr("id", divname);
+	$(divname).attr('html','ooxx');
+	$('#chatcontrolbar').append($(divname));
+	*/
+}
+
+//////////////
+function dropdowntoolbar_nodeedittitleview() {
+	$('#dropdowntoolbar_nodeeditcontainer_content').slideToggle('normal');
+	$('#dropdowntoolbar_nodeeditcontainer_title').toggleClass('');
+	return false;	
+}
+
+function dropdowntoolbar_discusstiontitleview() {
+	
+	$('#dropdowntoolbar_discusstioncontainer_content').slideToggle('normal');
+	$('#dropdowntoolbar_discusstioncontainer_title').toggleClass('');
+	return false;	
+}
+
+function onlinelistview()
+{
+	//alert('here');
+	$('#onlinelist').slideToggle('normal');	
+	$('#onlinelistcontrol').toggleClass('');
+	return false;
+}
+
+function chatroomview()
+{
+	$('#chatroommessagecontainer').slideToggle('normal');
+	$('#chatroomcontrol').toggleClass('');
+	return false;
+}
+
+function socket_send_node_drag(tNodeID, sNodeID, dragpos) {
+	socket.emit('node_drag', [tNodeID, sNodeID, dragpos]);
+}
+
+function socket_get_node_drag(data) {	
+	var tNodeID = parseInt(data[0]),
+		sNodeID = parseInt(data[1]),
+		dragpos = parseInt(data[2]);
+		
+	var view = gYApp.getView();
+	var tnode = view.getNodeByNodeID(tNodeID),
+		snode = view.getNodeByNodeID(sNodeID);
+	
+	if ( tnode ) { //表示在同一map下操作			
+			//var mousePos = F_GetMouseCoords(evt);
+			//var oView = view.getNodeView(tnode);
+			//var oPos = F_GetPosition(oView);
+			var cloneB = snode.clone();			
+			var bAttached = false;
+			
+			if ( tnode.indent == 0 ) { // 當有node被加入到跟節點下方時
+				bAttached = view.tree.attachToNode(tnode, snode, dragpos);
+			} else {
+				if ( gYApp.dragPos == NODE_POS_UP ) { // 當某一節點 拖到某一節點上方時 其順序會改變至該節點的前面 (非變成parent)
+					bAttached = view.tree.attachToNode(tnode, snode, tnode.pos, true);
+				} else { // 當有節點加入到非根節點的下方時
+					bAttached = view.tree.attachToNode(tnode, snode, tnode.pos);
+				}
+			}
+
+			
+			if ( bAttached ) { // 如果node有被拖曳成功過
+				//updatenodeposition(tnode.NodeID, snode.NodeID, snode.pos); // 去DB更新資訊 (假設DB均操作成功的話 目前不處理ERROR)
+				//socket_send_node_drag(tnode.NodeID, snode.NodeID); // socket廣播 遠端同步
+				if ( tnode.folded ) { // 如果拖曳到一個已經folded的節點上 會加入到該node後面 並將該node展開
+					view.toggleNode(tnode);
+				}
+				view.redrawTree(false);
+				
+				var cloneA = snode.clone();
+				gYApp.history.push(ACT_NODE_MOVE, [cloneB, cloneA]);
+			}
+			
+			/*
+			if ( !bAttached ) { // 拖曳無更動
+				gYApp.dragObject.style.left = gYApp.dragOldLeft + "px";
+				gYApp.dragObject.style.top = gYApp.dragOldTop + "px";
+			} else {
+				view.selectNode(snode, false, false);
+			}
+			*/
+			//gYApp.dragObject.style.zIndex = 10;
+			
+			//view.hideNodeSelector();
+
+			gYApp.dragObject = null;
+			view.panelD.style.cursor = "default";
+			/*
+			if ( gBrowserDetect.browser == "Explorer" ) {
+				evt.cancelBubble = true;
+			} else {
+				evt.stopPropagation();
+			}
+			*/		
+	}
+}
+
+
+function init() {
+	yTree = new YTree("Start");
+	yView = new YView(yTree, document.getElementById("panelDOM"), document.getElementById("panelSVG"));
+	//yView = new YView(yTree, $('#panelDOM'), $('#panelSVG'));
+
+	yView.setNodeEditor(document.getElementById("nodeEditor"));
+	yView.setLongNodeEditor(document.getElementById("longNodeEditor"));
+	yView.setImageChooser(document.getElementById("imageChooser"));
+	yView.setHyperlinkChooser(document.getElementById("hyperlinkChooser"));
+	yView.setColorChooser(document.getElementById("colorChooser"));
+	yView.setFontNameSelector(document.getElementById("fontNameSelector"));
+	yView.setFontSizeSelector(document.getElementById("fontSizeSelector"));
+	
+	yApp = new YApp(yView);
+	yApp.createMenu("menu1");
+	yView.redrawTree(true);
+}
+
+//儲存用 已拿掉 改成自動儲存
+function ajaxSaveArray() {
+	var xmlstr = yTree.unLoadFreeMind(yTree.rootNode);
+	//alert(xmlstr);
+	//ajax post to server side php	
+	$.post( "updateNode.php", 
+	{act: 'save', json: xmlstr}, 
+	function (data) {
+		alert(data);  // 儲存成功 跳出saved畫面
+	});
+}
+
+// 20120511 remove 
+// 列出所有專案清單
+function ajaxListProject() {
+	//get current project list from ajax	
+	$.post( "update", 
+			{act: 'listPrj'},
+			function (prjList) {
+				prjList = "<input type='button' value='Close' onclick=hideDIV('ProjectSelector')><hr />"+prjList;
+				$('#ProjectSelector').html(prjList);
+				showDIV('ProjectSelector');
+	});
+}
+
+
+//讀檔
+function ajaxLoadMap(prjID) {
+	prjID = parseInt(prjID);
+
+	//hideDIV('ProjectSelector');	
+	isLoad = true;
+	
+	if( gYApp != null)
+	{
+		gYApp.history.clear();
+		gYApp.view.redrawTree(true);
+		if ( gYApp.menu ) gYApp.menu.hideAll();
+		gYApp.history.clear();
+
+		var view = gYApp.getView();
+		view.deleteNodeView(view.tree.rootNode);		
+	}
+	
+	init();
+	
+	yTree.loadFreeMind(prjID);	
+	yView.redrawTree(true);	
+
+	setCurrentPrjID(prjID);	
+	socket.emit('set_mapid', prjID);
+	M_loglistreload(); // 將專案歷程一起讀進來
+
+	isLoad = false;	
+	$.unblockUI();	
+}
+
+function showDIV(id) {
+	obj=document.getElementById(id);
+	if (obj) { obj.style.display='block'; }
+}
+
+function hideDIV(id) {
+	obj=document.getElementById(id);
+	if (obj) { obj.style.display='none'; }
+}
+
+function setCurrentPrjID(id) {
+	prjID=id;
+}
+
+function getCurrentPrjID() {
+	return prjID;
+}
+
+function M_loglistreload() {
+	$('#loglist').text('');
+	$.post( "update", 
+	{act: 'loglistload'}, 
+	function (data) {		
+		var arrlog = JSON.parse(data);
+		//var html = "";
+		//html += "<tr><td>" + timeformat(arrlog[i]['time']) + "</td><td>" + arrlog[i]['action'] +"</td><td>" + arrlog[i]['uname'] + "</td></tr><hr>";
+		var html = "<table style='font-size:12'><tr><td>時間</td><td>行為</td><td>操作人</td></tr>";
+		for(var i=0;i<arrlog.length;i++)
+		{						
+			var myact;			
+			if (arrlog[i]['action'] == "node_create") myact="新增節點";
+			if (arrlog[i]['action'] == "node_edit") myact="編輯節點";
+			if (arrlog[i]['action'] == "node_drag") myact="移動節點";
+			if (arrlog[i]['action'] == "node_delete") myact="刪除節點";
+			if (arrlog[i]['action'] == "node_iconadd") myact="加入圖示";
+			if (arrlog[i]['action'] == "node_iconremoveall") myact="移除圖示";
+			
+			//html += "<div style='text-align:left'><font size='1'>" + timeformat(arrlog[i]['time']) + "</font></div><hr>";
+			html += "<tr><td>" + timeformat(arrlog[i]['time']) + "</td><td>" + myact +"</td><td>" + arrlog[i]['uname'] + "</td></tr>";
+			
+		}
+		html += "</table>";
+		$('#loglist').append(html);
+	});
+}
+
+function vediochat(uname) {	
+	socket.emit('vediochat_private', uname);  // 
+}
+
+function vediochat_private_local(data) {  // data = [from_uname,to_uname,from_uid,to_uid]
+	var from_uname = data[0];
+	var to_uname = data[1];
+	var from_uid = data[2];
+	var to_uid = data[3];
+
+	// 自己的視訊設定
+	//$('#vediochat_local').prop('src','rtmp://163.22.32.104/myapp?publish=' + from_uname);
+	
+	var newElement = document.createElement('div');	
+	var objid = 'vediochat_local';
+	
+	if(!document.getElementById(objid)) { // 先判斷視訊聊天室窗是否有重複開啟
+		newElement.id = objid;
+	} else {
+		return false;
+	}			
+var vediostr = "<object type='application/x-shockwave-flash' data='http://" + nodeWebSite+"/VideoIO.swf' width='200 height='160'><param name='movie' value='http://"+nodeWebSite+"/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&cameraQuality=80&src=rtmp://"+rtmpSite+"/myapp?publish=" + from_uid + "'/></object>";
+//	var vediostr = "<object type='application/x-shockwave-flash' data='http://10.32.10.139:8080/VideoIO.swf' width='200 height='160'><param name='movie' value='http://10.32.10.139:8080/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&cameraQuality=80&src=rtmp://10.32.10.139/myapp?publish=" + from_uid + "'/></object>";
+	newElement.innerHTML = vediostr;	
+	newElement.style.position = 'fixed';
+	newElement.style.bottom = '0px';
+	newElement.style.left = '0px';
+	newElement.style.width = '180px';
+	newElement.style.height = '150px';
+	document.body.appendChild(newElement);	
+
+	// 對方的視訊	
+	var newElement2 = document.createElement('div');	
+	var objid2 = 'vediochat_' + from_uname;
+	
+	if(!document.getElementById(objid2)) { // 先判斷視訊聊天室窗是否有重複開啟
+		newElement2.id = objid2;
+	} else {
+		return false;
+	}	
+	
+	newElement2.title = 'vedio chat with ' + to_uname;   
+var vediostr2 = "<object type='application/x-shockwave-flash' data='http://"+nodeWebSite+"/VideoIO.swf' width='300' height='240'><param name='movie' value='http://"+nodeWebSite+"/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&src=rtmp://"+rtmpSite+"/myapp?play=" + to_uid +"'/></object>";	
+//	var vediostr2 = "<object type='application/x-shockwave-flash' data='http://10.32.10.139:8080/VideoIO.swf' width='300' height='240'><param name='movie' value='http://10.32.10.139:8080/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&src=rtmp://10.32.10.139/myapp?play=" + to_uid +"'/></object>";
+	newElement2.innerHTML = vediostr2;
+	document.body.appendChild(newElement2);
+
+	$('#' + newElement2.id).dialog();
+	$('#' + newElement2.id).bind( "dialogclose", function(event, ui) {
+		$('#' + newElement2.id).dialog("destroy");
+		$('#' + newElement.id).remove();
+		$('#' + newElement2.id).remove();
+	});
+}
+
+// 收到通知 別人想和我視訊通話
+function vediochat_private_remote(data) { // data = [from_uname,to_uname,from_uid,to_uid]	
+	var from_uname = data[0];  // 這是別人的姓名
+	var to_uname = data[1];  // 這是我的姓名
+	var from_uid = data[2];
+	var to_uid = data[3];	
+
+	// 自己的視訊設定
+	var newElement = document.createElement('div');	
+	var objid = 'vediochat_local';
+	
+	if(!document.getElementById(objid)) { // 先判斷視訊聊天室窗是否有重複開啟
+		newElement.id = objid;
+	} else {
+		return false;
+	}		
+	
+	var vediostr = "<object type='application/x-shockwave-flash' data='http://"+nodeWebSite+"/VideoIO.swf' width='200 height='160'><param name='movie' value='http://"+nodeWebSite+"/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&cameraQuality=80&src=rtmp://"+rtmpSite+"/myapp?publish=" + to_uid + "'/></object>";
+//	var vediostr = "<object type='application/x-shockwave-flash' data='http://10.32.10.139:8080/VideoIO.swf' width='200 height='160'><param name='movie' value='http://10.32.10.139:8080/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&cameraQuality=80&src=rtmp://10.32.10.139/myapp?publish=" + to_uid + "'/></object>";	
+	newElement.innerHTML = vediostr;
+	
+	newElement.style.position = 'fixed';
+	newElement.style.bottom = '0px';
+	newElement.style.left = '0px';
+	newElement.style.width = '200px';
+	newElement.style.height = '160px';
+	document.body.appendChild(newElement);
+			
+	// 對方的視訊
+	var newElement2 = document.createElement('div');	
+	var objid2 = 'vediochat_' + from_uname;
+	
+	if(!document.getElementById(objid2)) { // 先判斷視訊聊天室窗是否有重複開啟
+		newElement2.id = objid2;
+	} else {
+		return false;
+	}
+	
+	newElement2.title = 'vedio chat with ' + from_uname;
+var vediostr2 = "<object type='application/x-shockwave-flash' data='http://"+nodeWebSite+"/VideoIO.swf' width='300' height='240'><param name='movie' value='http://"+nodeWebSite+"/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&src=rtmp://"+rtmpSite+"/myapp?play=" + from_uid +"'/></object>";
+//	var vediostr2 = "<object type='application/x-shockwave-flash' data='http://10.32.10.139:8080/VideoIO.swf' width='300' height='240'><param name='movie' value='http://10.32.10.139:8080/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&src=rtmp://10.32.10.139/myapp?play=" + from_uid +"'/></object>";	
+	newElement2.innerHTML = vediostr2;
+	document.body.appendChild(newElement2);
+
+	$('#' + newElement2.id).dialog();
+	$('#' + newElement2.id).bind( "dialogclose", function(event, ui) {
+		$('#' + newElement2.id).dialog("destroy");
+		$('#' + newElement.id).remove();
+		$('#' + newElement2.id).remove();
+	});	
+}
+
+function vediochat_broadcast(){
+	socket.emit('vediochat_broadcast');
+}
+
+function vediochat_broadcast_local(data) {  // data = [from_uid]	
+	var from_uid = data[0];
+	
+	// 自己的視訊設定
+	var newElement = document.createElement('div');	
+	var objid = 'vediochat_local';
+	
+	if(!document.getElementById(objid)) { // 先判斷視訊聊天室窗是否有重複開啟
+		newElement.id = objid;
+	} else {
+		return false;
+	}
+	
+var vediostr = "<object type='application/x-shockwave-flash' data='http://"+nodeWebSite+"/VideoIO.swf' width='200 height='160'><param name='movie' value='http://"+nodeWebSite+"/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&cameraQuality=80&src=rtmp://"+rtmpSite+"/myapp?publish=" + from_uid + "'/></object>";
+//	var vediostr = "<object type='application/x-shockwave-flash' data='http://10.32.10.139:8080/VideoIO.swf' width='200 height='160'><param name='movie' value='http://10.32.10.139:8080/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&cameraQuality=80&src=rtmp://10.32.10.139/myapp?publish=" + from_uid + "'/></object>";	
+	newElement.innerHTML = vediostr;
+	
+	newElement.style.position = 'fixed';
+	newElement.style.bottom = '0px';
+	newElement.style.left = '0px';
+	newElement.style.width = '200px';
+	newElement.style.height = '160px';
+	document.body.appendChild(newElement);	
+}
+
+function vediochat_broadcast_remote(data) { // data = [from_uname,from_uid]
+	var from_uname = data[0];
+	var from_uid = data[1];
+
+	// 遠端廣播的視訊
+	var newElement2 = document.createElement('div');	
+	var objid2 = 'vediochat_' + from_uname;
+	
+	if(!document.getElementById(objid2)) { // 先判斷視訊聊天室窗是否有重複開啟
+		newElement2.id = objid2;
+	} else {
+		return false;
+	}
+	
+	newElement2.title = from_uname + ' broadcast';
+	var vediostr2 = "<object type='application/x-shockwave-flash' data='http://"+nodeWebSite+"/VideoIO.swf' width='300' height='240'><param name='movie' value='http://"+nodeWebSite+"/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&src=rtmp://"+rtmpSite+"/myapp?play=" + from_uid +"'/></object>";
+//	var vediostr2 = "<object type='application/x-shockwave-flash' data='http://10.32.10.139:8080/VideoIO.swf' width='300' height='240'><param name='movie' value='http://10.32.10.139:8080/VideoIO.swf' /><param name='quality' value='high' /><param name='bgcolor' value='#000000' /><param name='allowFullScreen' value='true' /><param name='allowScriptAccess' value='' /><param name='flashVars' value='controls=true&src=rtmp://10.32.10.139/myapp?play=" + from_uid +"'/></object>";	
+	newElement2.innerHTML = vediostr2;
+	document.body.appendChild(newElement2);
+
+	$('#' + newElement2.id).dialog();
+	$('#' + newElement2.id).bind( "dialogclose", function(event, ui) {
+		$('#' + newElement2.id).dialog("destroy");		
+		$('#' + newElement2.id).remove();
+	});
+}
+
+function vediochat_broadcast_stop() {
+	//socket.emit('vediochat_broadcast_stop');
+	$('#vediochat_local').remove();
+}
+
+// 20120607 功能尚未放上去
+function vediochat_broadcast_stop_local(data) {  // data = [from_uid]	
+	var from_uid = data[0];
+	$('#vediochat_local').remove();
+}
+
+// 20120607 功能尚未放上去
+function vediochat_broadcast_stop_remote(data) { // data = [from_uname,from_uid]
+	
+}

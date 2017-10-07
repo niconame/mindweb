@@ -1,0 +1,24 @@
+{
+  "name": "mindweb",
+  "version": "1.0.0",
+  "main": "app.js",
+  "dependencies": {
+    "connect": "^2.3.0",
+    "express": "^2.5.9",
+    "mysql": "^0.9.6",
+    "jsontoxml": "^0.0.11",
+    "socket.io": "^0.9.6",
+    "connect-form": "^0.2.1",
+    "fs": "^0.0.2",
+    "http": "^0.0.0",
+    "url": "^0.7.9",
+    "xml2js": "^0.4.12"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

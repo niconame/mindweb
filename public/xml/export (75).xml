@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mapdata>
+  <NodeID>6418</NodeID>
+  <MapID>379</MapID>
+  <ParentNodeID>0</ParentNodeID>
+  <Content>專題改造計畫</Content>
+  <ps>null</ps>
+  <starttime>2015-08-21T06:22:57.</starttime>
+  <endtime>null</endtime>
+  <budget>0</budget>
+  <leader>賴俊佑</leader>
+  <Created>1440138177539</Created>
+  <Creater>111</Creater>
+  <Modified>2015-08-20T22:22:58.000Z</Modified>
+  <Modifier>111</Modifier>
+  <Position>0</Position>
+  <FinishDate/>
+  <Childs>
+      <NodeID>6419</NodeID>
+      <MapID>379</MapID>
+      <ParentNodeID>6418</ParentNodeID>
+      <Content>A部門</Content>
+      <ps>undefined</ps>
+      <starttime>undefined</starttime>
+      <endtime>undefined</endtime>
+      <budget>undefined</budget>
+      <leader>小毛</leader>
+      <Created>1440342492926</Created>
+      <Creater>111</Creater>
+      <Modified>2015-08-23T15:08:12.000Z</Modified>
+      <Modifier>111</Modifier>
+      <Position>2</Position>
+      <FinishDate/>
+      <Childs>
+</Childs>
+      <icons>
+</icons>
+
+      <NodeID>6420</NodeID>
+      <MapID>379</MapID>
+      <ParentNodeID>6418</ParentNodeID>
+      <Content>B部門</Content>
+      <ps>undefined</ps>
+      <starttime>undefined</starttime>
+      <endtime>undefined</endtime>
+      <budget>undefined</budget>
+      <leader>B毛</leader>
+      <Created>1440395974366</Created>
+      <Creater>111</Creater>
+      <Modified>2015-08-24T05:59:34.000Z</Modified>
+      <Modifier>111</Modifier>
+      <Position>1</Position>
+      <FinishDate/>
+      <Childs>
+</Childs>
+      <icons>
+</icons>
+
+      <NodeID>6421</NodeID>
+      <MapID>379</MapID>
+      <ParentNodeID>6418</ParentNodeID>
+      <Content>C部門</Content>
+      <ps>undefined</ps>
+      <starttime>undefined</starttime>
+      <endtime>undefined</endtime>
+      <budget>undefined</budget>
+      <leader>C毛</leader>
+      <Created>1440396011918</Created>
+      <Creater>111</Creater>
+      <Modified>2015-08-24T06:00:11.000Z</Modified>
+      <Modifier>111</Modifier>
+      <Position>2</Position>
+      <FinishDate/>
+      <Childs>
+</Childs>
+      <icons>
+</icons>
+
+      <NodeID>6422</NodeID>
+      <MapID>379</MapID>
+      <ParentNodeID>6418</ParentNodeID>
+      <Content>D部門</Content>
+      <ps>undefined</ps>
+      <starttime>undefined</starttime>
+      <endtime>undefined</endtime>
+      <budget>undefined</budget>
+      <leader>D毛</leader>
+      <Created>1440396031622</Created>
+      <Creater>111</Creater>
+      <Modified>2015-08-24T06:00:31.000Z</Modified>
+      <Modifier>111</Modifier>
+      <Position>1</Position>
+      <FinishDate/>
+      <Childs>
+</Childs>
+      <icons>
+</icons>
+
+</Childs>
+  <icons>bookmark
+</icons>
+</mapdata>

@@ -1,0 +1,30 @@
+﻿<?php
+/* 連接資料庫 */
+mysql_connect("localhost","localhost","0000");
+mysql_select_db("board");
+?>
+<?header("location:view.php");?>
+<?php
+include("db.php");                    //匯入db.php檔案
+/* 接收表單資料 */
+$subject=$_POST["subject"];
+$content=$_POST["content"];
+/* 將欄位資料加入資料庫 */
+$sql="INSERT guestbook (name,mail,subject,content,putdate)
+VALUES ('$name','$mail','$subject','$content',now())";
+mysql_query($sql);
+?>
+<html>
+<head>
+<title>留言板</title>
+</head>
+<body>
+<a href="view.php">觀看留言</a><p>
+<form name="form1" method="post" action="add.php">
+主題：<input type="text" name="subject"><br>
+內容：<textarea rows=7 name="content"></textarea><br>
+<input type="submit" name="Submit" value="送出">
+<input type="Reset" name="Reset" value="重新填寫">
+</form>
+</body>
+</html>

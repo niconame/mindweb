@@ -1,0 +1,535 @@
+html, body {
+ margin: 0;
+ padding: 0;
+}
+
+#container{
+  background-image: url(/background/PersonBackGround.jpg);
+}
+
+.heading{
+    
+    height:150px;
+    padding:10px;
+}
+
+
+
+.menu{
+   background-color:#DDDDDD;
+   height:100%;
+   width:100%;
+   margin:0;
+}
+
+.table table-striped table-hover{
+   border: 2px solid;
+   
+}
+.userPic {
+  max-width:100px; 
+  max-height:100px;
+
+}
+
+#sidebar{
+  padding-right: 0px; 
+  padding-left: 0px; 
+  height:100%;
+
+  background-color:black;
+}
+
+#container{
+    padding-left: 0px;
+ 
+}
+
+#openPjButton{
+  width:200px;
+  height:70px;
+  line-height:10px;
+  font-size:25px;
+
+
+}
+
+
+#sidebarList{
+  background-color:white;
+
+}
+
+#sidebarList li{
+  font-size:30px;
+
+}
+
+#addProjectForm{
+  display:none;
+}
+
+#deleteProjectForm{
+  display:none;
+}
+#changeUserPic{
+  display:none;
+}
+
+#appProjectMember{
+   display:none;
+}
+
+/*0912 專案設定*/
+#ProjectOption{
+   display:none;
+}
+
+.ConfirmProjectBudget{
+  display:none;
+}
+.ProjectBudget{
+  display:none;
+}
+.EditProjectMoneyCancel{
+  display: none;
+}
+/*0919 行事曆*/
+
+.ProjectCalendar{
+  display:none;
+}
+
+.ProjectCalendarBackground{
+   background-color : #EEE;
+    
+  height : 130px;
+  width : 150px;
+    
+  text-align : center;
+    
+  /* Firefox, Chrome */
+  line-height : 10px;
+    box-shadow:2px 2px 2px rgba(20%,20%,40%,0.6),4px 4px 6px rgba(20%,20%,40%,0.4),6px 6px 12px rgba(20%,20%,40%,0.4);
+  /* IE */
+  *font-size : 180px;  /* 200px * 0.9 = 180px */
+}
+.ProjectCalendarBackground img{
+   vertical-align : middle;
+}
+
+.ProjectCalendarBackground:hover{
+  box-shadow:inset 3px 3px 3px rgba(20%,20%,40%,0.5);
+}
+
+#calendar {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.ProjectEdit{
+  display:none;
+}
+
+#closeProjectEdit{
+  position: absolute;
+  float:right;
+  top:20px;
+  right:20px;
+
+}
+#cancel{
+  position: absolute;
+  float:right;
+  top:20px;
+  right:20px;
+  border:0;
+  border-radius: 10px;
+}
+#cancel3{
+  position: absolute;
+  float:right;
+  top:50px;
+  right:20px;
+  border-radius: 10px;
+}
+#DeleteProjectEditMember{
+  float:right;
+
+}
+
+#closeProjectCalendar{
+ position: absolute;
+  float:right;
+  top:20px;
+  right:20px;
+  border-radius: 10px;
+}
+
+#searchProjectPosition{
+  position: relative;
+  float:right;
+
+}
+
+ul{
+  list-style-type: none;
+}
+
+.ShowProjectDetail{
+   margin:10px;
+   top:10%;
+}
+
+.persondata{
+	position: relative;
+	float:left;
+    margin:10px;
+    opacity:0.8;
+}
+
+.favoriteProject{
+	position: relative;
+	float:left;
+	margin:10px;
+	opacity: 0.8;
+}
+
+.sendmail{
+	position: relative;
+	float:left;
+	margin:10px;
+	opacity: 0.8;
+}
+
+.persondata:hover{
+    opacity: 1;
+}
+.favoriteProject:hover{
+	opacity:1;
+}
+.sendmail:hover{
+   opacity:1;
+}
+
+.content{
+	position: absolute;
+	height:100%;
+	width:80%;
+	top:0;
+	left:17%;
+	overflow: visible;
+  float:left;
+}
+
+.leftSidebar{
+	position: fixed;
+	height:100%;
+	width:17%;
+	margin:0;
+	top:;
+    left:0;
+    float:left;
+	background-color: #DCD1F6;
+	
+}
+
+.bottom{
+	position:fixed;
+	width:100%;
+	height:6%;
+	bottom:0;
+	font-size: 10px;
+	vertical-align: center;
+	line-height: 100px;
+	background-color: #505050;
+}
+
+/*.chatroom{
+	position:relative;
+    margin:0;
+	
+	height:100%;
+	width:100%;
+	background-color: #6CD675;
+}*/
+
+/*.chatroomHeader{
+	position: relative;
+	margin:1%;
+
+	top:0;
+	left:0;
+	height:10%;
+	width:100%;
+	
+	z-index: 10;
+}*/
+
+.memberlist{
+	position:relative;
+	margin:0;
+	left:0;
+  height:94%;
+  top:0;
+  width:100%;
+  background-color: #D4E3FF;
+  z-index: 10;
+  
+}
+
+.memberlist .peoplesearch{
+	position:absolute;
+	height:50px;
+  width:100%;
+	margin:0;
+	left:0;
+  bottom:0;
+
+    background-color: #D4E3FF;
+    z-index: 10;
+  
+
+}
+
+.memberlist .memberlistHeader{
+  position:relative;
+  top:0;
+  margin:0;
+  left:0;
+  height:10%;
+  text-align: center;
+  line-height: 100px;
+  width:100%;
+/*  background-color: #A7F1A6;*/
+  z-index: 10;
+  font-family:fantasy;
+  background:#3892E4;
+  color:white;
+  border:1px solid silver;
+  display:inline-block;
+  border-radius: 5%;
+  padding:0.5em 0.75em;
+  box-shadow:1px 1px 3px 2px rgba(20%,20%,40%,0.5) inset;
+
+
+
+}
+
+ .memberlist .memberlistHeader .addfriends{
+  position: relative;
+  top:10px;
+  right:10px;
+  width:32px;
+  height:32px;
+  background-image: url("/pic/icon/add322.png");
+  background-repeat:no-repeat;
+  background-position:center;
+  opacity: 0.6;
+}
+
+ .memberlist .memberlistHeader .addfriends:hover{
+  opacity: 1;
+}
+
+#addfriendContent{
+  margin:10%;
+  display: none;
+}
+
+#addfriendcancel{
+  position: absolute;
+  float:right;
+  top:20px;
+  right:20px;
+  border:0;
+  border-radius: 10px;
+}
+
+.FriendLine{
+  position: relative;
+  width:95%;
+  height:100%;
+  left:0;
+  margin:0;
+  padding:1px;
+  float:left;
+}
+
+.DetailMember{
+  position: relative;
+  width:100%;
+  height:400px;
+  overflow-y:auto;
+}
+
+.PersonelData{
+
+  display:none;
+}
+
+#closePersonData{
+  position: absolute;
+  float:right;
+  top:20px;
+  right:20px;
+}
+
+.PersonelMessage{
+  display:none;
+}
+
+#closePersonelMessage{
+  position: absolute;
+  float:right;
+  top:20px;
+  right:20px;
+}
+
+.PersonDataEdit{
+  display:none;
+}
+
+.ShowPersonData{
+  position:relative;
+  margin:10%;
+  width:80%;
+  height:90%;
+}
+
+.ShowFriendData{
+  position:relative;
+  margin:10%;
+  width:80%;
+  height:90%;
+}
+
+.PersonDataEdit{
+   position:relative;
+  margin:10%;
+
+  width:80%;
+  height:90%;
+}
+
+.PersonelMessage .PersonMessageContent{
+  position:relative;
+  margin:10%;
+  width:80%;
+  height:90%;
+  background-color: #D6E340;
+}
+
+.MessageboxContent{
+  position: relative;
+  left:3%;
+  margin:1%;
+  width:96%;
+  height:96%;
+  background-color: #AD4977;
+}
+
+.MessageboxContent .messageListContent{
+   position: relative;
+   width:40%;
+   height:95%;
+   float:left;
+  /* background-color: #73FFD2;*/
+  
+}
+.MessageboxContent .messageList{
+  position: relative;
+   width:100%;
+
+   height:500px;
+   float:left;
+/*   background-color: #73FFD2;*/
+   overflow-y:auto;
+}
+
+
+.messageCheckContent{
+   position: relative;
+   width:55%;
+   height:90%;
+   float:left;
+ /*  background-color: #3CDD84;*/
+}
+
+.messageCheckContent .messageCheckList{
+  position: relative;
+   width:100%;
+   
+   height:500px;
+   float:left;
+   text-align: left;
+  /* background-color: #3CDD84;*/
+   overflow-y:auto;
+}
+
+
+.PersonelMessage .SendmessageContent{
+  position:relative;
+  margin:5%;
+  width:90%;
+  height:100%;
+
+  display: none;
+}
+
+/*.messageLine{
+  position:relative;
+  width:80%
+  left:5%;
+  height:5%;
+  margin:10px;
+  text-align: left;
+  background-color: #F1FF1E;
+}*/
+
+#testing{
+  position: relative;
+  z-index: 100;
+}
+
+.messageIMG{
+  position: relative;
+  width:20%;
+  height:100%;
+  margin:0;
+  float:left;
+  padding:1px;
+}
+
+.messageLine{
+  position: relative;
+  width:95%;
+  height:100%;
+  margin:0;
+  padding:1px;
+  float:left;
+ /*text-align: left;*/
+/* background-color: #F1FF1E;*/
+}
+
+.messageLine:hover{
+
+ background-color: #7EAAEE;
+}
+
+.messageText{
+  position: relative;
+  top:5%;
+  margin:2px;
+  text-align: left;
+
+}
+.messageTime{
+   position: relative;
+   text-align: right;
+   right:5%;
+   bottom:0;
+}
+.FriendData{
+  display: none;
+}

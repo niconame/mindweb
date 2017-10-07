@@ -1,0 +1,725 @@
+<html>   
+<head>
+<title>YMap</title>
+<style type="text/css">
+#nodeAuthority{
+        display:none;
+}
+
+  .fn-gantt *,
+      .fn-gantt *:after,
+      .fn-gantt *:before {
+        -webkit-box-sizing: content-box;
+           -moz-box-sizing: content-box;
+                box-sizing: content-box;
+      }
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8;" />
+<link href="YMap.css" rel="stylesheet" type="text/css" />
+
+<!-- 選擇日期插件 -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+<script type="text/javascript" src="jquery-1.10.js"></script>
+<script type="text/javascript" src="jquery-ui.js"></script>
+<link rel="stylesheet" href="/resources/demos/style.css">
+
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="YMap.js"></script>
+<script type="text/javascript" src="YTree.js"></script>
+<script type="text/javascript" src="YView.js"></script>
+<script type="text/javascript" src="jquery.blockUI.js"></script>
+<script type="text/javascript" src="jquery-ui-1.8.20.custom.min.js"></script>
+<script type="text/javascript" src="jquery.accordion.js"></script>
+
+<!-- 引用非同步上傳模組-->
+<script type="text/javascript" src="jquery.upload-1.0.2.js"></script>
+
+<!-- 引用網頁文字編輯器模組-->
+<script charset="utf-8" src="kindeditor/kindeditor-min.js"></script>
+<script charset="utf-8" src="kindeditor/lang/zh_CN.js"></script>
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+<!--預算新增-->
+<script type="text/javascript" src="Chart.js"></script>
+<!-- Canvus-->
+<script type="text/javascript" src="http://html2canvas.hertzen.com/build/html2canvas.js"></script>
+<script type="text/javascript" src="http://127.0.0.1/views/Canvas.php"></script>
+
+
+<!-- 0915新增 甘特圖 -->
+<script type="text/javascript" src="jquery.fn.gantt.js" /></script>
+<link href="gnatt.css" rel="stylesheet" type="text/css" media="screen" />
+<!-- //0916 甘特圖new -->
+
+
+<script>
+$(function() {
+    $("#datepicker_start").datepicker( {
+        changeYear : true,
+        changeMonth : true,
+        numberOfMonths : 1,
+        showButtonPanel: true,
+        onSelect : function(selectedDate) {
+            $("#datepicker_end").datepicker("option", "minDate", selectedDate);
+		}
+    });
+});
+$(function() {
+    $("#datepicker_end").datepicker( {
+        changeYear : true,
+        changeMonth : true,
+        numberOfMonths : 1,
+        showButtonPanel: true,
+        onSelect : function(selectedDate) {
+            $("#datepicker_start").datepicker("option", "maxDate", selectedDate);
+		}
+    });
+//0914 預算新增
+    $("#Budget_chart").click(function(){
+		ChartCheckStr();
+    });
+//0915 甘特圖新增
+
+    $(".ShowNodegnattchart").click(function(){
+        $.blockUI({ 
+           message: $('#NodeGanattchart'),
+           css: {top:'70px',width:'80%',margin:'0 auto',left:'10%'}            
+        }); 
+        ShowNodegnattchart();
+    });
+
+     $("#closeNodegnattchart").click(function(){
+    	$.unblockUI();
+    });
+	
+///////////////////////
+
+    $("#closeBudget").click(function(){
+    	$.unblockUI();
+    });
+	
+$(function() {
+    $("#Node_Finish").datepicker( {
+        changeYear : true,
+        changeMonth : true,
+        numberOfMonths : 1,
+        showButtonPanel: true,
+        onSelect : function(selectedDate) {
+            $("#datepicker_end").datepicker("option", "minDate", selectedDate);
+		}
+    });
+});
+
+
+$("#msgboard").click(function(){
+		poster_UI();
+    });
+$("#switchPrj").click(function(){
+		ConfOpenMap('');
+    });   
+	
+	
+    $("#ProjectHistoryButton").click(function(){
+    
+        $.blockUI({ 
+           message: $('#ProjectHistory'),
+           css: {top:'100px', width: '400px',height:'600px'}            
+        }); 
+    });
+     $("#nodeEdit").click(function(){
+     
+        $.blockUI({ 
+           message: $('.nodeEditeAttrbute'),
+           css: {top:'100px', width: '400px',height:'400px'}            
+        }); 
+        M_EditEditNode();
+    });
+// 改造   
+    $("#unblock").click(function(){
+    	$.unblockUI();
+    });
+    $("#unblockNodeEdit").click(function(){
+    	$.unblockUI();
+    });
+
+
+    $("#ProjectChart").click(function(){
+       openwindow1();
+    });
+    $("#ProjectExport").click(function(){
+    	exportXML();
+    })
+//新增 new
+    $(".right_sidebar_arrow").click(function(){
+      $(".right_sidebar").animate({
+          right:0
+      },500);
+
+      $(".right_sidebar_arrow").hide();
+    
+      $(".right_sidebar_arrow_click").show();
+    });
+
+    $(".right_sidebar_arrow_click").click(function() {
+        $(".right_sidebar").animate({
+          right:"-360px"
+      },500);
+    	/* Act on the event */
+    	$(".right_sidebar_arrow").show();
+    
+        $(".right_sidebar_arrow_click").hide();
+    });
+
+    $(".login_out").click(function(){
+    	M_Quit();
+    })
+    $(".return").click(function(){
+    	ReturnToProjectPage();
+    })
+
+
+
+ });
+
+</script>
+
+<script type="text/javascript">
+
+	var yTree;
+	var yView;
+	var yApp;
+	var isLoad = false; // 設定一個flag 使得當Loading的時候  執行到newtree時 不會去DB建立新的nodeid跟mapid
+	var prjID;
+	var node_dbar; // 右方dropdowntoolbar選擇的node
+	var logplay=false;
+
+	var socket = io.connect();	
+	var connectState = 0;	
+	socket.on('connected', function(socket) {
+		connectState = 1;
+		$.unblockUI();
+		var selectID = getCookieValue("prjselect");
+        LoadMap(selectID);
+	});
+	socket.on('disconnect', function(socket) {
+		connectState = 2;
+		$.blockUI({ message: '<h3><img src="ui/busy.gif" /> 伺服器斷線... 嘗試連線中...</h3>' });
+	});
+/*	socket.on('disconnect', function (){
+//		socket.socket.connect(); 
+//		console.log('disconnected')
+	});
+*/
+	socket.on('node_create', function (data) {
+		socket_get_node_create(data);
+	});
+
+	socket.on('node_edit', function(data) {
+		socket_get_node_edit(data);
+	});
+	
+	socket.on('node_delete', function(data) {
+		socket_get_node_delete(data);
+	});
+	
+	socket.on('node_drag', function(data) {
+		socket_get_node_drag(data);
+	});
+	
+	socket.on('online_list', function(data) {
+		//alert(data);
+		showonline(data);
+	});
+	
+	socket.on('publicmessage', function(data) { // data = [msg, prjID, uname];
+		//alert('id:'+data[0] + ', msg:' + data[1]);
+		if ( data[1] == prjID) {
+			updatmessage_public(data);
+		}
+	});
+	
+	//xxxx 刪除訊息
+	socket.on('delmessages', function(data) { // data = [prjID];
+		if ( data == prjID) {//檢查當prjID是否吻合
+			ZapChatBoard();//刪除訊息指令  call ymap中的zap涵式4168
+		}
+	});
+	
+	socket.on('privatemessage', function(data) { // data = [session.uname+'[私信]',msg,prjID]	
+		if ( data[2] == prjID) {
+			updatmessage_private(data);
+		}
+	});
+	
+	socket.on('messageerror', function(data) { // data = [to_uname,msg]
+		updatmessage_error(data);		
+	});	
+	
+	socket.on('node_iconadd', function(data) { // data = [NodeID,icon]
+		socket_get_node_iconadd(data);		
+	});	
+	
+	socket.on('node_iconremove', function(data) { // data = [NodeID,icon]		
+		socket_get_node_iconremove(data);
+	});	
+	
+	socket.on('node_iconremoveall', function(data) { // data = NodeID		
+		socket_get_node_iconremoveall(data);		
+	});	
+	
+	socket.on('nodediscuss', function(data) { // data = NodeID		
+		socket_get_node_discuss(data);		
+	});
+	
+	socket.on('renewfilelist', function(data) { // 當別人刪除檔案或新增檔案時 動態去更新檔案清單
+		if (data == prjID)
+		{
+			getfilelist();
+		}		
+	});
+	
+	socket.on('vediochat_private_local', function(data) { // data = [from_uname,to_uname,from_uid,to_uid]	
+		vediochat_private_local(data);
+	});
+
+	socket.on('vediochat_private_remote', function(data) { // data = [from_uname,to_uname,from_uid,to_uid]
+		vediochat_private_remote(data);
+		//$('#vediochat_ee').draggable();
+	});
+	socket.on('reload',function(data) {
+	    alert('狀態更新了,現進行重整');
+	    LoadMap(data);
+    });
+    
+	socket.on('vediochat_broadcast_local', function(data) { // data = [from_uid]	
+		vediochat_broadcast_local(data);
+	});
+	
+	socket.on('vediochat_broadcast_remote', function(data) { // data = [from_uname,from_uid]
+		vediochat_broadcast_remote(data);
+	});
+	
+	// 20120607 功能尚未放上去  原意：當廣播者關閉廣播時 遠端也會一起關閉
+	socket.on('vediochat_broadcast_stop_local', function(data) { // data = [from_uid]	
+		vediochat_broadcast_stop_local(data);
+	});
+	
+	// 20120607 功能尚未放上去  原意：當廣播者關閉廣播時 遠端也會一起關閉
+	socket.on('vediochat_broadcast_stop_remote', function(data) { // data = [from_uname,from_uid]
+		vediochat_broadcast_stop_remote(data);
+	});	
+
+	// 下拉選單特效  參考 http://bassistance.de/jquery-plugins/jquery-plugin-accordion/
+	jQuery().ready(function(){
+		jQuery('#dropdowntoolbarcontainer').accordion({
+			header: 'div.dropdowntoolbartitle',
+			active: false,
+			alwaysOpen: false
+		});
+
+
+	});
+</script>
+
+</head>
+
+<!-- 以下被註解掉的 為原作者的排版 小弟保留以示尊重  -->
+<body onLoad="onconnecting()">
+<!-- Include the VML behavior -->
+<!-- <style>v\: * { behavior:url(#default#VML);display:inline-block }</style> -->
+
+<!-- Declare the VML namespace -->
+<!-- <xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" /> -->
+<div id="nodeAuthority"> 
+    <h3>
+		是否要鎖住此節點? 
+		<input type="radio" name="lock" value="Yes">Yes<input type="radio" name="lock" value="No">No
+	</h3>
+    </br>
+    <table border='0'>
+    <tr><td width="200px">誰可以編輯?</td><td width="200px">已加入</td></tr>
+    <tr><td><div id="projectMember"></div></td><td align="right"><div id="nodeMember"></div></td></tr>
+    <tr><td><input type="button" value="新增" onclick="addNodeEditMember()"></td>
+        <td align="right"><input type="button" value="刪除" onclick="DeleteNodeEditMember()"></td></tr>
+    </table>
+    <input type="button" value="完成" onclick="SetAuthority()"><input type="button" value="取消" onclick="CancelSetAuthority()">    
+</div>
+
+<div id="menuBar" class="YMenuBar" style="left:0px;top:0px;width:100%; height:0">
+	<table cellspacing="0" cellpadding="0" id="menu1" class="YMenu">
+		<tr>
+			<td>  <!-- 右鍵選單 -->
+				<a class="context" href="#"></a>
+				<div class="section" style="position:absolute;width:290px;">
+					<!-- new -->
+					<table class="item" id="nodeEdit"><tr><td class="label">節點編輯</td><td class="hot">F2</td></tr></table>
+                    <table class="item" onmouseUp="M_Nodediscusstion();"><tr><td class="label">進行討論</td></tr></table> 
+                    <table class="item" onmouseUp="M_LoadNodeTodolist();"><tr><td class="label">節點待辦事項</td><td class="hot"></td></tr></table>
+					<table class="item"><tr><td class="label">XML control</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:150px;">
+							<table class="item">
+								<tr><td class="item" onMouseUp="exportXML_byNode()"> 從此節點匯出</td></tr>
+								<tr><td class="item" onMouseUp="importXML_UI()"> 從此節點匯入</td></tr>
+							</table>
+						</div>
+					<table class="item" onMouseUp="M_getfilelist();"><tr><td class="label" style="background-image:url(ui/files.gif)">相關資料</td></tr></table>
+					<table class="item" onmouseUp="M_node_InsertNewChildNode();"><tr><td class="label" style="background-image:url(ui/btn_newchild.gif)">新增子節點</td><td class="hot">Insert</td></tr></table>					
+					<!--<table class="item"><tr><td class="label">Edit Long Node...</td><td class="hot">Ctrl+Enter</td></tr></table>-->
+					<table class="item" onMouseUp="M_EditRemoveNode();"><tr><td class="label" style="background-image:url(ui/btn_x.gif)">移除節點</td><td class="hot">Delete</td></tr></table>
+					
+					<table class="item"><tr><td class="label">加入圖示</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:150px;">
+							<!--<table class="item" onMouseUp="M_RemoveLastIcon();"><tr><td class="label" style="background-image:url(ui/btn_x.gif)">Remove Last Icon</td></tr></table>-->							
+							<div class="sep"></div>
+							<table cellspacing="0" cellpadding="0">
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('help');" src="icons/help.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('messagebox_warning');" src="icons/messagebox_warning.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('idea');" src="icons/idea.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('button_ok');" src="icons/button_ok.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('button_cancel');" src="icons/button_cancel.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-1');" src="icons/full-1.gif" class="button" />
+
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('full-2');" src="icons/full-2.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-3');" src="icons/full-3.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-4');" src="icons/full-4.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-5');" src="icons/full-5.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-6');" src="icons/full-6.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-7');" src="icons/full-7.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('back');" src="icons/back.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('forward');" src="icons/forward.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('attach');" src="icons/attach.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('ksmiletris');" src="icons/ksmiletris.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('clanbomber');" src="icons/clanbomber.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('desktop_new');" src="icons/desktop_new.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('flag');" src="icons/flag.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('gohome');" src="icons/gohome.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('kaddressbook');" src="icons/kaddressbook.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('knotify');" src="icons/knotify.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('korn');" src="icons/korn.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('mail');" src="icons/mail.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('password');" src="icons/password.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('pencil');" src="icons/pencil.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('stop');" src="icons/stop.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('wizard');" src="icons/wizard.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('xmag');" src="icons/xmag.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('bell');" src="icons/bell.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('bookmark');" src="icons/bookmark.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('penguin');" src="icons/penguin.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('licq');" src="icons/licq.gif" class="button" />
+									</td>
+								</tr>
+							</table>
+						</div>
+					<table class="item" onMouseUp="M_node_RemoveAllIcons();"><tr><td class="label" style="background-image:url(ui/btn_trash.gif)">移除圖示</td></tr></table>  
+					<!-- //0912修改					 -->
+					<table class="item" onmouseUp="M_SetAuthorities();"><tr><td class="label">節點權限編輯</td></tr></table>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+<!--node資訊即時顯示區塊-->
+<div class="briefInfo_Controller" id ="briefInfo_Controller" style="text-align:left">
+	<div id="briefInfo"></div>
+	<div id="progressbar" style="width:160px"></div>
+	<div id="briefInfo_Content"></div>
+	<div id="briefInfo_leader"></div>
+	<div id="briefInfo_starttime"></div>
+	<div id="briefInfo_endtime"></div>
+	<div id="briefInfo_budget"></div>
+</div>
+
+
+
+
+
+<!--用來設定 當你點到node中的文字的時候 他會變成textbox讓你修改-->
+<input id="nodeEditor" type="text" value="" style="position:absolute;top:0px;left:-600px;width:1px;height:1px;border:1px gray solid;z-index:50;" onBlur="_M_EditEditNode(true);" />
+
+
+<!-- 儲存後跳出來的視窗 -->
+<div id="saveDialog" class="YEditor" style="width:240px;top:0px;left:-600px;">
+	<div class="title">Save</div>
+	<div class="tool"></div>
+</div>
+
+<!-- 畫布 -->
+<!-- For Firefox, Chrome and Safari -->
+<div id="panelDOM" style="position:absolute;width:2000px;height:2000px;margin:0px;padding:0px;overflow:hidden;z-index:0">
+    <svg id="panelSVG" xmlns="http://www.w3.org/2000/svg" version="1.1" width="2000px" height="2000px"></svg> 
+
+</div>
+<!-- 以下為新增的 -->
+
+<div class="menu">
+    <div class="menuPic"></div>
+
+    <nav class="menuList">
+      <ul>
+    	<li>
+    		<div class="menuListBackground" id="switchPrj">
+    			<div class="MenuIcon-switch">
+    			</div>
+    			<div class="MenuContent">
+    				Switch
+    			</div> 
+    		</div>
+    	</li>
+        <li>
+        	<div class="menuListBackground" id="ProjectExport">
+        		<div class="MenuIcon-import">
+        		</div>
+        		<span class="MenuContent">
+        		    Export
+        	    </span>
+        	</div>
+        </li>
+		<li>
+        	<div class="menuListBackground" >
+        		<div class="MenuIcon-import">
+        		</div>
+        		<span class="MenuContent">
+        		    <a type="button" style="text-decoration:none;color:black;" id="canvas">ScreenShot</a>
+        	    </span>
+        	</div>
+        </li>
+        <li><div class="menuListBackground" id="ProjectHistoryButton">
+        	  <div class="MenuIcon-history">
+        	  </div>
+        	  <span class="MenuContent">
+        	    History
+        	  </span>
+        	</div>
+        </li>
+        <li>
+        	<div class="menuListBackground">
+        		<div class="MenuIcon-introduction">
+        		</div>
+        		<span class="MenuContent">
+        			Introduction
+        		</span>
+        	</div>
+        </li>
+        <li><div class="menuListBackground" id="Budget_chart">
+        	  <div class="MenuIcon-chart">
+        	  </div>
+              <span class="MenuContent">
+        		Chart
+        	  </span>
+            </div>
+        </li>
+        <li><div class="menuListBackground" id="msgboard">
+        	  <div class="MenuIcon-question">
+        	  </div>
+        	  <span class="MenuContent">
+        	  	MSGboard
+        	  </span>
+        	</div>
+        </li>
+      </ul>
+    </nav>
+</div>
+<div id="ProjectHistory" class="ProjectHistory">
+	<input type="button" onClick="M_loglistreload();" value="ReLoad">
+	<input type="button" onClick="M_logplay()" value="Play"><hr>
+	<input type="button" onClick="M_LoadMapDiscussion(prjID)" value="showchat"><hr>
+	<div style="height:440px; overflow-y: scroll;">
+		<div id="loglist" style="text-align:left;"></div>
+	</div>
+	<input type="button" id="unblock" value="關閉">
+</div>
+
+<!-- 討論室 -->
+<div id="chatroomcontainer" class="chatroomcontainer">
+	<div id="chatroomcontrol" class="chatroomcontrol" onClick="chatroomview()">
+		<!-- 線上人員名單 -->
+		<div id="chatcontrolbar" class="chatcontrolbar">	
+			<div id="onlinelistcontainer" class="onlinelistcontainer">		
+				<div id="onlinelistcontrol" class="onlinelistcontrol" onClick="onlinelistview()"><label id='onlinepeople'>線上人員</label></div>
+				<div id="onlinelist" class="onlinelist"></div>
+			</div>	
+		</div>
+		討論室
+
+	</div>
+	<div id="chatroommessagecontainer" class="chatroommessagecontainer">		
+		<div id="messages" class="messages">
+			<div id="lines" style="text-align:left;"></div>
+		</div>
+		<div id="send-message" class="send-message">				
+			<input type="text" id="message" maxlength="60" style="width:100%">
+		</div>
+	</div>
+</div>
+
+
+<div class="right_sidebar">
+	<div class="right_sidebar_arrow">
+	</div>
+
+	<div class="right_sidebar_arrow_click">
+    </div>
+
+	<div class="right_sidebar_content">
+        <div id="NodeContentName">
+        	<h3>當前節點名稱:<span id="PickNodeName"></span></h3> 
+        </div>
+
+		<div class="dropdowntoolbarcontainer" id="dropdowntoolbarcontainer">
+			<div>
+				<div class="dropdowntoolbartitle" title="相關討論串">專案佈告欄</div>
+				<div class="dropdowntoolbarcontent" id="dropdowntoolbar_NodeDiscusstion">
+					<div id="nodediscusstion" class="nodediscusstion" >
+						<div id="discusstion" style="text-align:left;"></div>
+					</div>
+					<div id="dpdKindEditor" class="dpdKindEditor">
+						<form>
+							<textarea name="KindEditor" style="width:100%;height:10px;visibility:hidden;"></textarea>
+							<input type='button' value="送出" onClick="nodediscusstionsubmit();"/><input type='button' value="清除" onClick="nodediscusstionclear();"/>
+						</form>
+					</div>
+
+
+					<script>
+						var editor;
+						KindEditor.ready(function(K) {
+							editor = K.create('textarea[name="KindEditor"]', {
+								langType : 'zh_TW',
+								resizeType : 1,
+								allowPreviewEmoticons : false,
+								allowImageUpload : true,
+								items : [
+									'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+									'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+									'insertunorderedlist', '|', 'emoticons', 'link']
+							});
+						});
+					</script>
+				</div>
+			</div>
+			<div>
+				<div class="dropdowntoolbartitle" title="TodoList">TodoList</div>
+				<div class="dropdowntoolbarcontent" id="dropdowntoolbar_Todolist">		
+				  <div id="Todolist">
+		          	  <h3>代辦事項</h3><br>
+		                <input type="text" id="addnewTodolistValue"><input type="button" id="getListValue" value="新增" onclick="addNewTodolist()">
+		              <hr>
+		              <div id="showTodolist"></div>
+
+		          </div>
+
+			    </div>
+			</div>
+			<div>
+				<div class="dropdowntoolbartitle" title="相關資料">相關資料</div>
+				<div class="dropdowntoolbarcontent" id="dropdowntoolbar_NodeFiles">			
+					<select id="filetypeselect" onChange="getfilelist()">
+						<option value="node">此節點</option>
+						<option value="map">此專案</option>
+					</select>
+					<input type="file" name="thumbnail" id="thumbnail" onChange="fileupload();">
+					<label id="fileuploadstate" style="color: #cccccc"></label>
+					<hr>
+					<div style="height:440px; overflow-y: scroll;">
+						<div id="filelist" style="text-align:left;"></div>
+					</div>
+				</div>
+			</div>
+
+		
+		</div>
+	</div>
+</div>
+
+<div class="nodeEditeAttrbute">
+		<table>
+					<h3>節點內容編輯</h3>
+					<tr><td>內容</td><td><input type="text" value="" name="Node_Content" id="Node_Content"></td></tr>
+					<tr><td>開始時間</td><td><input type="text" name="starttime" id="datepicker_start"></td></tr>
+					<tr><td>結束時間</td><td><input type="text" name="endtime" id="datepicker_end"></td></tr>
+					<tr><td>負責人</td><td><input type="text" value="" id="leader"></td></tr>
+					<tr><td>預算</td><td><input type="text" value="" id="budget"></td></tr>
+					<tr><td>已支出花費</td><td><input type="text" value="" id="Node_ps"></td></tr>
+					<tr><td>完成日期</td><td><input type="text" value="" id="Node_Finish"></td></tr>
+					<td align="center"></td>
+<!-- Ymap.js new -->
+	    </table>
+	 <input type="button" id="dbar_Node_update"  value="完成" onClick="dbarNodeUpdate()" /><input type="button" id="unblockNodeEdit" value="關閉">
+</div>
+<div class="return"></div>
+<div class="login_out"></div>
+<!-- //0916甘特圖新增 -->
+<div class="ShowNodegnattchart"></div>
+
+
+
+<!-- 0914預算新增 -->
+<div class="budgetChartInfo"  id="budgetChartInfo">
+	  <h1>預算支出表</h1>
+	<div class="BudgetChart">
+		<canvas id="FinishProjectBudgetChart" width="500px" height="300px" style="top:50px"></canvas>
+	</div>
+	<div class="budgetInformation">
+        <div class="BugetDetail">
+        	<table>
+        		<tr><td><img src="/pic/chart/budget.jpg"></td><td>預算</td></tr>
+        		<tr><td><img src="/pic/chart/spend.jpg"></td><td>花費</td></tr>
+
+        	</table>
+        </div>
+	
+	</div>
+
+	<input type="button" value="關閉" id="closeBudget">
+</div>
+
+<div class="NodeGanattchart" id="NodeGanattchart">
+<h1>專案節點甘特圖</h1>
+ <div class="gantt"></div>
+ <input type="button" id="closeNodegnattchart" value="關閉">
+
+</div>
+
+
+
+<script type="text/javascript">
+ //20150913 截圖
+$(function(){
+	print();
+});
+function print(){
+	html2canvas( $("#panelDOM") ,{
+		onrendered: function(canvas){
+			$('#canvas').attr( 'href' , canvas.toDataURL() ) ;
+			$('#canvas').attr( 'download' , 'mymap.png' ) ;
+			var html_canvas = canvas.toDataURL();
+			$.post('', {order_id:1,type_id:2,html_canvas:html_canvas}, function(json){
+			}, 'json');
+		}
+	});
+}
+</script>
+</body>
+</html>

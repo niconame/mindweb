@@ -1,0 +1,1178 @@
+<html>
+<head>
+<title>YMap</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8;" />
+<link href="YMap.css" rel="stylesheet" type="text/css" />
+
+<!-- 選擇日期插件 -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+<script type="text/javascript" src="jquery-1.10.js"></script>
+<script type="text/javascript" src="jquery-ui.js"></script>
+<link rel="stylesheet" href="/resources/demos/style.css">
+
+
+
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="YMap.js"></script>
+<script type="text/javascript" src="YTree.js"></script>
+<script type="text/javascript" src="YView.js"></script>
+<script type="text/javascript" src="jquery.blockUI.js"></script>
+<script type="text/javascript" src="jquery-ui-1.8.20.custom.min.js"></script>
+
+<script type="text/javascript" src="jquery.accordion.js"></script>
+
+<!-- 引用非同步上傳模組-->
+<script type="text/javascript" src="jquery.upload-1.0.2.js"></script>
+
+<!-- 引用網頁文字編輯器模組-->
+<script charset="utf-8" src="kindeditor/kindeditor-min.js"></script>
+<script charset="utf-8" src="kindeditor/lang/zh_CN.js"></script>
+
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+<script>
+$(function() {
+    $("#datepicker_start").datepicker( {
+        changeYear : true,
+        changeMonth : true,
+        numberOfMonths : 1,
+        showButtonPanel: true,
+        onSelect : function(selectedDate) {
+            $("#datepicker_end").datepicker("option", "minDate", selectedDate);
+		}
+    });
+});
+</script>
+<script>
+$(function() {
+    $("#datepicker_end").datepicker( {
+        changeYear : true,
+        changeMonth : true,
+        numberOfMonths : 1,
+        showButtonPanel: true,
+        onSelect : function(selectedDate) {
+            $("#datepicker_start").datepicker("option", "maxDate", selectedDate);
+		}
+    });
+});
+</script>
+
+<script type="text/javascript">
+
+	var yTree;
+	var yView;
+	var yApp;
+	var isLoad = false; // 設定一個flag 使得當Loading的時候  執行到newtree時 不會去DB建立新的nodeid跟mapid
+	var prjID;
+	var node_dbar; // 右方dropdowntoolbar選擇的node
+	var logplay=false;
+
+	var socket = io.connect();	
+
+	var connectState = 0;	
+	socket.on('connected', function(socket) {
+		connectState = 1;
+		$.unblockUI();
+		M_EnterSite();
+	});
+	socket.on('disconnect', function(socket) {
+		connectState = 2;
+		$.blockUI({ message: '<h3><img src="ui/busy.gif" /> 伺服器斷線... 嘗試連線中...</h3>' });
+	});
+/*	socket.on('disconnect', function (){
+//		socket.socket.connect(); 
+//		console.log('disconnected')
+	});
+*/
+	socket.on('node_create', function (data) {
+		socket_get_node_create(data);
+	});
+
+	socket.on('node_edit', function(data) {
+		socket_get_node_edit(data);
+	});
+	
+	socket.on('node_delete', function(data) {
+		socket_get_node_delete(data);
+	});
+	
+	socket.on('node_drag', function(data) {
+		socket_get_node_drag(data);
+	});
+	
+	socket.on('online_list', function(data) {
+		//alert(data);
+		showonline(data);
+	});
+	
+	socket.on('publicmessage', function(data) { // data = [msg, prjID, uname];
+		//alert('id:'+data[0] + ', msg:' + data[1]);
+		if ( data[1] == prjID) {
+			updatmessage_public(data);
+		}
+	});
+	
+	socket.on('privatemessage', function(data) { // data = [session.uname+'[私信]',msg,prjID]	
+		if ( data[2] == prjID) {
+			updatmessage_private(data);
+		}
+	});
+	
+	socket.on('messageerror', function(data) { // data = [to_uname,msg]
+		updatmessage_error(data);		
+	});	
+	
+	socket.on('node_iconadd', function(data) { // data = [NodeID,icon]
+		socket_get_node_iconadd(data);		
+	});	
+	
+	socket.on('node_iconremove', function(data) { // data = [NodeID,icon]		
+		socket_get_node_iconremove(data);
+	});	
+	
+	socket.on('node_iconremoveall', function(data) { // data = NodeID		
+		socket_get_node_iconremoveall(data);		
+	});	
+	
+	socket.on('nodediscuss', function(data) { // data = NodeID		
+		socket_get_node_discuss(data);		
+	});
+	
+	socket.on('renewfilelist', function(data) { // 當別人刪除檔案或新增檔案時 動態去更新檔案清單
+		if (data == prjID)
+		{
+			getfilelist();
+		}		
+	});
+	
+	socket.on('vediochat_private_local', function(data) { // data = [from_uname,to_uname,from_uid,to_uid]	
+		vediochat_private_local(data);
+	});
+
+	socket.on('vediochat_private_remote', function(data) { // data = [from_uname,to_uname,from_uid,to_uid]
+		vediochat_private_remote(data);
+		//$('#vediochat_ee').draggable();
+	});
+	
+	socket.on('vediochat_broadcast_local', function(data) { // data = [from_uid]	
+		vediochat_broadcast_local(data);
+	});
+	
+	socket.on('vediochat_broadcast_remote', function(data) { // data = [from_uname,from_uid]
+		vediochat_broadcast_remote(data);
+	});
+	
+	// 20120607 功能尚未放上去  原意：當廣播者關閉廣播時 遠端也會一起關閉
+	socket.on('vediochat_broadcast_stop_local', function(data) { // data = [from_uid]	
+		vediochat_broadcast_stop_local(data);
+	});
+	
+	// 20120607 功能尚未放上去  原意：當廣播者關閉廣播時 遠端也會一起關閉
+	socket.on('vediochat_broadcast_stop_remote', function(data) { // data = [from_uname,from_uid]
+		vediochat_broadcast_stop_remote(data);
+	});	
+
+	// 下拉選單特效  參考 http://bassistance.de/jquery-plugins/jquery-plugin-accordion/
+	jQuery().ready(function(){
+		jQuery('#dropdowntoolbarcontainer').accordion({
+			header: 'div.dropdowntoolbartitle',
+			active: false,
+			alwaysOpen: false
+		});
+	});
+
+
+</script>
+
+</head>
+
+<!-- 以下被註解掉的 為原作者的排版 小弟保留以示尊重  -->
+<body style="margin:0px" onLoad="onconnecting()">
+<!-- Include the VML behavior -->
+<!-- <style>v\: * { behavior:url(#default#VML);display:inline-block }</style> -->
+
+<!-- Declare the VML namespace -->
+<!-- <xml:namespace ns="urn:schemas-microsoft-com:vml" prefix="v" /> -->
+
+<div id="menuBar" class="YMenuBar" style="left:0px;top:0px;width:100%;">
+	<table cellspacing="0" cellpadding="0" id="menu1" class="YMenu">
+		<tr>
+			<td>
+				<a class="menu" href="#"><u>F</u>ile</a>
+				<div class="section" style="position:absolute;width:270px;">
+					<table class="item" onMouseUp="M_FileNew_view();"><tr><td class="label" style="background-image:url(ui/btn_new.gif)">New</td><td class="hot">Ctrl+N</td></tr></table>
+					<table class="item" onMouseUp="M_FileOpen();"><tr><td class="label" style="background-image:url(ui/btn_open.gif)">Open...</td><td class="hot">Ctrl+O</td></tr></table>
+					<!--
+					<table class="item" onMouseDown="M_FileSave();"><tr><td class="label" style="background-image:url(ui/btn_save.gif)">Save</td><td class="hot">Ctrl+S</td></tr></table>
+					<table class="item" onMouseDown="M_FileSaveAs();"><tr><td class="label" style="background-image:url(ui/btn_saveas.gif)">Save As...</td><td class="hot">Ctrl+Shift+S</td></tr></table>
+					<table class="item" onMouseDown="M_FileRevert();"><tr><td class="label">Revert</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_CEM.gif)">Create Encrypted Map...</td></tr></table>
+					<table class="item" onMouseDown="M_FileClose();"><tr><td class="label">Close</td><td class="hot">Ctrl+W</td></tr></table>
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label">Export</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:290px;">
+							<table class="item"><tr><td class="label">Branch...</td><td class="hot">Alt+A</td></tr></table>
+							<div class="sep"></div>
+							<table class="item"><tr><td class="label">As HTML</td><td class="hot">Ctrl+E</td></tr></table>
+							<table class="item"><tr><td class="label">As XHTML (Javascript version)...</td></tr></table>
+							<table class="item"><tr><td class="label">As XHTML (Clickable map image version)...</td></tr></table>
+							<table class="item"><tr><td class="label">Branch as HTML</td><td class="hot">Ctrl+H</td></tr></table>
+							<!--<table class="item"><tr><td class="label">As PDF...</td></tr></table>-->
+							<!--<table class="item"><tr><td class="label">As SVG...</td></tr></table>-->
+							<!--<table class="item"><tr><td class="label">As PNG...</td></tr></table>-->
+							<!--<table class="item"><tr><td class="label">As JPEG...</td></tr></table>-->
+							<!--<table class="item"><tr><td class="label">As Open Office Writer Document...</td></tr></table>-->
+							<!--<table class="item"><tr><td class="label">Using XSLT</td></tr></table>-->
+						<!--</div>-->
+					<!--<div class="sep"></div>
+					<table class="item"><tr><td class="label">Import</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:290px;">
+							<table class="item"><tr><td class="label">FreeMind...</td></tr></table>
+							<div class="sep"></div>
+							<table class="item"><tr><td class="label">Branch...</td></tr></table>
+							<table class="item"><tr><td class="label">Linked Branch</td></tr></table>
+							<table class="item"><tr><td class="label">(Linked Branch)Without Root...</td></tr></table>
+							<div class="sep"></div>
+							<!--<table class="item"><tr><td class="label">Explorer Favorites...</td></tr></table>-->
+							<!--<table class="item"><tr><td class="label">Folder Structure...</td></tr></table>-->
+							<!--<table class="item"><tr><td class="label">MindManager X5 Map...</td></tr></table>
+						</div>
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label">Page Setup...</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_print.gif)">Print...</td><td class="hot">Ctrl+P</td></tr></table>
+					<!--
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label">Most Recent Files</td><td class="arrow">&nbsp;</td></tr></table>
+					-->
+					<div class="sep"></div>
+					<table class="item" onMouseUp="M_Quit();"><tr><td class="label">Quit</td><td class="hot">Ctrl+Q</td></tr></table>
+				</div>
+			</td>
+
+			<td>
+				<a class="menu" href="#">Edit</a>
+				<div class="section" style="position:absolute;width:270px;">
+					<table class="item" onMouseUp="M_EditUndo();"><tr><td class="label" style="background-image:url(ui/btn_undo.gif)">Undo</td><td class="hot">Ctrl+Z</td></tr></table>
+					<table class="item" onMouseUp="M_EditRedo();"><tr><td class="label" style="background-image:url(ui/btn_redo.gif)">Redo</td><td class="hot">Ctrl+Y</td></tr></table>
+					<div class="sep"></div>
+					<!--<table class="item"><tr><td class="label">Select All Visible</td><td class="hot">Ctrl+A</td></tr></table>
+					<table class="item"><tr><td class="label">Select Visible Branch</td><td class="hot">Ctrl+Shift+A</td></tr></table>
+					<div class="sep"></div>-->
+					<!--
+					<table class="item" onMouseDown="M_EditCut();"><tr><td class="label" style="background-image:url(ui/btn_cut.gif)">Cut</td><td class="hot">Ctrl+X</td></tr></table>
+					<table class="item" onMouseDown="M_EditCopy(true);"><tr><td class="label" style="background-image:url(ui/btn_copy.gif)">Copy</td><td class="hot">Ctrl+C</td></tr></table>
+					<table class="item" onMouseDown="M_EditCopy(false);"><tr><td class="label">Copy Single</td><td class="hot">Ctrl+Shift+C</td></tr></table>
+					<table class="item" onMouseDown="M_EditPaste();"><tr><td class="label" style="background-image:url(ui/btn_paste.gif)">Paste</td><td class="hot">Ctrl+V</td></tr></table>
+					<table class="item" onMouseDown="M_EditCopyFormat();"><tr><td class="label" style="background-image:url(ui/btn_copyformat.gif)">Copy Format</td><td class="hot">Alt+C</td></tr></table>
+					<table class="item" onMouseDown="M_EditPasteFormat();"><tr><td class="label" style="background-image:url(ui/btn_pasteformat.gif)">Paste Format</td><td class="hot">Alt+V</td></tr></table>
+					-->					
+					<table class="item" onMouseUp="M_node_InsertNewChildNode();"><tr><td class="label" style="background-image:url(ui/btn_newchild.gif)">New Child Node</td><td class="hot">Insert</td></tr></table>
+					<table class="item" onMouseUp="M_EditEditNode();"><tr><td class="label">Edit Node</td><td class="hot">F2</td></tr></table>
+					<!--<table class="item" onMouseDown="M_EditEditLongNode();"><tr><td class="label">Edit Long Node...</td><td class="hot">Ctrl+Enter</td></tr></table>-->
+					<table class="item" onMouseUp="M_EditRemoveNode();"><tr><td class="label" style="background-image:url(ui/btn_x.gif)">Remove Node</td><td class="hot">Delete</td></tr></table>
+					<table class="item" onmouseUp="M_Nodediscusstion();"><tr><td class="label">Node Discusstion</td></tr></table>
+					
+					<div class="sep"></div>
+					<table class="item"><tr><td  class="label" style="background-image:url(ui/btn_selecticon.gif)">Icons</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:150px;">
+							<!--<table class="item" onMouseUp="M_RemoveLastIcon();"><tr><td class="label" style="background-image:url(ui/btn_x.gif)">Remove Last Icon</td></tr></table>-->							
+							<div class="sep"></div>
+							<table cellspacing="0" cellpadding="0">
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('help');" src="icons/help.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('messagebox_warning');" src="icons/messagebox_warning.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('idea');" src="icons/idea.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('button_ok');" src="icons/button_ok.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('button_cancel');" src="icons/button_cancel.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-1');" src="icons/full-1.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('full-2');" src="icons/full-2.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-3');" src="icons/full-3.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-4');" src="icons/full-4.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-5');" src="icons/full-5.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-6');" src="icons/full-6.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-7');" src="icons/full-7.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('back');" src="icons/back.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('forward');" src="icons/forward.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('attach');" src="icons/attach.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('ksmiletris');" src="icons/ksmiletris.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('clanbomber');" src="icons/clanbomber.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('desktop_new');" src="icons/desktop_new.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('flag');" src="icons/flag.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('gohome');" src="icons/gohome.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('kaddressbook');" src="icons/kaddressbook.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('knotify');" src="icons/knotify.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('korn');" src="icons/korn.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('mail');" src="icons/mail.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('password');" src="icons/password.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('pencil');" src="icons/pencil.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('stop');" src="icons/stop.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('wizard');" src="icons/wizard.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('xmag');" src="icons/xmag.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('bell');" src="icons/bell.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('bookmark');" src="icons/bookmark.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('penguin');" src="icons/penguin.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('licq');" src="icons/licq.gif" class="button" />
+									</td>
+								</tr>
+							</table>
+						</div>
+					<table class="item" onMouseUp="M_node_RemoveAllIcons();"><tr><td class="label" style="background-image:url(ui/btn_trash.gif)">Remove Icon</td></tr></table>
+										
+					<!--<div class="sep"></div>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_find.gif)">Find...</td><td class="hot">Ctrl+F</td></tr></table>
+					<table class="item"><tr><td class="label">Find Next</td><td class="hot">Ctrl+G</td></tr></table>-->
+				</div>
+			</td>
+			<!--<td>
+				<a class="menu" href="#">View</a>
+				<div class="section" style="position:absolute;width:230px;">
+					<table class="item"><tr><td class="label">Toggle Toolbar</td></tr></table>
+					<table class="item"><tr><td class="label">Toggle Left Toolbar</td></tr></table>
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label">Zoom In</td><td class="hot">Alt+Down</td></tr></table>
+					<table class="item"><tr><td class="label">Zoom Out</td><td class="hot">Alt+Up</td></tr></table>
+					<table class="item"><tr><td class="label">Zoom to Fit to Page</td></tr></table>
+				</div>
+			</td>
+			-->
+			<!--
+			<td>
+				<a class="menu" href="#">Insert</a>
+				<div class="section" style="position:absolute;width:310px;">
+					<table class="item" onMouseDown="M_node_InsertNewChildNode();"><tr><td class="label" style="background-image:url(ui/btn_newchild.gif)">New Child Node</td><td class="hot">Insert</td></tr></table>
+					<table class="item" onMouseDown="M_InsertNewSiblingNode();"><tr><td class="label">New Sibling Node</td><td class="hot">Enter</td></tr></table>
+					<table class="item" onMouseDown="M_InsertNewPreviousSiblingNode();"><tr><td class="label">New Previous Sibling Node</td><td class="hot">Shift+Enter</td></tr></table>
+					<table class="item" onMouseDown="M_InsertNewParentNode();"><tr><td class="label" style="background-image:url(ui/btn_newparent.gif)">New Parent Node</td><td class="hot">Shift+Insert</td></tr></table>
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label">Icons</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:150px;">
+							<table class="item" onMouseDown="M_RemoveLastIcon();"><tr><td class="label" style="background-image:url(ui/btn_x.gif)">Remove Last Icon</td></tr></table>
+							<table class="item" onMouseDown="M_RemoveAllIcons();"><tr><td class="label" style="background-image:url(ui/btn_trash.gif)">Remove All Icons</td></tr></table>
+							<div class="sep"></div>
+							<table cellspacing="0" cellpadding="0">
+								<tr>
+									<td>
+										<img onMouseDown="M_InsertIcons('help');" src="icons/help.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('messagebox_warning');" src="icons/messagebox_warning.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('idea');" src="icons/idea.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('button_ok');" src="icons/button_ok.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('button_cancel');" src="icons/button_cancel.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('full-1');" src="icons/full-1.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseDown="M_InsertIcons('full-2');" src="icons/full-2.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('full-3');" src="icons/full-3.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('full-4');" src="icons/full-4.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('full-5');" src="icons/full-5.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('full-6');" src="icons/full-6.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('full-7');" src="icons/full-7.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseDown="M_InsertIcons('back');" src="icons/back.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('forward');" src="icons/forward.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('attach');" src="icons/attach.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('ksmiletris');" src="icons/ksmiletris.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('clanbomber');" src="icons/clanbomber.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('desktop_new');" src="icons/desktop_new.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseDown="M_InsertIcons('flag');" src="icons/flag.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('gohome');" src="icons/gohome.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('kaddressbook');" src="icons/kaddressbook.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('knotify');" src="icons/knotify.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('korn');" src="icons/korn.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('mail');" src="icons/mail.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseDown="M_InsertIcons('password');" src="icons/password.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('pencil');" src="icons/pencil.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('stop');" src="icons/stop.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('wizard');" src="icons/wizard.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('xmag');" src="icons/xmag.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('bell');" src="icons/bell.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseDown="M_InsertIcons('bookmark');" src="icons/bookmark.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('penguin');" src="icons/penguin.gif" class="button" />
+										<img onMouseDown="M_InsertIcons('licq');" src="icons/licq.gif" class="button" />
+									</td>
+								</tr>
+							</table>
+						</div>
+					<div class="sep"></div>
+					<table class="item" onMouseDown="M_InsertImage();"><tr><td class="label">Image (File Chooser or Link)...</td><td class="hot">Alt+K</td></tr></table>
+					<table class="item"><tr><td class="label">Hyperlink (File Chooser)...</td><td class="hot">Ctrl+Shift+K</td></tr></table>					
+					<table class="item" onMouseDown="M_InsertHyperlink();"><tr><td class="label">Hyperlink (Text Field)...</td><td class="hot">Ctrl+K</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_glink.gif)">Add Graphical Link</td><td class="hot">Ctrl+L</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_llink.gif)">Add Local Hyperlink</td><td class="hot">Alt+L</td></tr></table>					
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_cloud.gif)">Cloud</td><td class="hot">Ctrl+Shift+B</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_note.gif)">Note</td></tr></table>
+				</div>
+			</td>
+			-->
+			<td>
+				<a class="menu" href="#">Format</a>
+				<div class="section" style="position:absolute;width:300px;">
+					<!--
+					<table class="item"><tr><td class="label">Physical Style</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:240px;">
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Default');"><tr><td class="label">Default</td><td class="hot">F1</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Normal');"><tr><td class="label">Normal</td><td class="hot">Ctrl+Shift+N</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('OK');"><tr><td class="label">OK</td><td class="hot">F3</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('NeedsAction');"><tr><td class="label">Needs action</td><td class="hot">F4</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Hot');"><tr><td class="label">Hot</td><td class="hot">F5</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Detail');"><tr><td class="label">Detail</td><td class="hot">F6</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Folder');"><tr><td class="label">Folder</td><td class="hot">F7</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Topic');"><tr><td class="label">Topic</td><td class="hot">F8</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('LargerTopic');"><tr><td class="label">Larger Topic</td><td class="hot">F9</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('WatingTopic');"><tr><td class="label">Waiting Topic</td><td class="hot">Ctrl+F1</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('ObjectKeyword');"><tr><td class="label">Object / Keyword</td><td class="hot">Ctrl+F2</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('ObjectOfCode');"><tr><td class="label">Object of Code</td><td class="hot">Ctrl+F3</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Question');"><tr><td class="label">Question</td><td class="hot">Ctrl+F4</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('OpenQuestion');"><tr><td class="label">Open Question</td><td class="hot">Ctrl+F5</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Bad');"><tr><td class="label">Bad</td><td class="hot">Ctrl+F6</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Blue');"><tr><td class="label">Blue</td><td class="hot">Ctrl+F7</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Pink');"><tr><td class="label">Pink</td><td class="hot">Ctrl+F8</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('Cyan');"><tr><td class="label">Cyan</td><td class="hot">Ctrl+F9</td></tr></table>
+							<table class="item" onMouseDown="M_FormatPhysicalStyle('BlueWithEdges');"><tr><td class="label">Blue with edges</td></tr></table>
+						</div>
+					-->
+					<!--
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label">Fork</td></tr></table>
+					<table class="item"><tr><td class="label">Bubble</td></tr></table>
+					-->
+					<div class="sep"></div>
+					<table class="item" onMouseUp="M_FormatFontSize('+');"><tr><td class="label">Larger Font</td><td class="hot">Ctrl+Plus</td></tr></table>
+					<table class="item" onMouseUp="M_FormatFontSize('-');"><tr><td class="label">Smaller Font</td><td class="hot">Ctrl+Minus</td></tr></table>
+					<table class="item" onMouseUp="M_FormatFontStyle('italic');"><tr><td class="label" style="background-image:url(ui/btn_italic.gif)">Italic</td><td class="hot">Ctrl+I</td></tr></table>
+					<table class="item" onMouseUp="M_FormatFontStyle('bold');"><tr><td class="label" style="background-image:url(ui/btn_bold.gif)">Bold</td><td class="hot">Ctrl+B</td></tr></table>
+					<!--
+					<table class="item" onMouseDown="M_FormatColor('0');"><tr><td class="label">Node Color...</td><td class="hot">Alt+F</td></tr></table>
+					<table class="item" onMouseDown="M_FormatBlendColor();"><tr><td class="label">Blend Color</td><td class="hot">Alt+B</td></tr></table>
+					<table class="item" onMouseDown="M_FormatColor('1');"><tr><td class="label">Node Background Color...</td></tr></table>
+					<table class="item" onMouseDown="M_RemoveNodeBGColor();"><tr><td class="label">Remove Node Background Color</td></tr></table>
+					<table class="item"><tr><td class="label">Reset Position</td></tr></table>					
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_autolayout.gif)">Automatic Layout</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_blinkingnode.gif)">Blinking Node</td></tr></table>
+					<table class="item"><tr><td class="label">Show icons hierachically</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_cloudcolor.gif)">Cloud Color...</td></tr></table>
+					<div class="sep"></div>
+					<table class="item" onMouseDown="M_FormatColor('2');"><tr><td class="label">Edge Color...</td><td class="hot">Alt+E</td></tr></table>
+					-->
+					<!--
+					<table class="item"><tr><td class="label">Edge Styles</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:120px;">
+							<table class="item"><tr><td class="label">Linear</td></tr></table>
+							<table class="item"><tr><td class="label">Bezier</td></tr></table>
+							<table class="item"><tr><td class="label">Sharp Linear</td></tr></table>
+							<table class="item"><tr><td class="label">Sharp Bezier</td></tr></table>
+						</div>
+					-->
+					<!--
+					<table class="item"><tr><td class="label">Edge Widths</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:120px;">
+							<table class="item" onMouseDown="M_FormatEdgeWidth('parent');"><tr><td class="label">Parent</td></tr></table>
+							<table class="item" onMouseDown="M_FormatEdgeWidth('thin');"><tr><td class="label">Thin</td></tr></table>
+							<table class="item" onMouseDown="M_FormatEdgeWidth(1);"><tr><td class="label">1</td></tr></table>
+							<table class="item" onMouseDown="M_FormatEdgeWidth(2);"><tr><td class="label">2</td></tr></table>
+							<table class="item" onMouseDown="M_FormatEdgeWidth(4);"><tr><td class="label">4</td></tr></table>
+							<table class="item" onMouseDown="M_FormatEdgeWidth(8);"><tr><td class="label">8</td></tr></table>
+						</div>
+					-->
+				</div>
+			</td>
+			<td>
+				<a class="menu" href="#">Navigate</a>
+				<div class="section" style="position:absolute;width:260px;">
+				<!--
+					<table class="item" onMouseDown="M_NavigateMoveToRoot();"><tr><td class="label">Move to Root</td><td class="hot">Escape</td></tr></table>
+					<table class="item" onMouseDown="M_NavigateNodeUpDown('up');"><tr><td class="label">Node Up</td><td class="hot">Ctrl+Up</td></tr></table>
+					<table class="item" onMouseDown="M_NavigateNodeUpDown('down');"><tr><td class="label">Node Down</td><td class="hot">Ctrl+Down</td></tr></table>
+					<div class="sep"></div>
+					<table class="item" onMouseDown="M_NavigateToggleFolded();"><tr><td class="label">Toggle Folded</td><td class="hot">Space</td></tr></table>
+					<table class="item" onMouseDown="M_NavigateToggleChildren();"><tr><td class="label">(Un)fold Children</td><td class="hot">Ctrl+Space</td></tr></table>
+				-->
+					<table class="item" onMouseUp="vediochat_broadcast();"><tr><td class="label" style="background-image:url(ui/webcam.gif)">Vedio Broadcast</td></tr></table>
+					<table class="item" onMouseUp="vediochat_broadcast_stop();"><tr><td class="label" >Vedio Broadcast Stop</td></tr></table>
+					<table class="item" onMouseUp="M_NavigateToggleAll(false);"><tr><td class="label" style="background-image:url(ui/btn_unfoldall.gif)">Unfold All</td><td class="hot">Alt+End</td></tr></table>
+					<table class="item" onMouseUp="M_NavigateToggleAll(true);"><tr><td class="label" style="background-image:url(ui/btn_foldall.gif)">Fold All</td><td class="hot">Alt+Home</td></tr></table>
+					<!--<table class="item"><tr><td class="label" style="background-image:url(ui/btn_unfoldonelevel.gif)">Unfold One Level</td><td class="hot">Alt+PageDown</td></tr></table>-->
+					<!--<table class="item"><tr><td class="label" style="background-image:url(ui/btn_foldonelevel.gif)">Fold One All</td><td class="hot">Alt+PageUp</td></tr></table>-->
+				<!--
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label">Open Hyperlink:</td><td class="hot">Ctrl+;</td></tr></table>
+				-->
+				</div>
+			</td>
+			<!--
+			<td>
+				<a class="menu" href="#">Tools</a>
+				<div class="section" style="position:absolute;width:270px;">
+					<table class="item"><tr><td class="label">Join Nodes</td><td class="hot">Ctrl+J</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_modtime.gif)">Show Modification Times</td></tr></table>
+					<!--<table class="item"><tr><td class="label">Show Revisions in Yellow</td></tr></table>-->
+					<!--<div class="sep"></div>-->
+					<!--
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_CEM.gif)">Insert Encrypted Node...</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_togglecrypt.gif)">Toggle Crypted / Encrypted</td></tr></table>
+					<div class="sep"></div>
+					-->
+					<!--
+					<table class="item"><tr><td class="label">Show Calendar...</td><td class="hot">Ctrl+T</td></tr></table>
+					<table class="item"><tr><td class="label">Show Time Schedule List...</td></tr></table>
+					<table class="item"><tr><td class="label">Show Map History...</td></tr></table>
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label">Preferences...</td><td class="hot">Ctrl+Comma</td></tr></table>
+				</div>
+			</td>
+			-->
+<!--
+			<td>
+				<a class="menu" href="#">Maps</a>
+				<div class="section" style="position:absolute;width:220px;">
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_prevmap.gif)">Previous Map</td><td class="hot">Ctrl+Left</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_nextmap.gif)">Next Map</td><td class="hot">Ctrl+Right</td></tr></table>
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/aaa.gif)">&gt;</td><td class="hot">Untitled</td></tr></table>
+				</div>
+			</td>
+			<td>
+				<a class="menu" href="#">Modes</a>
+			</td>
+-->
+			<td>	
+				<a class="menu" href="#">Help</a>
+				<div class="section" style="position:absolute;width:150px;">
+					<!--<table class="item"><tr><td class="label">Documentation</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_faq.gif)">Faq</td></tr></table>-->
+					<table class="item"><tr><td class="label">Help...</td></tr></table>
+					<div class="sep"></div>
+					<!--<table class="item"><tr><td class="label">License</td></tr></table>-->
+					<table class="item" onmouseUp="M_icon();"><tr><td class="label">About</td></tr></table>
+				</div>
+			</td>
+			<td>  <!-- 右鍵選單 -->
+				<a class="context" href="#"></a>
+				<div class="section" style="position:absolute;width:290px;">
+					<table class="item" onmouseUp="M_EditEditNode();"><tr><td class="label">節點編輯</td><td class="hot">F2</td></tr></table>
+					<table class="item" onmouseUp="M_Nodediscusstion();"><tr><td class="label">進行討論</td></tr></table>
+					<table class="item" onMouseUp="M_getfilelist();"><tr><td class="label" style="background-image:url(ui/files.gif)">相關資料</td></tr></table>
+					<table class="item" onmouseUp="M_node_InsertNewChildNode();"><tr><td class="label" style="background-image:url(ui/btn_newchild.gif)">新增子節點</td><td class="hot">Insert</td></tr></table>					
+					<!--<table class="item"><tr><td class="label">Edit Long Node...</td><td class="hot">Ctrl+Enter</td></tr></table>-->
+					<table class="item" onMouseUp="M_EditRemoveNode();"><tr><td class="label" style="background-image:url(ui/btn_x.gif)">移除節點</td><td class="hot">Delete</td></tr></table>
+					
+					<table class="item"><tr><td class="label">加入圖示</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:150px;">
+							<!--<table class="item" onMouseUp="M_RemoveLastIcon();"><tr><td class="label" style="background-image:url(ui/btn_x.gif)">Remove Last Icon</td></tr></table>-->							
+							<div class="sep"></div>
+							<table cellspacing="0" cellpadding="0">
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('help');" src="icons/help.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('messagebox_warning');" src="icons/messagebox_warning.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('idea');" src="icons/idea.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('button_ok');" src="icons/button_ok.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('button_cancel');" src="icons/button_cancel.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-1');" src="icons/full-1.gif" class="button" />
+
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('full-2');" src="icons/full-2.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-3');" src="icons/full-3.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-4');" src="icons/full-4.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-5');" src="icons/full-5.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-6');" src="icons/full-6.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('full-7');" src="icons/full-7.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('back');" src="icons/back.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('forward');" src="icons/forward.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('attach');" src="icons/attach.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('ksmiletris');" src="icons/ksmiletris.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('clanbomber');" src="icons/clanbomber.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('desktop_new');" src="icons/desktop_new.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('flag');" src="icons/flag.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('gohome');" src="icons/gohome.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('kaddressbook');" src="icons/kaddressbook.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('knotify');" src="icons/knotify.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('korn');" src="icons/korn.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('mail');" src="icons/mail.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('password');" src="icons/password.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('pencil');" src="icons/pencil.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('stop');" src="icons/stop.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('wizard');" src="icons/wizard.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('xmag');" src="icons/xmag.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('bell');" src="icons/bell.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img onMouseUp="M_node_InsertIcons('bookmark');" src="icons/bookmark.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('penguin');" src="icons/penguin.gif" class="button" />
+										<img onMouseUp="M_node_InsertIcons('licq');" src="icons/licq.gif" class="button" />
+									</td>
+								</tr>
+							</table>
+						</div>
+					<table class="item" onMouseUp="M_node_RemoveAllIcons();"><tr><td class="label" style="background-image:url(ui/btn_trash.gif)">移除圖示</td></tr></table>					
+					
+					<!--
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_cut.gif)">Cut</td><td class="hot">Ctrl+X</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_copy.gif)">Copy</td><td class="hot">Ctrl+C</td></tr></table>
+					<table class="item"><tr><td class="label">Copy Single</td><td class="hot">Ctrl+Shift+C</td></tr></table>
+					<table class="item"><tr><td class="label" style="background-image:url(ui/btn_paste.gif)">Paste</td><td class="hot">Ctrl+V</td></tr></table>
+					<div class="sep"></div>
+				
+					<table class="item" onmousedown="M_node_InsertNewChildNode();"><tr><td class="label" style="background-image:url(ui/btn_newchild.gif)">New Child Node</td><td class="hot">Insert</td></tr></table>
+				
+					<table class="item"><tr><td class="label">New Sibling Node</td><td class="hot">Enter</td></tr></table>
+					<table class="item"><tr><td class="label">New Previous Sibling Node</td><td class="hot">Shift+Enter</td></tr></table>
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label">Node Up</td><td class="hot">Ctrl+Up</td></tr></table>
+					<table class="item"><tr><td class="label">Node Down</td><td class="hot">Ctrl+Down</td></tr></table>
+					<div class="sep"></div>
+				-->
+					<!--<table class="item"><tr><td class="label">Toggle Folded</td><td class="hot">Space</td></tr></table>-->					
+				<!--
+					<table class="item"><tr><td class="label">Icons</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;">
+							<table cellspacing="0" cellpadding="0">
+								<tr>
+									<td>
+										<img src="icons/help.gif" class="button" />
+										<img src="icons/messagebox_warning.gif" class="button" />
+										<img src="icons/idea.gif" class="button" />
+										<img src="icons/button_ok.gif" class="button" />
+										<img src="icons/button_cancel.gif" class="button" />
+										<img src="icons/full-1.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="icons/full-2.gif" class="button" />
+										<img src="icons/full-3.gif" class="button" />
+										<img src="icons/full-4.gif" class="button" />
+										<img src="icons/full-5.gif" class="button" />
+										<img src="icons/full-6.gif" class="button" />
+										<img src="icons/full-7.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="icons/back.gif" class="button" />
+										<img src="icons/forward.gif" class="button" />
+										<img src="icons/attach.gif" class="button" />
+										<img src="icons/ksmiletris.gif" class="button" />
+										<img src="icons/clanbomber.gif" class="button" />
+										<img src="icons/desktop_new.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="icons/flag.gif" class="button" />
+										<img src="icons/gohome.gif" class="button" />
+										<img src="icons/kaddressbook.gif" class="button" />
+										<img src="icons/knotify.gif" class="button" />
+										<img src="icons/korn.gif" class="button" />
+										<img src="icons/Mail.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="icons/password.gif" class="button" />
+										<img src="icons/pencil.gif" class="button" />
+										<img src="icons/stop.gif" class="button" />
+										<img src="icons/wizard.gif" class="button" />
+										<img src="icons/xmag.gif" class="button" />
+										<img src="icons/bell.gif" class="button" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="icons/bookmark.gif" class="button" />
+										<img src="icons/penguin.gif" class="button" />
+										<img src="icons/licq.gif" class="button" />
+									</td>
+								</tr>
+							</table>
+						</div>
+					<table class="item"><tr><td class="label">Format</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:300px;">
+							<table class="item"><tr><td class="label">Fork</td></tr></table>
+							<table class="item"><tr><td class="label">Bubble</td></tr></table>
+							<div class="sep"></div>
+							<table class="item"><tr><td class="label">Larger Font</td><td class="hot">Ctrl+Plus</td></tr></table>
+							<table class="item"><tr><td class="label">Smaller Font</td><td class="hot">Ctrl+Minus</td></tr></table>
+							<table class="item"><tr><td class="label" style="background-image:url(ui/btn_italic.gif)">Italic</td><td class="hot">Ctrl+I</td></tr></table>
+							<table class="item"><tr><td class="label" style="background-image:url(ui/btn_bold.gif)">Bold</td><td class="hot">Ctrl+B</td></tr></table>
+							<table class="item"><tr><td class="label">Node Color...</td><td class="hot">Alt+F</td></tr></table>
+							<table class="item"><tr><td class="label">Blend Color</td><td class="hot">Alt+B</td></tr></table>
+							<table class="item"><tr><td class="label">Node Background Color...</td></tr></table>
+							<table class="item"><tr><td class="label">Remove Node Background Color</td></tr></table>
+							<table class="item"><tr><td class="label">Reset Position</td></tr></table>
+							<div class="sep"></div>
+							<table class="item"><tr><td class="label" style="background-image:url(ui/btn_cloudcolor.gif)">Cloud Color...</td></tr></table>
+							<div class="sep"></div>
+							<table class="item"><tr><td class="label">Edge Color...</td><td class="hot">Alt+E</td></tr></table>
+							<table class="item"><tr><td class="label">Edge Styles</td><td class="arrow">&nbsp;</td></tr></table>
+								<div class="section" style="position:absolute;width:120px;">
+									<table class="item"><tr><td class="label">Linear</td></tr></table>
+									<table class="item"><tr><td class="label">Bezier</td></tr></table>
+									<table class="item"><tr><td class="label">Sharp Linear</td></tr></table>
+									<table class="item"><tr><td class="label">Sharp Bezier</td></tr></table>
+								</div>
+							<table class="item"><tr><td class="label">Edge Widths</td><td class="arrow">&nbsp;</td></tr></table>
+								<div class="section" style="position:absolute;width:120px;">
+									<table class="item"><tr><td class="label">Parent</td></tr></table>
+									<table class="item"><tr><td class="label">Thin</td></tr></table>
+									<table class="item"><tr><td class="label">1</td></tr></table>
+									<table class="item"><tr><td class="label">2</td></tr></table>
+									<table class="item"><tr><td class="label">4</td></tr></table>
+									<table class="item"><tr><td class="label">8</td></tr></table>
+								</div>
+						</div>
+					<table class="item"><tr><td class="label">Insert</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:310px;">
+							<table class="item"><tr><td class="label" style="background-image:url(ui/btn_cloud.gif)">Cloud</td><td class="hot">Ctrl+Shift+B</td></tr></table>
+							<table class="item"><tr><td class="label">Image (File Chooser or Link)...</td><td class="hot">Alt+K</td></tr></table>
+							<div class="sep"></div>
+							<table class="item"><tr><td class="label">Hyperlink (File Chooser)...</td><td class="hot">Ctrl+Shift+K</td></tr></table>
+							<table class="item"><tr><td class="label">Hyperlink (Text Field)...</td><td class="hot">Ctrl+K</td></tr></table>
+							<table class="item"><tr><td class="label" style="background-image:url(ui/btn_glink.gif)">Add Graphical Link</td><td class="hot">Ctrl+L</td></tr></table>
+							<table class="item"><tr><td class="label" style="background-image:url(ui/btn_llink.gif)">Add Local Hyperlink</td><td class="hot">Alt+L</td></tr></table>
+						</div>
+					<div class="sep"></div>
+					<table class="item"><tr><td class="label">Physical Style</td><td class="arrow">&nbsp;</td></tr></table>
+						<div class="section" style="position:absolute;width:240px;">
+							<table class="item"><tr><td class="label">Default</td><td class="hot">F1</td></tr></table>
+							<table class="item"><tr><td class="label">Normal</td><td class="hot">Ctrl+Shift+N</td></tr></table>
+							<table class="item"><tr><td class="label">OK</td><td class="hot">F3</td></tr></table>
+							<table class="item"><tr><td class="label">Needs action</td><td class="hot">F4</td></tr></table>
+							<table class="item"><tr><td class="label">Hot</td><td class="hot">F5</td></tr></table>
+							<table class="item"><tr><td class="label">Detail</td><td class="hot">F6</td></tr></table>
+							<table class="item"><tr><td class="label">Folder</td><td class="hot">F7</td></tr></table>
+							<table class="item"><tr><td class="label">Topic</td><td class="hot">F8</td></tr></table>
+							<table class="item"><tr><td class="label">Larger Topic</td><td class="hot">F9</td></tr></table>
+							<table class="item"><tr><td class="label">Waiting Topic</td><td class="hot">Ctrl+F1</td></tr></table>
+							<table class="item"><tr><td class="label">Object / Keyword</td><td class="hot">Ctrl+F2</td></tr></table>
+							<table class="item"><tr><td class="label">Object of Code</td><td class="hot">Ctrl+F3</td></tr></table>
+							<table class="item"><tr><td class="label">Question</td><td class="hot">Ctrl+F4</td></tr></table>
+							<table class="item"><tr><td class="label">Open Question</td><td class="hot">Ctrl+F5</td></tr></table>
+							<table class="item"><tr><td class="label">Bad</td><td class="hot">Ctrl+F6</td></tr></table>
+							<table class="item"><tr><td class="label">Blue</td><td class="hot">Ctrl+F7</td></tr></table>
+							<table class="item"><tr><td class="label">Pink</td><td class="hot">Ctrl+F8</td></tr></table>
+							<table class="item"><tr><td class="label">Cyan</td><td class="hot">Ctrl+F9</td></tr></table>
+							<table class="item"><tr><td class="label">Blue with edges</td></tr></table>
+						</div>
+				-->
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<!--功能選單 印表機圖案的那邊 -->
+<div id="toolBar" class="YToolBar" style="left:0px;top:22px;width:100%;">
+	<table cellpadding="0" cellspacing="0">
+		<tr>
+			<td><div class="vsep"></div></td>
+			<!--<td class="item"><img src="ui/btn_print.gif" /></td>
+			<td>
+				<select>
+					<option value="25">25%</option>
+					<option value="50">50%</option>
+					<option value="75">75%</option>
+					<option value="100">100%</option>
+					<option value="150">150%</option>
+					<option value="200">200%</option>
+					<option value="300">300%</option>
+					<option value="400">400%</option>
+					<option value="">User defined</option>
+				</select>
+			</td>
+			<td><div class="vsep"></div></td>-->
+			<td class="item" onMouseDown="M_FileNew_view();"><img src="ui/btn_new.gif" /></td>
+			<td class="item" onMouseDown="M_FileOpen();"><img src="ui/btn_open.gif" /></td>
+			<!--
+			<td class="item" onMouseDown="M_FileSave();"><img src="ui/btn_save.gif" /></td>
+			<td class="item" onMouseDown="M_FileSaveAs();"><img src="ui/btn_saveas.gif" /></td>
+			-->
+			<td><div class="vsep"></div></td>
+			<td class="item" onMouseDown="M_EditUndo();"><img src="ui/btn_undo.gif" /></td>
+			<td class="item" onMouseDown="M_EditRedo();"><img src="ui/btn_redo.gif" /></td>
+			<!--
+			<td><div class="vsep"></div></td>
+			<td class="item" onMouseDown="M_EditCut();"><img src="ui/btn_cut.gif" /></td>
+			<td class="item" onMouseDown="M_EditCopy(true);"><img src="ui/btn_copy.gif" /></td>
+			<td class="item" onMouseDown="M_EditPaste();"><img src="ui/btn_paste.gif" /></td>
+			-->
+			<td><div class="vsep"></div></td>
+			<td class="item" onMouseDown="M_node_InsertNewChildNode();"><img src="ui/btn_newchild.gif" /></td>
+			<td class="item" onMouseDown="M_FormatFontStyle('italic');"><img src="ui/btn_italic.gif" /></td>
+			<td class="item" onMouseDown="M_FormatFontStyle('bold');"><img src="ui/btn_bold.gif" /></td>
+			<td><div class="vsep"></div></td>
+			<td class="item" onMouseDown="M_NavigateToggleAll(false);"><img src="ui/btn_unfoldall.gif" /></td>
+			<td class="item" onMouseDown="M_NavigateToggleAll(true);"><img src="ui/btn_foldall.gif" /></td>
+			<!--<td class="item"><img src="ui/btn_unfoldonelevel.gif" /></td>-->
+			<!--<td class="item"><img src="ui/btn_foldonelevel.gif" /></td>-->
+			<td>
+				<select>
+					<option value="SansSerif">SansSerif</option>
+				<!--
+					<option value="굴림">굴림</option>
+					<option value="바탕">바탕</option>
+					<option value="굴림체">굴림체</option>					
+				-->
+					<option value="Arial">Arial</option>
+					<option value="Times New Roman">Times New Roman</option>
+					<option value="Arial">Arial</option>
+					<option value="Arial Black">Arial Black</option>
+					<option value="Arial Narrow">Arial Narrow</option>
+					<option value="Comic Sans MS">Comic Sans MS</option>
+					<option value="Courier New">Courier New</option>
+					<option value="Garamond">Garamond</option>
+					<option value="Georgia">Georgia</option>
+					<option value="Tahoma">Tahoma</option>
+					<option value="Trebuchet MS">Trebuchet MS</option>
+					<option value="Verdana">Verdana</option>
+					<option value="Wingdings">Wingdings</option>
+				</select>
+			</td>
+			<td>
+				<select>
+					<option value=""></option>
+					<option value="8">8</option>
+					<option value="10">10</option>
+					<option value="12">12</option>
+					<option value="14">14</option>
+					<option value="16">16</option>
+					<option value="18">18</option>
+					<option value="20">20</option>
+					<option value="24">24</option>
+					<option value="28">28</option>
+				</select>
+			</td>
+			<td>
+				<div class="vsep"></div>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<!-- 左側的按鈕 -->
+<!-- <div id="leftToolBar" class="YToolBar" style="left:0px;top:46px;height:101%;">
+	<table cellpadding="0" cellspacing="0">
+		<tr><td align="center" style="font-size:1px;height:1px;"><hr /></td></tr>
+		<tr><td class="item" onMouseDown="M_RemoveLastIcon();"><img src="ui/btn_x.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_RemoveAllIcons();"><img src="ui/btn_trash.gif" /></td></tr>
+		<tr><td align="center" style="font-size:1px;height:1px;"><hr /></td></tr>
+
+		<tr><td class="item" onMouseDown="M_InsertIcons('help');"><img src="icons/help.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('messagebox_warning');"><img src="icons/messagebox_warning.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('idea');"><img src="icons/idea.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('button_ok');"><img src="icons/button_ok.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('button_cancel');"><img src="icons/button_cancel.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('full-1');"><img src="icons/full-1.gif" /></td></tr>
+
+		<tr><td class="item" onMouseDown="M_InsertIcons('full-2');"><img src="icons/full-2.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('full-3');"><img src="icons/full-3.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('full-4');"><img src="icons/full-4.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('full-5');"><img src="icons/full-5.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('full-6');"><img src="icons/full-6.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('full-7');"><img src="icons/full-7.gif" /></td></tr>
+
+		<tr><td class="item" onMouseDown="M_InsertIcons('back');"><img src="icons/back.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('forward');"><img src="icons/forward.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('attach');"><img src="icons/attach.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('ksmiletris');"><img src="icons/ksmiletris.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('clanbomber');"><img src="icons/clanbomber.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('desktop_new');"><img src="icons/desktop_new.gif" /></td></tr>
+
+		<tr><td class="item" onMouseDown="M_InsertIcons('flag');"><img src="icons/flag.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('gohome');"><img src="icons/gohome.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('kaddressbook');"><img src="icons/kaddressbook.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('knotify');"><img src="icons/knotify.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('korn');"><img src="icons/korn.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('mail');"><img src="icons/mail.gif" /></td></tr>
+
+		<tr><td class="item" onMouseDown="M_InsertIcons('password');"><img src="icons/password.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('pencil');"><img src="icons/pencil.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('stop');"><img src="icons/stop.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('wizard');"><img src="icons/wizard.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('xmag');"><img src="icons/xmag.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('bell');"><img src="icons/bell.gif" /></td></tr>
+		
+		<tr><td class="item" onMouseDown="M_InsertIcons('bookmark');"><img src="icons/bookmark.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('penguin');"><img src="icons/penguin.gif" /></td></tr>
+		<tr><td class="item" onMouseDown="M_InsertIcons('licq');"><img src="icons/licq.gif" /></td></tr>
+
+	</table>
+</div>
+-->
+
+<!--用來設定 當你點到node中的文字的時候 他會變成textbox讓你修改-->
+<input id="nodeEditor" type="text" value="" style="position:absolute;top:0px;left:-600px;width:1px;height:1px;border:1px gray solid;z-index:50;" onBlur="_M_EditEditNode(true);" />
+
+<!-- 已移除 節點長內容編輯 -->
+<!--
+<div id="longNodeEditor" class="YEditor" style="width:520px;height:240px;top:0px;left:-600px;">
+	<div class="title">Edit Long Node...</div>
+	<div class="tool">
+			<input type="checkbox" />Enter Confirms
+			<input type="button" value="  OK  " onClick="_M_EditEditLongNode(true);" />
+			<input type="button" value="Cancel" onClick="_M_EditEditLongNode(false);" />
+	</div>
+	<textarea id="_longNodeEditor" style="width:100%;height:100%;" onKeyPress="if (F_CheckKey(event,[27])) _M_EditEditLongNode(false);">
+	</textarea>
+</div>
+-->
+
+<!-- 已移除 加入圖片到目前node -->
+<!--
+<div id="imageChooser" class="YEditor" style="width:480px;top:0px;left:-600px;">
+	<div class="title">Insert Image URL</div>
+	<div class="tool">
+		URL : <input type="text" id="_imageChooser" style="width:300px;" onKeyPress="if (F_CheckKey(event,[27])) _M_InsertImage(false);" />
+		<input type="button" value="  OK  " onClick="_M_InsertImage(true);" />
+		<input type="button" value="Cancel" onClick="_M_InsertImage(false);" />
+	</div>
+</div>
+-->
+
+<!-- 已移除 加入超連結到目前node中-->
+<!--
+<div id="hyperlinkChooser" class="YEditor" style="width:480px;top:0px;left:-600px;">
+	<div class="title">Insert Hyperlink URL</div>
+	<div class="tool">
+		URL http:// <input type="text" id="_hyperlinkChooser" style="width:300px;"  onkeypress="if (F_CheckKey(event,[27])) _M_InsertHyperlink(false);" />
+		<input type="button" value="  OK  " onclick="_M_InsertHyperlink(true);" />
+		<input type="button" value="Cancel" onclick="_M_InsertHyperlink(false);" />
+	</div>
+</div>
+-->
+
+<!--已移除 設定文字顏色-->
+<!--
+<div id="colorChooser" class="YEditor" style="width:240px;top:0px;left:-600px;">
+	<div class="title">Choose Color</div>
+	<div class="tool">
+		<br />
+		<div id="colorPicker"></div>
+		<br />
+		#<input type="text" id="_colorChooser" size="4" />
+		<input type="hidden" id="_colorTarget" />
+		<input type="button" value="  OK  " onClick="_M_FormatColor(true);" />
+		<input type="button" value="Cancel" onClick="_M_FormatColor(false);" />
+		<br /><br />
+	</div>
+</div>
+-->
+
+<!-- 儲存後跳出來的視窗 -->
+<div id="saveDialog" class="YEditor" style="width:240px;top:0px;left:-600px;">
+	<div class="title">Save</div>
+	<div class="tool"></div>
+</div>
+
+<!-- 畫布 -->
+<!-- For Firefox, Chrome and Safari -->
+<div id="panelDOM" style="position:absolute;width:2000px;height:2000px;margin:0px;padding:0px;overflow:visible;border:solid 1px gray;z-index:0">
+<svg id="panelSVG" xmlns="http://www.w3.org/2000/svg" version="1.1" width="2000px" height="2000px"></svg>
+</div>
+
+<!-- 線上人員名單 -->
+<div id="chatcontrolbar" class="chatcontrolbar">	
+	<div id="onlinelistcontainer" class="onlinelistcontainer">		
+		<div id="onlinelistcontrol" class="onlinelistcontrol" onClick="onlinelistview()"><label id='onlinepeople'>線上人員</label></div>
+		<div id="onlinelist" class="onlinelist"></div>
+	</div>	
+</div>
+
+<!-- 討論室 -->
+<div id="chatroomcontainer" class="chatroomcontainer">
+	<div id="chatroomcontrol" class="chatroomcontrol" onClick="chatroomview()">討論室</div>
+	<div id="chatroommessagecontainer" class="chatroommessagecontainer">		
+		<div id="messages" class="messages">
+			<div id="lines" style="text-align:left;"></div>
+		</div>
+		<div id="send-message" class="send-message">				
+			<input type="text" id="message" maxlength="60" style="width:100%">
+		</div>
+	</div>
+</div>
+
+<!-- 右側工具列 -->
+<div class="dropdowntoolbarcontainer" id="dropdowntoolbarcontainer">
+	<div>
+		<div class="dropdowntoolbartitle" title="Node 編輯">Node 編輯</div>
+		<div class="dropdowntoolbarcontent" id="dropdowntoolbar_NodeEdit">
+			<fieldset>
+				<table class="nodeattrbute">
+					<legend>Attribute</legend>
+					
+					<!--<tr><td>內容</td>
+						<td><input type="text" value="" id="Node_Content" />
+						<td><input type="button" id="dbar_Node_update"  value="更新" onClick="dbarNodeUpdate()" /></td>-->
+						
+<!--						<input type="button" id="dbar_Node_edit" value="編輯" onClick="dbarNodeEdit()"> style="display:none" -->
+					<!--</td>	
+					</tr>-->
+			    <!--<tr><td>建立時間</td><td><label id="Node_Created"></label></td></tr>
+					<tr><td>最後修改時間</td><td><label id="Node_Modified"></label></td></tr>-->
+					<tr><td>內容</td><td><input type="text" value="" name="Node_Content" id="Node_Content"></td></tr>
+					<tr><td>開始時間</td><td><input type="text" name="starttime" id="datepicker_start"></td></tr>
+					<tr><td>結束時間</td><td><input type="text" name="endtime" id="datepicker_end"></td></tr>
+					<tr><td>負責人</td><td><input type="text" value="" id="leader"></td></tr>
+					<tr><td>預算</td><td><input type="text" value="" id="budget"></td></tr>
+					<tr><td>進度</td><td><input type="text" value="" id="Node_ps"></td></tr>
+					<td><input type="button" id="dbar_Node_update"  value="資料更新" onClick="dbarNodeUpdate()" /></td>
+					<td><input type="button" id="dbar_NodePS_update"  value="進度更新" onClick="dbarNodePSUpdate()" /></td>
+			    <!--<tr><td>建立者</td><td><label id="Node_Creater"></label></td></tr>
+					<tr><td>最後修改者</td><td><label id="Node_Modifier"></label></td></tr>-->				
+				</table>
+			</fieldset>
+			<!-- 此部分可使用 但因版面會亂掉 所以暫時移除 
+			<fieldset>
+				<table class="nodeattrbute">
+					<legend>Work</legend>					
+					<tr>
+						<td>加入子節點</td>
+						<td class="item" onMouseDown="M_node_InsertNewChildNode();"><img src="ui/btn_newchild.gif" /></td>						
+					</tr>					
+					<tr>
+						<td>移除此結點</td>
+						<td class="item" onMouseDown="M_EditRemoveNode();"><img src="ui/btn_x.gif" /></td>
+					</tr>					
+					<tr>
+						<td>節點摺疊</td>						
+						<td class="item" onMouseDown="M_NavigateToggleAll(true);"><img src="ui/btn_foldall.gif" /></td>
+					</tr>
+					<tr>
+						<td>節點延展</td>
+						<td class="item" onMouseDown="M_NavigateToggleAll(false);"><img src="ui/btn_unfoldall.gif" /></td>
+					</tr>
+					<tr><td>字型</td><td></td></tr>
+					<tr><td>字體大小</td><td></td></tr>
+					<tr><td>字體顏色</td><td></td></tr>
+					<tr><td>背景顏色</td><td></td></tr>
+				</table>
+			</fieldset>		
+			-->	
+		</div>
+	</div>
+	<div>
+		<div class="dropdowntoolbartitle" title="相關討論串">相關討論串</div>
+		<div class="dropdowntoolbarcontent" id="dropdowntoolbar_NodeDiscusstion">
+			<div id="nodediscusstion" class="nodediscusstion" >
+				<div id="discusstion" style="text-align:left;"></div>
+			</div>
+			<div id="dpdKindEditor" class="dpdKindEditor">
+				<form>
+					<textarea name="KindEditor" style="width:100%;height:10px;visibility:hidden;"></textarea>
+					<input type='button' value="送出" onClick="nodediscusstionsubmit();"/><input type='button' value="清除" onClick="nodediscusstionclear();"/>
+				</form>
+			</div>
+
+			<!-- 載入文字編輯器 為編輯討論串使用 -->
+			<script>
+				var editor;
+				KindEditor.ready(function(K) {
+					editor = K.create('textarea[name="KindEditor"]', {
+						langType : 'zh_TW',
+						resizeType : 1,
+						allowPreviewEmoticons : false,
+						allowImageUpload : true,
+						items : [
+							'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+							'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+							'insertunorderedlist', '|', 'emoticons', 'link']
+					});
+				});
+			</script>
+		</div>
+	</div>
+	<div>
+		<div class="dropdowntoolbartitle" title="相關資料">相關資料</div>
+		<div class="dropdowntoolbarcontent" id="dropdowntoolbar_NodeFiles">			
+			<select id="filetypeselect" onChange="getfilelist()">
+				<option value="node">此節點</option>
+				<option value="map">此專案</option>
+			</select>
+			<input type="file" name="thumbnail" id="thumbnail" onChange="fileupload();">
+			<label id="fileuploadstate" style="color: #cccccc"></label>
+			<hr>
+			<div style="height:440px; overflow-y: scroll;">
+				<div id="filelist" style="text-align:left;"></div>
+			</div>
+		</div>
+	</div>
+	<div>
+		<div class="dropdowntoolbartitle" title="專案歷程">專案歷程</div>
+		<div class="dropdowntoolbarcontent">
+			<input type="button" onClick="M_loglistreload();" value="ReLoad">
+			<input type="button" onClick="M_logplay()" value="Play"><hr>
+			<input type="button" onClick="alert(prjID);M_LoadMapDiscussion(prjID)" value="showchat"><hr>
+
+			<div style="height:440px; overflow-y: scroll;">
+				<div id="loglist" style="text-align:left;"></div>
+			</div>
+		</div>
+	</div>	
+	<div>
+		<div class="dropdowntoolbartitle" title="其他">其他</div>
+		<div class="dropdowntoolbarcontent">
+		<form id="form1" name="form1" method="get" action="">
+		<input type="button" name="ganttchart" value="圖表區" onclick="openwindow1()">
+		<input type="button" name="admin" value="權限管理" onclick="openwindow2()">
+		</form>	
+		</div>		
+	</div>
+</div>
+</body>
+</html>
